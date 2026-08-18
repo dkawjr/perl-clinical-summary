@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.local/schemas/independent-review-dossier-event.schema.json",
+  "title": "PERL independent-review local dossier seal",
+  "description": "Tamper-evident local evidence packaging that cannot name an evaluator, establish accuracy or reliability, complete independent review, or authorize clinical use.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "sequence", "previousHash", "contractVersion", "type", "status", "dossierFingerprint", "reviewPackageHash", "evidenceStateHash", "gateCounts", "evidenceCounts", "chainHeads", "decision", "externalApprovalsRecorded", "independentEvaluatorNamed", "independentReviewComplete", "accuracyEstablished", "reliabilityEstablished", "clinicalValidation", "pilotAuthorizationRecorded", "productionReleaseAuthorized", "patientUseAuthorized", "actor", "createdAt", "note", "hash"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "contractVersion": { "const": "perl-independent-review-dossier/1.0" },
+    "type": { "const": "independent-review-local-dossier-sealed" },
+    "status": { "const": "sealed-local-evidence-only" },
+    "dossierFingerprint": { "$ref": "#/$defs/hash" },
+    "reviewPackageHash": { "$ref": "#/$defs/hash" },
+    "evidenceStateHash": { "$ref": "#/$defs/hash" },
+    "gateCounts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["localCurrent", "localRequired", "externalAccepted", "externalDecisionRequired", "total"],
+      "properties": {
+        "localCurrent": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "localRequired": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "externalAccepted": { "type": "integer", "enum": [0, 1] },
+        "externalDecisionRequired": { "type": "integer", "enum": [5, 6] },
+        "total": { "const": 10 }
+      }
+    },
+    "referenceDependency": {
+      "type": "object", "additionalProperties": false,
+      "required": ["docketFingerprint", "chainHead", "freezeAttestationFingerprint", "verifiedDuties"],
+      "properties": {
+        "docketFingerprint": { "$ref": "#/$defs/hash" },
+        "chainHead": { "$ref": "#/$defs/hash" },
+        "freezeAttestationFingerprint": { "$ref": "#/$defs/hash" },
+        "verifiedDuties": { "const": 4 }
+      }
+    },
+    "evidenceCounts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["syntheticCases", "pairedBlindComparisons", "independentReviewerCodes", "workflowTimingObservations", "structuredFeedbackEntries", "unresolvedHighSeverityIncidents", "clinicalStandardDrafts"],
+      "properties": {
+        "syntheticCases": { "$ref": "#/$defs/count" },
+        "pairedBlindComparisons": { "$ref": "#/$defs/count" },
+        "independentReviewerCodes": { "$ref": "#/$defs/count" },
+        "workflowTimingObservations": { "$ref": "#/$defs/count" },
+        "structuredFeedbackEntries": { "$ref": "#/$defs/count" },
+        "unresolvedHighSeverityIncidents": { "$ref": "#/$defs/count" },
+        "clinicalStandardDrafts": { "$ref": "#/$defs/count" }
+      }
+    },
+    "chainHeads": { "type": "object", "minProperties": 1, "additionalProperties": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" } },
+    "decision": { "const": "independent-review-not-authorized" },
+    "externalApprovalsRecorded": { "const": false },
+    "independentEvaluatorNamed": { "const": false },
+    "independentReviewComplete": { "const": false },
+    "accuracyEstablished": { "const": false },
+    "reliabilityEstablished": { "const": false },
+    "clinicalValidation": { "const": false },
+    "pilotAuthorizationRecorded": { "const": false },
+    "productionReleaseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 80, "maxLength": 500 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "count": { "type": "integer", "minimum": 0 }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/candidate-retest-disposition-attestation.schema.json",
+  "title": "PERL candidate retest disposition attestation",
+  "type": "object", "additionalProperties": false,
+  "required": ["contractVersion", "attestationId", "challengeId", "nonce", "registryFingerprint", "dispositionPackageHash", "purpose", "keyId", "issuedAt", "decision", "contentBoundary", "signature"],
+  "properties": {
+    "contractVersion": { "const": "perl-candidate-retest-disposition-attestation/1.0" },
+    "attestationId": { "type": "string", "pattern": "^FF-RETEST-DISPOSITION-ATTEST-[A-Z0-9-]{3,80}$" },
+    "challengeId": { "type": "string", "pattern": "^FF-RETEST-DISPOSITION-CHALLENGE-[A-F0-9-]{20,80}$" },
+    "nonce": { "type": "string", "pattern": "^[A-Za-z0-9_-]{43}$" },
+    "registryFingerprint": { "$ref": "#/$defs/hash" },
+    "dispositionPackageHash": { "$ref": "#/$defs/hash" },
+    "purpose": { "$ref": "#/$defs/purpose" },
+    "keyId": { "type": "string", "pattern": "^FF-RETEST-DISPOSITION-KEY-[A-Z0-9-]{3,80}$" },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "decision": { "oneOf": [{ "$ref": "#/$defs/accuracy" }, { "$ref": "#/$defs/reliability" }, { "$ref": "#/$defs/standard" }, { "$ref": "#/$defs/freeze" }] },
+    "contentBoundary": { "$ref": "candidate-retest-disposition-challenge.schema.json#/$defs/boundary" },
+    "signature": { "$ref": "#/$defs/signature" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "purpose": { "enum": ["independent-accuracy-disposition", "independent-reliability-disposition", "clinical-standard-satisfaction-disposition", "independent-result-freeze"] },
+    "domainDisposition": { "enum": ["meets-standard", "does-not-meet-standard", "inconclusive"] },
+    "signature": { "type": "object", "additionalProperties": false, "required": ["algorithm", "keyId", "value"], "properties": { "algorithm": { "const": "Ed25519" }, "keyId": { "type": "string", "pattern": "^FF-RETEST-DISPOSITION-KEY-[A-Z0-9-]{3,80}$" }, "value": { "type": "string", "pattern": "^[A-Za-z0-9_-]{86}$" } } },
+    "accuracy": { "type": "object", "additionalProperties": false, "required": ["analysisPlanHash", "sourceFidelity", "criticalSafetyHandling", "clinicalRestraint", "conversationUsefulness", "correctionBurden", "cycleComparison", "outcome"], "properties": { "analysisPlanHash": { "$ref": "#/$defs/hash" }, "sourceFidelity": { "$ref": "#/$defs/domainDisposition" }, "criticalSafetyHandling": { "$ref": "#/$defs/domainDisposition" }, "clinicalRestraint": { "$ref": "#/$defs/domainDisposition" }, "conversationUsefulness": { "$ref": "#/$defs/domainDisposition" }, "correctionBurden": { "enum": ["acceptable", "not-acceptable", "inconclusive"] }, "cycleComparison": { "enum": ["retest-supported", "baseline-supported", "materially-equivalent", "inconclusive"] }, "outcome": { "enum": ["accuracy-supported-for-frozen-cycle", "accuracy-not-supported", "inconclusive"] } } },
+    "reliability": { "type": "object", "additionalProperties": false, "required": ["agreementAnalysisHash", "reviewerOverlapAccepted", "caseCoverageAccepted", "reliabilityEstimate", "outcome"], "properties": { "agreementAnalysisHash": { "$ref": "#/$defs/hash" }, "reviewerOverlapAccepted": { "type": "boolean" }, "caseCoverageAccepted": { "type": "boolean" }, "reliabilityEstimate": { "enum": ["sufficient-for-frozen-cycle", "insufficient", "inconclusive"] }, "outcome": { "enum": ["reliability-supported-for-frozen-cycle", "reliability-not-supported", "inconclusive"] } } },
+    "standard": { "type": "object", "additionalProperties": false, "required": ["clinicalStandardDraftHash", "accuracyAttestationFingerprint", "reliabilityAttestationFingerprint", "clientConfirmationReferenceHash", "satisfactionThresholdMet", "outcome"], "properties": { "clinicalStandardDraftHash": { "$ref": "#/$defs/hash" }, "accuracyAttestationFingerprint": { "$ref": "#/$defs/hash" }, "reliabilityAttestationFingerprint": { "$ref": "#/$defs/hash" }, "clientConfirmationReferenceHash": { "$ref": "#/$defs/hash" }, "satisfactionThresholdMet": { "type": "boolean" }, "outcome": { "enum": ["clinical-standard-met-for-frozen-cycle", "clinical-standard-not-met", "further-refinement-required"] } } },
+    "freeze": { "type": "object", "additionalProperties": false, "required": ["priorAttestationFingerprints", "frozenDispositionPackageHash", "cycleCloseRecommendation", "candidateRecommendation", "outcome"], "properties": { "priorAttestationFingerprints": { "type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": { "$ref": "#/$defs/hash" } }, "frozenDispositionPackageHash": { "$ref": "#/$defs/hash" }, "cycleCloseRecommendation": { "enum": ["close-this-refinement-cycle", "continue-refinement", "hold-study"] }, "candidateRecommendation": { "enum": ["advance-to-separate-provider-model-decision", "retain-baseline-and-refine", "no-advancement"] }, "outcome": { "const": "independent-result-frozen" } } }
+  }
+}

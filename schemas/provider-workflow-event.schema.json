@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/perl/schemas/provider-workflow-event.schema.json",
+  "title": "PERL synthetic provider-workflow event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status",
+    "assessmentId", "sourceEventReceiptHash", "origin", "trigger", "actor",
+    "note", "createdAt", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "contractVersion": { "const": "perl-provider-workflow/0.1" },
+    "type": { "enum": ["review-queued", "handoff-queued", "handoff-prepared", "handoff-failed"] },
+    "status": { "enum": ["awaiting-review", "queued", "prepared-not-attached", "failed"] },
+    "assessmentId": { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]+$" },
+    "sourceEventReceiptHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "reportArtifactId": { "type": "string", "format": "uuid" },
+    "reportArtifactHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "attachmentReceiptHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "jobId": { "type": "string", "format": "uuid" },
+    "attempt": { "type": "integer", "minimum": 1 },
+    "errorCode": { "const": "PREPARATION_FAILED" },
+    "origin": { "enum": ["runtime-automation", "manual-rehearsal", "schema-v13-baseline"] },
+    "trigger": { "enum": ["source-event-import", "clinician-approval", "manual-preparation", "operator-retry", "migration"] },
+    "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "note": { "type": "string", "minLength": 20, "maxLength": 300 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "review-queued" } } },
+      "then": { "properties": { "status": { "const": "awaiting-review" } } }
+    },
+    {
+      "if": { "properties": { "type": { "enum": ["handoff-queued", "handoff-prepared", "handoff-failed"] } } },
+      "then": { "required": ["reportArtifactId", "reportArtifactHash", "jobId", "attempt"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "handoff-queued" } } },
+      "then": { "properties": { "status": { "const": "queued" } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "handoff-prepared" } } },
+      "then": {
+        "required": ["attachmentReceiptHash"],
+        "properties": { "status": { "const": "prepared-not-attached" } }
+      }
+    },
+    {
+      "if": { "properties": { "type": { "const": "handoff-failed" } } },
+      "then": {
+        "required": ["errorCode"],
+        "properties": { "status": { "const": "failed" } }
+      }
+    }
+  ]
+}

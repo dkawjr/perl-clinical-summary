@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/calibration-case-set.schema.json",
+  "title": "PERL calibration case-set manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "version", "status", "frozenAt", "population", "clinicalValidation", "holdoutValid", "claimBoundary", "targetStrata", "cases"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{4,79}$" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "status": { "const": "frozen-engineering-rehearsal" },
+    "frozenAt": { "type": "string", "format": "date-time" },
+    "population": { "type": "string", "minLength": 10 },
+    "clinicalValidation": { "const": false },
+    "holdoutValid": { "const": false },
+    "claimBoundary": { "type": "string", "minLength": 80 },
+    "targetStrata": { "type": "array", "minItems": 2, "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9-]+$" } },
+    "cases": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": { "pattern": "^FF-TEST-" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["partition", "strata", "sourceVersion", "referenceVersion", "assignmentEnabled"],
+        "properties": {
+          "partition": { "enum": ["development", "holdout"] },
+          "strata": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string" } },
+          "sourceVersion": { "type": "string", "minLength": 3 },
+          "referenceVersion": { "type": "string", "minLength": 3 },
+          "assignmentEnabled": { "const": true }
+        }
+      }
+    }
+  }
+}

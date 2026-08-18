@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/perl/schemas/delivery-event.schema.json",
+  "title": "PERL tamper-evident delivery outbox event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status", "jobId", "jobHash",
+    "assessmentId", "reportArtifactHash", "attachmentReceiptHash", "attempt", "connectorId",
+    "connectorVersion", "connectorMode", "origin", "actor", "note", "createdAt", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "contractVersion": { "const": "perl-delivery-outbox/1.0" },
+    "type": { "enum": ["delivery-queued", "delivery-attempted", "delivery-retry-scheduled", "delivery-dead-lettered", "delivery-rehearsed", "delivery-requeued"] },
+    "status": { "enum": ["awaiting-authorized-connector", "ready", "in-flight", "retry-wait", "dead-lettered", "rehearsed-not-attached"] },
+    "jobId": { "type": "string", "format": "uuid" },
+    "jobHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "assessmentId": { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]+$" },
+    "reportArtifactHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "attachmentReceiptHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "attempt": { "type": "integer", "minimum": 0, "maximum": 3 },
+    "connectorId": { "type": "string", "minLength": 2, "maxLength": 120 },
+    "connectorVersion": { "type": "string", "minLength": 2, "maxLength": 120 },
+    "connectorMode": { "enum": ["disabled", "structured-candidate"] },
+    "requestHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "acknowledgementHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "receiptIdHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "remoteWriteClaimed": { "const": false },
+    "errorCode": { "enum": ["DELIVERY_TIMEOUT", "DELIVERY_ACK_REJECTED", "DELIVERY_REQUEST_REJECTED", "DELIVERY_UNAVAILABLE", "DELIVERY_INTERRUPTED"] },
+    "origin": { "enum": ["runtime-automation", "schema-v15-baseline", "operator-action", "startup-recovery"] },
+    "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "note": { "type": "string", "minLength": 20, "maxLength": 300 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "delivery-attempted" } } },
+      "then": { "required": ["requestHash"], "properties": { "status": { "const": "in-flight" }, "attempt": { "minimum": 1 } } }
+    },
+    {
+      "if": { "properties": { "type": { "enum": ["delivery-retry-scheduled", "delivery-dead-lettered"] } } },
+      "then": { "required": ["errorCode"], "properties": { "attempt": { "minimum": 1 } } }
+    },
+    {
+      "if": { "properties": { "type": { "const": "delivery-rehearsed" } } },
+      "then": {
+        "required": ["acknowledgementHash", "receiptIdHash", "remoteWriteClaimed"],
+        "properties": { "status": { "const": "rehearsed-not-attached" }, "attempt": { "minimum": 1 } }
+      }
+    }
+  ]
+}

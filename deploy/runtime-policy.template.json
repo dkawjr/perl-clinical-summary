@@ -1,0 +1,21 @@
+{
+  "contractVersion": "perl-runtime-envelope-policy/1.0",
+  "status": "approved-for-synthetic-container-rehearsal",
+  "policyId": "FF-RUNTIME-POLICY-REPLACE-ME",
+  "version": "1.0.0",
+  "issuedAt": "2026-08-14T00:00:00.000Z",
+  "expiresAt": "2026-09-13T00:00:00.000Z",
+  "environment": "synthetic-sandbox",
+  "bindHost": "0.0.0.0",
+  "port": 4173,
+  "publicBaseUrl": "https://perl.example.invalid/",
+  "dataDirectory": "/var/lib/perl",
+  "tlsTerminatedUpstream": true,
+  "runAsNonRootRequired": true,
+  "readOnlyRootFilesystemRequired": true,
+  "stateMountReadWrite": true,
+  "secretsMountReadOnly": true,
+  "gracefulShutdownSeconds": 30,
+  "livenessPath": "/api/live",
+  "readinessPath": "/api/ready"
+}

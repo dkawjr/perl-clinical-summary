@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/independent-review-admission-event.schema.json",
+  "title": "PERL independent-review admission ledger event",
+  "oneOf": [{ "$ref": "#/$defs/challengeEvent" }, { "$ref": "#/$defs/attestationEvent" }],
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "chainHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "claims": {
+      "type": "object", "additionalProperties": false,
+      "required": ["sourceContractsAccepted", "caseSetFrozen", "clinicalStandardAccepted", "evaluatorCharterVerified", "legalPermissionVerified", "privacyPermissionVerified", "independentReviewProtocolFrozen", "independentReviewExecutionReady", "independentReviewComplete", "accuracyEstablished", "reliabilityEstablished", "clinicalValidation", "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized"],
+      "properties": {
+        "sourceContractsAccepted": { "type": "boolean" }, "caseSetFrozen": { "type": "boolean" }, "clinicalStandardAccepted": { "type": "boolean" }, "evaluatorCharterVerified": { "type": "boolean" }, "legalPermissionVerified": { "type": "boolean" }, "privacyPermissionVerified": { "type": "boolean" }, "independentReviewProtocolFrozen": { "type": "boolean" }, "independentReviewExecutionReady": { "type": "boolean" },
+        "independentReviewComplete": { "const": false }, "accuracyEstablished": { "const": false }, "reliabilityEstablished": { "const": false }, "clinicalValidation": { "const": false }, "pilotAuthorized": { "const": false }, "productionReleaseAuthorized": { "const": false }, "patientUseAuthorized": { "const": false }
+      }
+    },
+    "baseProperties": {
+      "id": { "type": "string", "pattern": "^[0-9a-f-]{20,40}$" }, "sequence": { "type": "integer", "minimum": 1 }, "previousHash": { "$ref": "#/$defs/chainHash" }, "contractVersion": { "const": "perl-independent-review-admission-docket/1.0" }, "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" }, "createdAt": { "type": "string", "format": "date-time" }, "boundary": { "type": "string", "minLength": 900 }, "hash": { "$ref": "#/$defs/hash" },
+      "sourceContractsAccepted": { "type": "boolean" }, "caseSetFrozen": { "type": "boolean" }, "clinicalStandardAccepted": { "type": "boolean" }, "evaluatorCharterVerified": { "type": "boolean" }, "legalPermissionVerified": { "type": "boolean" }, "privacyPermissionVerified": { "type": "boolean" }, "independentReviewProtocolFrozen": { "type": "boolean" }, "independentReviewExecutionReady": { "type": "boolean" },
+      "independentReviewComplete": { "const": false }, "accuracyEstablished": { "const": false }, "reliabilityEstablished": { "const": false }, "clinicalValidation": { "const": false }, "pilotAuthorized": { "const": false }, "productionReleaseAuthorized": { "const": false }, "patientUseAuthorized": { "const": false }
+    },
+    "challengeEvent": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "sequence", "previousHash", "eventType", "contractVersion", "challenge", "actor", "createdAt", "sourceContractsAccepted", "caseSetFrozen", "clinicalStandardAccepted", "evaluatorCharterVerified", "legalPermissionVerified", "privacyPermissionVerified", "independentReviewProtocolFrozen", "independentReviewExecutionReady", "independentReviewComplete", "accuracyEstablished", "reliabilityEstablished", "clinicalValidation", "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized", "boundary", "hash"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[0-9a-f-]{20,40}$" }, "sequence": { "type": "integer", "minimum": 1 }, "previousHash": { "$ref": "#/$defs/chainHash" }, "eventType": { "const": "independent-review-admission-challenge-issued" }, "contractVersion": { "const": "perl-independent-review-admission-docket/1.0" }, "challenge": { "$ref": "independent-review-admission-challenge.schema.json" }, "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" }, "createdAt": { "type": "string", "format": "date-time" },
+        "sourceContractsAccepted": { "const": false }, "caseSetFrozen": { "const": false }, "clinicalStandardAccepted": { "const": false }, "evaluatorCharterVerified": { "const": false }, "legalPermissionVerified": { "const": false }, "privacyPermissionVerified": { "const": false }, "independentReviewProtocolFrozen": { "const": false }, "independentReviewExecutionReady": { "const": false }, "independentReviewComplete": { "const": false }, "accuracyEstablished": { "const": false }, "reliabilityEstablished": { "const": false }, "clinicalValidation": { "const": false }, "pilotAuthorized": { "const": false }, "productionReleaseAuthorized": { "const": false }, "patientUseAuthorized": { "const": false }, "boundary": { "type": "string", "minLength": 900 }, "hash": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "attestationEvent": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "sequence", "previousHash", "eventType", "contractVersion", "attestation", "attestationFingerprint", "keyFingerprint", "actor", "createdAt", "sourceContractsAccepted", "caseSetFrozen", "clinicalStandardAccepted", "evaluatorCharterVerified", "legalPermissionVerified", "privacyPermissionVerified", "independentReviewProtocolFrozen", "independentReviewExecutionReady", "independentReviewComplete", "accuracyEstablished", "reliabilityEstablished", "clinicalValidation", "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized", "boundary", "hash"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[0-9a-f-]{20,40}$" }, "sequence": { "type": "integer", "minimum": 1 }, "previousHash": { "$ref": "#/$defs/chainHash" }, "eventType": { "const": "independent-review-admission-attestation-verified" }, "contractVersion": { "const": "perl-independent-review-admission-docket/1.0" }, "attestation": { "$ref": "independent-review-admission-attestation.schema.json" }, "attestationFingerprint": { "$ref": "#/$defs/hash" }, "keyFingerprint": { "$ref": "#/$defs/hash" }, "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" }, "createdAt": { "type": "string", "format": "date-time" },
+        "sourceContractsAccepted": { "type": "boolean" }, "caseSetFrozen": { "type": "boolean" }, "clinicalStandardAccepted": { "type": "boolean" }, "evaluatorCharterVerified": { "type": "boolean" }, "legalPermissionVerified": { "type": "boolean" }, "privacyPermissionVerified": { "type": "boolean" }, "independentReviewProtocolFrozen": { "type": "boolean" }, "independentReviewExecutionReady": { "type": "boolean" }, "independentReviewComplete": { "const": false }, "accuracyEstablished": { "const": false }, "reliabilityEstablished": { "const": false }, "clinicalValidation": { "const": false }, "pilotAuthorized": { "const": false }, "productionReleaseAuthorized": { "const": false }, "patientUseAuthorized": { "const": false }, "boundary": { "type": "string", "minLength": 900 }, "hash": { "$ref": "#/$defs/hash" }
+      }
+    }
+  }
+}

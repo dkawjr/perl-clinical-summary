@@ -1,0 +1,308 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/clinical-release-event.schema.json",
+  "title": "PERL governed clinical-release event",
+  "oneOf": [
+    { "$ref": "#/$defs/challengeEvent" },
+    { "$ref": "#/$defs/clinicalEvent" },
+    { "$ref": "#/$defs/productionEvent" },
+    { "$ref": "#/$defs/attestationEvent" }
+  ],
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "eventHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "date": { "type": "string", "format": "date-time" },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "keyId", "value"],
+      "properties": {
+        "algorithm": { "const": "Ed25519" },
+        "keyId": { "type": "string", "pattern": "^FF-RELEASE-KEY-[A-Z0-9-]{3,80}$" },
+        "value": { "type": "string", "pattern": "^[A-Za-z0-9_-]{86}$" }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidenceFilesIncluded", "humanNamesIncluded", "humanSignaturesIncluded", "credentialsOrSecretsIncluded", "patientRecordsIncluded", "findingsContentIncluded", "phiIncluded", "perlExternalTransmissionPerformed"],
+      "properties": {
+        "evidenceFilesIncluded": { "const": false },
+        "humanNamesIncluded": { "const": false },
+        "humanSignaturesIncluded": { "const": false },
+        "credentialsOrSecretsIncluded": { "const": false },
+        "patientRecordsIncluded": { "const": false },
+        "findingsContentIncluded": { "const": false },
+        "phiIncluded": { "const": false },
+        "perlExternalTransmissionPerformed": { "const": false }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["environmentId", "tenantRef", "releaseId", "artifactDigest", "configurationDigest"],
+      "properties": {
+        "environmentId": { "const": "eqpass-azure-pilot" },
+        "tenantRef": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,95}$" },
+        "releaseId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,95}$" },
+        "artifactDigest": { "$ref": "#/$defs/hash" },
+        "configurationDigest": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "challenge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractVersion", "challengeId", "nonce", "candidateId", "dossierFingerprint", "authorityBridgeFingerprint", "pilotStartControlFingerprint", "pilotStartChainHead", "preparationAcknowledgementFingerprint", "continuityFingerprint", "registryFingerprint", "requiredPurposeOrder", "releaseMode", "issuedAt", "expiresAt", "contentBoundary"],
+      "properties": {
+        "contractVersion": { "const": "perl-clinical-release-challenge/1.0" },
+        "challengeId": { "type": "string", "pattern": "^FF-RELEASE-CHALLENGE-[A-F0-9-]{20,80}$" },
+        "nonce": { "type": "string", "pattern": "^[A-Za-z0-9_-]{43}$" },
+        "candidateId": { "enum": ["north-central-counseling-center", "cooper-psych-clinic-qi"] },
+        "dossierFingerprint": { "$ref": "#/$defs/hash" },
+        "authorityBridgeFingerprint": { "$ref": "#/$defs/hash" },
+        "pilotStartControlFingerprint": { "$ref": "#/$defs/hash" },
+        "pilotStartChainHead": { "$ref": "#/$defs/hash" },
+        "preparationAcknowledgementFingerprint": { "$ref": "#/$defs/hash" },
+        "continuityFingerprint": { "$ref": "#/$defs/hash" },
+        "registryFingerprint": { "$ref": "#/$defs/hash" },
+        "requiredPurposeOrder": {
+          "type": "array",
+          "prefixItems": [
+            { "const": "clinical-use-authorization" },
+            { "const": "production-release-authorization" },
+            { "const": "release-deployment-attestation" }
+          ],
+          "items": false,
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "releaseMode": { "const": "release-authority-only-traffic-off" },
+        "issuedAt": { "$ref": "#/$defs/date" },
+        "expiresAt": { "$ref": "#/$defs/date" },
+        "contentBoundary": { "$ref": "#/$defs/boundary" }
+      }
+    },
+    "clinicalAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractVersion", "challengeId", "candidateId", "dossierFingerprint", "registryFingerprint", "keyId", "authorizationId", "issuedAt", "expiresAt", "useWindow", "scope", "evidenceReferences", "contentBoundary", "signature"],
+      "properties": {
+        "contractVersion": { "const": "perl-clinical-use-authorization/1.0" },
+        "challengeId": { "type": "string", "pattern": "^FF-RELEASE-CHALLENGE-[A-F0-9-]{20,80}$" },
+        "candidateId": { "enum": ["north-central-counseling-center", "cooper-psych-clinic-qi"] },
+        "dossierFingerprint": { "$ref": "#/$defs/hash" },
+        "registryFingerprint": { "$ref": "#/$defs/hash" },
+        "keyId": { "type": "string", "pattern": "^FF-RELEASE-KEY-[A-Z0-9-]{3,80}$" },
+        "authorizationId": { "type": "string", "pattern": "^FF-CLINICAL-AUTH-[A-Z0-9-]{3,80}$" },
+        "issuedAt": { "$ref": "#/$defs/date" },
+        "expiresAt": { "$ref": "#/$defs/date" },
+        "useWindow": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["notBefore", "notAfter"],
+          "properties": { "notBefore": { "$ref": "#/$defs/date" }, "notAfter": { "$ref": "#/$defs/date" } }
+        },
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["settingRef", "populationRef", "maximumRecords", "purpose", "allowedAudience", "clinicalUseAuthorized", "patientUseAuthorized", "autonomousClinicalDecisionAllowed", "diagnosticUseAllowed", "scoringByPerlAllowed", "findingsModificationAllowed"],
+          "properties": {
+            "settingRef": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,95}$" },
+            "populationRef": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,95}$" },
+            "maximumRecords": { "type": "integer", "minimum": 1, "maximum": 1000 },
+            "purpose": { "const": "provider-reviewed-quality-improvement" },
+            "allowedAudience": { "const": "licensed-clinical-provider" },
+            "clinicalUseAuthorized": { "const": true },
+            "patientUseAuthorized": { "const": true },
+            "autonomousClinicalDecisionAllowed": { "const": false },
+            "diagnosticUseAllowed": { "const": false },
+            "scoringByPerlAllowed": { "const": false },
+            "findingsModificationAllowed": { "const": false }
+          }
+        },
+        "evidenceReferences": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["intendedUse", "language", "clinicalStandard", "independentReview", "eqpassContract", "privacySecurity", "accessibility"],
+          "properties": {
+            "intendedUse": { "$ref": "#/$defs/hash" },
+            "language": { "$ref": "#/$defs/hash" },
+            "clinicalStandard": { "$ref": "#/$defs/hash" },
+            "independentReview": { "$ref": "#/$defs/hash" },
+            "eqpassContract": { "$ref": "#/$defs/hash" },
+            "privacySecurity": { "$ref": "#/$defs/hash" },
+            "accessibility": { "$ref": "#/$defs/hash" }
+          }
+        },
+        "contentBoundary": { "$ref": "#/$defs/boundary" },
+        "signature": { "$ref": "#/$defs/signature" }
+      }
+    },
+    "productionAuthorization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractVersion", "challengeId", "candidateId", "registryFingerprint", "keyId", "authorizationId", "clinicalAuthorizationId", "clinicalAuthorizationFingerprint", "issuedAt", "expiresAt", "deployment", "controlReferences", "releaseState", "contentBoundary", "signature"],
+      "properties": {
+        "contractVersion": { "const": "perl-production-release-authorization/1.0" },
+        "challengeId": { "type": "string", "pattern": "^FF-RELEASE-CHALLENGE-[A-F0-9-]{20,80}$" },
+        "candidateId": { "enum": ["north-central-counseling-center", "cooper-psych-clinic-qi"] },
+        "registryFingerprint": { "$ref": "#/$defs/hash" },
+        "keyId": { "type": "string", "pattern": "^FF-RELEASE-KEY-[A-Z0-9-]{3,80}$" },
+        "authorizationId": { "type": "string", "pattern": "^FF-PRODUCTION-AUTH-[A-Z0-9-]{3,80}$" },
+        "clinicalAuthorizationId": { "type": "string", "pattern": "^FF-CLINICAL-AUTH-[A-Z0-9-]{3,80}$" },
+        "clinicalAuthorizationFingerprint": { "$ref": "#/$defs/hash" },
+        "issuedAt": { "$ref": "#/$defs/date" },
+        "expiresAt": { "$ref": "#/$defs/date" },
+        "deployment": { "$ref": "#/$defs/deployment" },
+        "controlReferences": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["securityApproval", "privacyApproval", "eqpassOwnerApproval", "rollbackEvidence", "monitoringEvidence", "incidentResponseEvidence"],
+          "properties": {
+            "securityApproval": { "$ref": "#/$defs/hash" },
+            "privacyApproval": { "$ref": "#/$defs/hash" },
+            "eqpassOwnerApproval": { "$ref": "#/$defs/hash" },
+            "rollbackEvidence": { "$ref": "#/$defs/hash" },
+            "monitoringEvidence": { "$ref": "#/$defs/hash" },
+            "incidentResponseEvidence": { "$ref": "#/$defs/hash" }
+          }
+        },
+        "releaseState": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["productionReleaseAuthorized", "patientUseAuthorityConfirmed", "clinicalTrafficEnabled", "pilotStarted"],
+          "properties": {
+            "productionReleaseAuthorized": { "const": true },
+            "patientUseAuthorityConfirmed": { "const": true },
+            "clinicalTrafficEnabled": { "const": false },
+            "pilotStarted": { "const": false }
+          }
+        },
+        "contentBoundary": { "$ref": "#/$defs/boundary" },
+        "signature": { "$ref": "#/$defs/signature" }
+      }
+    },
+    "deploymentAttestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractVersion", "challengeId", "candidateId", "registryFingerprint", "keyId", "attestationId", "clinicalAuthorizationFingerprint", "productionAuthorizationFingerprint", "observedAt", "deployment", "controlChecks", "releaseState", "contentBoundary", "signature"],
+      "properties": {
+        "contractVersion": { "const": "perl-release-deployment-attestation/1.0" },
+        "challengeId": { "type": "string", "pattern": "^FF-RELEASE-CHALLENGE-[A-F0-9-]{20,80}$" },
+        "candidateId": { "enum": ["north-central-counseling-center", "cooper-psych-clinic-qi"] },
+        "registryFingerprint": { "$ref": "#/$defs/hash" },
+        "keyId": { "type": "string", "pattern": "^FF-RELEASE-KEY-[A-Z0-9-]{3,80}$" },
+        "attestationId": { "type": "string", "pattern": "^FF-RELEASE-ATTEST-[A-Z0-9-]{3,80}$" },
+        "clinicalAuthorizationFingerprint": { "$ref": "#/$defs/hash" },
+        "productionAuthorizationFingerprint": { "$ref": "#/$defs/hash" },
+        "observedAt": { "$ref": "#/$defs/date" },
+        "deployment": { "$ref": "#/$defs/deployment" },
+        "controlChecks": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["artifactMatched", "configurationMatched", "identityAccessReady", "continuousMonitoringReady", "encryptedBackupReady", "incidentRoutesReady", "auditRetentionReady", "rollbackReady"],
+          "properties": {
+            "artifactMatched": { "const": true },
+            "configurationMatched": { "const": true },
+            "identityAccessReady": { "const": true },
+            "continuousMonitoringReady": { "const": true },
+            "encryptedBackupReady": { "const": true },
+            "incidentRoutesReady": { "const": true },
+            "auditRetentionReady": { "const": true },
+            "rollbackReady": { "const": true }
+          }
+        },
+        "releaseState": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["deploymentVerified", "releaseReadyForTrafficActivation", "clinicalTrafficEnabled", "patientRecordsProcessed", "pilotStarted"],
+          "properties": {
+            "deploymentVerified": { "const": true },
+            "releaseReadyForTrafficActivation": { "const": true },
+            "clinicalTrafficEnabled": { "const": false },
+            "patientRecordsProcessed": { "const": false },
+            "pilotStarted": { "const": false }
+          }
+        },
+        "contentBoundary": { "$ref": "#/$defs/boundary" },
+        "signature": { "$ref": "#/$defs/signature" }
+      }
+    },
+    "eventBaseProperties": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "previousHash": { "$ref": "#/$defs/eventHash" },
+        "contractVersion": { "const": "perl-governed-clinical-release/1.0" },
+        "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+        "createdAt": { "$ref": "#/$defs/date" },
+        "clinicalTrafficEnabled": { "const": false },
+        "pilotStarted": { "const": false },
+        "boundary": { "const": "This gate requires three distinct externally provisioned Ed25519 duties before it can record bounded clinical-use, patient-use, production-release, and deployment-conformance authority. It verifies metadata and signatures only. It does not create a key, inspect evidence files, identify a person, receive a patient record, transmit to e-QPASS, deploy an artifact, enable clinical traffic, start a live pilot, process a patient record, modify Findings, score an assessment, make a diagnosis or care decision, establish clinical validity or outcomes, renew or expand a site, or replace identity, legal, privacy, security, accessibility, monitoring, backup, incident-response, stop/restart, and operational controls. Even all three verified duties produce release-ready evidence; a later external traffic-activation control must still turn traffic on and attest the first governed transaction." },
+        "hash": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "challengeEvent": {
+      "allOf": [
+        { "$ref": "#/$defs/eventBaseProperties" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "sequence", "previousHash", "eventType", "contractVersion", "challenge", "actor", "createdAt", "clinicalUseAuthorized", "patientUseAuthorized", "productionReleaseAuthorized", "deploymentVerified", "releaseReadyForTrafficActivation", "clinicalTrafficEnabled", "pilotStarted", "boundary", "hash"],
+          "properties": {
+            "id": true, "sequence": true, "previousHash": true, "contractVersion": true, "actor": true, "createdAt": true, "clinicalTrafficEnabled": true, "pilotStarted": true, "boundary": true, "hash": true,
+            "eventType": { "const": "release-challenge-issued" },
+            "challenge": { "$ref": "#/$defs/challenge" },
+            "clinicalUseAuthorized": { "const": false }, "patientUseAuthorized": { "const": false }, "productionReleaseAuthorized": { "const": false }, "deploymentVerified": { "const": false }, "releaseReadyForTrafficActivation": { "const": false }
+          }
+        }
+      ]
+    },
+    "clinicalEvent": {
+      "allOf": [
+        { "$ref": "#/$defs/eventBaseProperties" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "sequence", "previousHash", "eventType", "contractVersion", "clinicalAuthorization", "clinicalAuthorizationFingerprint", "keyFingerprint", "actor", "createdAt", "clinicalUseAuthorized", "patientUseAuthorized", "productionReleaseAuthorized", "deploymentVerified", "releaseReadyForTrafficActivation", "clinicalTrafficEnabled", "pilotStarted", "boundary", "hash"],
+          "properties": {
+            "id": true, "sequence": true, "previousHash": true, "contractVersion": true, "actor": true, "createdAt": true, "clinicalTrafficEnabled": true, "pilotStarted": true, "boundary": true, "hash": true,
+            "eventType": { "const": "clinical-use-authorized" }, "clinicalAuthorization": { "$ref": "#/$defs/clinicalAuthorization" }, "clinicalAuthorizationFingerprint": { "$ref": "#/$defs/hash" }, "keyFingerprint": { "$ref": "#/$defs/hash" },
+            "clinicalUseAuthorized": { "const": true }, "patientUseAuthorized": { "const": true }, "productionReleaseAuthorized": { "const": false }, "deploymentVerified": { "const": false }, "releaseReadyForTrafficActivation": { "const": false }
+          }
+        }
+      ]
+    },
+    "productionEvent": {
+      "allOf": [
+        { "$ref": "#/$defs/eventBaseProperties" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "sequence", "previousHash", "eventType", "contractVersion", "productionAuthorization", "productionAuthorizationFingerprint", "keyFingerprint", "actor", "createdAt", "clinicalUseAuthorized", "patientUseAuthorized", "productionReleaseAuthorized", "deploymentVerified", "releaseReadyForTrafficActivation", "clinicalTrafficEnabled", "pilotStarted", "boundary", "hash"],
+          "properties": {
+            "id": true, "sequence": true, "previousHash": true, "contractVersion": true, "actor": true, "createdAt": true, "clinicalTrafficEnabled": true, "pilotStarted": true, "boundary": true, "hash": true,
+            "eventType": { "const": "production-release-authorized" }, "productionAuthorization": { "$ref": "#/$defs/productionAuthorization" }, "productionAuthorizationFingerprint": { "$ref": "#/$defs/hash" }, "keyFingerprint": { "$ref": "#/$defs/hash" },
+            "clinicalUseAuthorized": { "const": true }, "patientUseAuthorized": { "const": true }, "productionReleaseAuthorized": { "const": true }, "deploymentVerified": { "const": false }, "releaseReadyForTrafficActivation": { "const": false }
+          }
+        }
+      ]
+    },
+    "attestationEvent": {
+      "allOf": [
+        { "$ref": "#/$defs/eventBaseProperties" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "sequence", "previousHash", "eventType", "contractVersion", "deploymentAttestation", "deploymentAttestationFingerprint", "keyFingerprint", "actor", "createdAt", "clinicalUseAuthorized", "patientUseAuthorized", "productionReleaseAuthorized", "deploymentVerified", "releaseReadyForTrafficActivation", "clinicalTrafficEnabled", "pilotStarted", "boundary", "hash"],
+          "properties": {
+            "id": true, "sequence": true, "previousHash": true, "contractVersion": true, "actor": true, "createdAt": true, "clinicalTrafficEnabled": true, "pilotStarted": true, "boundary": true, "hash": true,
+            "eventType": { "const": "release-deployment-attested" }, "deploymentAttestation": { "$ref": "#/$defs/deploymentAttestation" }, "deploymentAttestationFingerprint": { "$ref": "#/$defs/hash" }, "keyFingerprint": { "$ref": "#/$defs/hash" },
+            "clinicalUseAuthorized": { "const": true }, "patientUseAuthorized": { "const": true }, "productionReleaseAuthorized": { "const": true }, "deploymentVerified": { "const": true }, "releaseReadyForTrafficActivation": { "const": true }
+          }
+        }
+      ]
+    }
+  }
+}

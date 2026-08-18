@@ -1,0 +1,72 @@
+{
+  "contractVersion": "eqpass-perl-score-event/rfi-0.1",
+  "eventId": "FF-TEST-EVENT-EQ-001",
+  "eventType": "assessment.scored",
+  "occurredAt": "2026-08-13T18:15:00.000Z",
+  "environment": "calibration",
+  "tenantRef": "FF-TEST-TENANT-DEMO",
+  "sourceAssessment": {
+    "assessmentRef": "FF-TEST-EQ-001",
+    "subjectRef": "FF-TEST-SUBJECT-001",
+    "instrument": {
+      "name": "e-QPASS",
+      "version": "synthetic-instrument-2026-08",
+      "itemCount": 105
+    },
+    "completedAt": "2026-08-13T18:04:45.000Z",
+    "durationSeconds": 615,
+    "scoringVersion": "synthetic-score-rules-2026-08",
+    "responseVersion": "synthetic-response-v1"
+  },
+  "scoring": {
+    "answeredItemCount": 105,
+    "scales": {
+      "depression": { "score": 35, "level": "mild" },
+      "anxiety": { "score": 20, "level": "mild" },
+      "anger": { "score": 27, "level": "mild" },
+      "gpi": { "score": 82, "level": "mild" },
+      "phobicAvoidance": { "score": 2, "level": "mild" },
+      "obsessiveCompulsive": { "score": 4, "level": "mild" },
+      "psychoticism": { "score": 1, "level": "minimal" },
+      "suicideRisk": { "score": 0, "level": "minimal" },
+      "violenceRisk": { "score": 0, "level": "minimal" }
+    },
+    "redFlagSectionScore": 2,
+    "subscales": [
+      { "code": "DEP_DYSPHORIA", "label": "Dysphoria", "domain": "depression", "score": 5, "level": "mild" },
+      { "code": "DEP_UNSUSTAINED_EFFORT", "label": "Unsustained effort", "domain": "depression", "score": 5, "level": "mild" },
+      { "code": "DEP_NEGATIVE_COGNITION", "label": "Negative cognition", "domain": "depression", "score": 8, "level": "mild" },
+      { "code": "DEP_FATIGUE", "label": "Fatigue", "domain": "depression", "score": 5, "level": "mild" },
+      { "code": "DEP_ANHEDONIA", "label": "Anhedonia", "domain": "depression", "score": 4, "level": "mild" },
+      { "code": "ANX_APPREHENSION", "label": "Apprehension", "domain": "anxiety", "score": 8, "level": "mild" },
+      { "code": "ANX_INTERPERSONAL", "label": "Interpersonal anxiety", "domain": "anxiety", "score": 4, "level": "mild" },
+      { "code": "ANX_PHYSIOLOGICAL", "label": "Physiological arousal", "domain": "anxiety", "score": 3, "level": "mild" },
+      { "code": "ANG_ANGRY_MOOD", "label": "Angry mood", "domain": "anger", "score": 6, "level": "mild" },
+      { "code": "ANG_RESENTMENT", "label": "Resentment", "domain": "anger", "score": 3, "level": "mild" },
+      { "code": "ANG_INDIGNATION", "label": "Indignation", "domain": "anger", "score": 4, "level": "mild" },
+      { "code": "ANG_IN", "label": "Anger in", "domain": "anger", "score": 5, "level": "mild" },
+      { "code": "ANG_OUT_VERBAL", "label": "Anger out verbal", "domain": "anger", "score": 2, "level": "mild" },
+      { "code": "ANG_OUT_PHYSICAL", "label": "Anger out physical", "domain": "anger", "score": 0, "level": "minimal" }
+    ],
+    "criticalFlags": [
+      {
+        "code": "RF_85",
+        "category": "other-red-flag",
+        "score": 2,
+        "directReviewRequired": true,
+        "labelRef": "RF_85"
+      }
+    ]
+  },
+  "findingsReport": {
+    "reportRef": "FF-TEST-REPORT-EQ-001",
+    "reportVersion": "synthetic-findings-v1",
+    "status": "finalized",
+    "mimeType": "application/pdf",
+    "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  },
+  "trace": {
+    "correlationId": "FF-TEST-CORRELATION-EQ-001",
+    "idempotencyKey": "FF-TEST-IDEMPOTENCY-EQ-001"
+  }
+}

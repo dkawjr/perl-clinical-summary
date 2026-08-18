@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.local/schemas/candidate-blind-review-event.schema.json",
+  "title": "PERL Candidate Blind-Review Outcome Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status", "assignmentId", "packetFingerprint", "caseId", "caseFingerprint", "protocolFingerprint", "reviewProtocol", "reviewerCodeHash", "sourceProfileHash", "cells", "authorMapping", "authorMappingHash", "evidence", "measureProtocol", "reviewTiming", "contentBoundary", "candidateIdentityVisibleDuringReview", "authorMappingRevealedAfterSubmission", "reviewerIdentityVerified", "counselorQualificationVerified", "candidateRunExternallyVerified", "providerVerified", "trialExecutionAuthorized", "accuracyEstablished", "reliabilityEstablished", "safetyEstablished", "usefulnessEstablished", "clinicalValidation", "engineRanked", "engineSelected", "modelModificationAuthorized", "carePlanChanged", "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized", "actor", "createdAt", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[0-9a-f-]{20,40}$" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "contractVersion": { "const": "perl-candidate-blind-review/1.0" },
+    "type": { "const": "candidate-blind-review-outcome-recorded" },
+    "status": { "const": "anonymous-review-held-unverified" },
+    "assignmentId": { "type": "string", "pattern": "^FF-CANDIDATE-REVIEW-[A-F0-9-]{20,80}$" },
+    "packetFingerprint": { "$ref": "#/$defs/hash" },
+    "caseId": { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]{3,40}$" },
+    "caseFingerprint": { "$ref": "#/$defs/hash" },
+    "protocolFingerprint": { "$ref": "#/$defs/hash" },
+    "reviewProtocol": { "const": "candidate-blind-review-v1" },
+    "reviewerCodeHash": { "$ref": "#/$defs/hash" },
+    "sourceProfileHash": { "$ref": "#/$defs/hash" },
+    "cells": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/cell" }
+    },
+    "authorMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A", "B", "C", "D"],
+      "properties": {
+        "A": { "$ref": "#/$defs/arm" },
+        "B": { "$ref": "#/$defs/arm" },
+        "C": { "$ref": "#/$defs/arm" },
+        "D": { "$ref": "#/$defs/arm" }
+      }
+    },
+    "authorMappingHash": { "$ref": "#/$defs/hash" },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidateReturnChainHead", "referenceDecisionChainHead", "clinicalStandardHash", "candidateTrialProtocolFingerprint"],
+      "properties": {
+        "candidateReturnChainHead": { "$ref": "#/$defs/hash" },
+        "referenceDecisionChainHead": { "$ref": "#/$defs/hash" },
+        "clinicalStandardHash": { "$ref": "#/$defs/hash" },
+        "candidateTrialProtocolFingerprint": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "measureProtocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["predeclaredMeasures", "directlyRecordedMeasures", "reviewerAgreementDerivedAcrossIndependentPackets"],
+      "properties": {
+        "predeclaredMeasures": { "const": 6 },
+        "directlyRecordedMeasures": { "const": 5 },
+        "reviewerAgreementDerivedAcrossIndependentPackets": { "const": true }
+      }
+    },
+    "reviewTiming": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assignedAt", "submittedAt", "durationSeconds", "protocolEligible"],
+      "properties": {
+        "assignedAt": { "type": "string", "format": "date-time" },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "durationSeconds": { "type": "integer", "minimum": 0, "maximum": 86400 },
+        "protocolEligible": { "type": "boolean" }
+      }
+    },
+    "contentBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["syntheticScoredSourceIncluded", "anonymousSummaryContentIncluded", "candidateIdentityIncluded", "providerIdentityIncluded", "modelIdentityIncluded", "counselorIdentityIncluded", "reviewerIdentityIncluded", "rawResponsesIncluded", "findingsContentIncluded", "fileBytesIncluded", "patientIdentifiersIncluded", "credentialsIncluded", "phiIncluded"],
+      "properties": {
+        "syntheticScoredSourceIncluded": { "const": true },
+        "anonymousSummaryContentIncluded": { "const": true },
+        "candidateIdentityIncluded": { "const": false },
+        "providerIdentityIncluded": { "const": false },
+        "modelIdentityIncluded": { "const": false },
+        "counselorIdentityIncluded": { "const": false },
+        "reviewerIdentityIncluded": { "const": false },
+        "rawResponsesIncluded": { "const": false },
+        "findingsContentIncluded": { "const": false },
+        "fileBytesIncluded": { "const": false },
+        "patientIdentifiersIncluded": { "const": false },
+        "credentialsIncluded": { "const": false },
+        "phiIncluded": { "const": false }
+      }
+    },
+    "candidateIdentityVisibleDuringReview": { "const": false },
+    "authorMappingRevealedAfterSubmission": { "const": false },
+    "reviewerIdentityVerified": { "const": false },
+    "counselorQualificationVerified": { "const": false },
+    "candidateRunExternallyVerified": { "const": false },
+    "providerVerified": { "const": false },
+    "trialExecutionAuthorized": { "const": false },
+    "accuracyEstablished": { "const": false },
+    "reliabilityEstablished": { "const": false },
+    "safetyEstablished": { "const": false },
+    "usefulnessEstablished": { "const": false },
+    "clinicalValidation": { "const": false },
+    "engineRanked": { "const": false },
+    "engineSelected": { "const": false },
+    "modelModificationAuthorized": { "const": false },
+    "carePlanChanged": { "const": false },
+    "pilotAuthorized": { "const": false },
+    "productionReleaseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 300, "maxLength": 900 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "arm": { "enum": ["candidate-01", "candidate-02", "candidate-03", "counselor-reference"] },
+    "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["blindPosition", "artifactHash", "ratings", "correctionBurden", "correctionFlags", "dissentFlags", "useDisposition"],
+      "properties": {
+        "blindPosition": { "enum": ["A", "B", "C", "D"] },
+        "artifactHash": { "$ref": "#/$defs/hash" },
+        "ratings": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["evidenceFidelity", "criticalSafetyHandling", "clinicalRestraint", "conversationUsefulness"],
+          "properties": {
+            "evidenceFidelity": { "$ref": "#/$defs/rating" },
+            "criticalSafetyHandling": { "$ref": "#/$defs/rating" },
+            "clinicalRestraint": { "$ref": "#/$defs/rating" },
+            "conversationUsefulness": { "$ref": "#/$defs/rating" }
+          }
+        },
+        "correctionBurden": { "enum": ["none", "minor", "material", "unsafe"] },
+        "correctionFlags": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 6,
+          "items": { "enum": ["factual-mismatch", "unsupported-overreach", "material-omission", "tone-or-clarity", "safety-routing", "workflow-usefulness"] }
+        },
+        "dissentFlags": {
+          "type": "array",
+          "uniqueItems": true,
+          "maxItems": 4,
+          "items": { "enum": ["rubric-interpretation", "source-evidence", "safety-judgment", "clinical-utility"] }
+        },
+        "useDisposition": { "enum": ["usable-as-is", "usable-after-revision", "not-usable", "uncertain"] }
+      }
+    }
+  }
+}

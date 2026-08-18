@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/clinical-brief.schema.json",
+  "title": "PERL evidence-linked clinical brief",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format", "recordId", "overallDistress", "coreDimensions", "clinicalThemes", "mixedSignals", "redFlags", "qualityChecks", "limitations", "boundaries"],
+  "properties": {
+    "format": { "const": "perl-clinical-brief/1.0" },
+    "recordId": { "type": "string", "pattern": "^FF-TEST-" },
+    "overallDistress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["headline", "score", "level", "statement", "evidence"],
+      "properties": {
+        "headline": { "type": "string", "minLength": 5 },
+        "score": { "type": "number", "minimum": 0 },
+        "level": { "$ref": "#/$defs/level" },
+        "statement": { "type": "string", "minLength": 20 },
+        "evidence": { "type": "string", "minLength": 3 }
+      }
+    },
+    "coreDimensions": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "$ref": "#/$defs/dimension" }
+    },
+    "clinicalThemes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": { "$ref": "#/$defs/theme" }
+    },
+    "mixedSignals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "headline", "items", "statement"],
+      "properties": {
+        "status": { "enum": ["observed", "none-observed"] },
+        "headline": { "type": "string", "minLength": 5 },
+        "statement": { "type": "string", "minLength": 10 },
+        "items": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "label", "statement", "evidence"],
+            "properties": {
+              "id": { "type": "string", "minLength": 3 },
+              "label": { "type": "string", "minLength": 3 },
+              "statement": { "type": "string", "minLength": 10 },
+              "evidence": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 3 } }
+            }
+          }
+        }
+      }
+    },
+    "redFlags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "urgency", "highlightedResponses", "headline", "statement", "sourceDisclosure"],
+      "properties": {
+        "status": { "enum": ["direct-review-required", "no-automated-hold"] },
+        "urgency": { "enum": ["routine", "priority", "immediate"] },
+        "highlightedResponses": { "type": "integer", "minimum": 0 },
+        "headline": { "type": "string", "minLength": 5 },
+        "statement": { "type": "string", "minLength": 20 },
+        "sourceDisclosure": { "type": "string", "minLength": 10 }
+      }
+    },
+    "qualityChecks": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "status", "value", "detail"],
+        "properties": {
+          "id": { "type": "string", "minLength": 3 },
+          "label": { "type": "string", "minLength": 3 },
+          "status": { "enum": ["pass", "review", "fail", "not-scored"] },
+          "value": { "type": "string", "minLength": 2 },
+          "detail": { "type": "string", "minLength": 10 }
+        }
+      }
+    },
+    "limitations": { "type": "array", "minItems": 5, "items": { "type": "string", "minLength": 20 } },
+    "boundaries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sourceAuthority", "clinical", "evidence", "review"],
+      "properties": {
+        "sourceAuthority": { "type": "string", "minLength": 20 },
+        "clinical": { "type": "string", "minLength": 20 },
+        "evidence": { "type": "string", "minLength": 20 },
+        "review": { "type": "string", "minLength": 20 }
+      }
+    }
+  },
+  "$defs": {
+    "level": { "enum": ["minimal", "mild", "moderate", "severe"] },
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["key", "label", "score", "level", "evidence", "statement"],
+      "properties": {
+        "key": { "enum": ["gpi", "depression", "anxiety", "anger"] },
+        "label": { "type": "string", "minLength": 3 },
+        "score": { "type": "number", "minimum": 0 },
+        "level": { "$ref": "#/$defs/level" },
+        "evidence": { "type": "string", "minLength": 3 },
+        "statement": { "type": "string", "minLength": 10 }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "domain", "title", "hypothesis", "confidence", "uncertainty", "evidence", "followUp"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^theme-[0-9]{2}$" },
+        "domain": { "type": "string", "minLength": 3 },
+        "title": { "type": "string", "minLength": 3 },
+        "hypothesis": { "type": "string", "minLength": 20 },
+        "confidence": { "enum": ["Low", "Moderate", "High"] },
+        "uncertainty": { "type": "string", "minLength": 20 },
+        "evidence": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 3 } },
+        "followUp": { "type": "string", "minLength": 8 }
+      }
+    }
+  }
+}

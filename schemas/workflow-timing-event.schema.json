@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/workflow-timing-event.schema.json",
+  "title": "PERL workflow timing integrity event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "sequence", "previousHash", "type", "observationId", "observationHash", "createdAt", "note", "hash"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "type": { "enum": ["recorded", "legacy-baseline"] },
+    "observationId": { "type": "string", "format": "uuid" },
+    "observationHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 10, "maxLength": 300 },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

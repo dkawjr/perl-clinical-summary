@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.local/schemas/eqpass-owner-return-preflight-event.schema.json",
+  "title": "PERL e-QPASS owner-return metadata preflight event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "sequence",
+    "previousHash",
+    "contractVersion",
+    "type",
+    "status",
+    "requestFingerprint",
+    "manifestHash",
+    "candidateReturnIdHash",
+    "artifactResults",
+    "counts",
+    "metadataChecklistComplete",
+    "decision",
+    "fileBytesReceived",
+    "recordLevelDataReceived",
+    "patientIdentifiersReceived",
+    "rawResponsesReceived",
+    "findingsContentReceived",
+    "externalTransferPerformed",
+    "phiApproved",
+    "ownerIdentityVerified",
+    "authoritativeContractAccepted",
+    "scoringLogicAccepted",
+    "productionIntegrationAuthorized",
+    "clinicalUseAuthorized",
+    "actor",
+    "createdAt",
+    "note",
+    "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "contractVersion": { "const": "perl-eqpass-owner-return-preflight/1.0" },
+    "type": { "const": "eqpass-owner-return-metadata-preflight-recorded" },
+    "status": { "enum": ["metadata-incomplete", "metadata-complete-unverified"] },
+    "requestFingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "manifestHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "candidateReturnIdHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "artifactResults": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "prefixItems": [
+        { "$ref": "#/$defs/thresholdWorkbook" },
+        { "$ref": "#/$defs/questionWorkbook" },
+        { "$ref": "#/$defs/scoredEvent" },
+        { "$ref": "#/$defs/fieldDictionary" },
+        { "$ref": "#/$defs/scoringVersion" },
+        { "$ref": "#/$defs/reportLifecycle" },
+        { "$ref": "#/$defs/attachmentInterface" },
+        { "$ref": "#/$defs/securityDataFlow" }
+      ],
+      "items": false
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "metadataDeclared", "metadataComplete", "missing", "workbookMetadataDeclared", "exactWorkbookFilenameMatches"],
+      "properties": {
+        "required": { "const": 8 },
+        "metadataDeclared": { "type": "integer", "minimum": 0, "maximum": 8 },
+        "metadataComplete": { "type": "integer", "minimum": 0, "maximum": 8 },
+        "missing": { "type": "integer", "minimum": 0, "maximum": 8 },
+        "workbookMetadataDeclared": { "type": "integer", "minimum": 0, "maximum": 2 },
+        "exactWorkbookFilenameMatches": { "type": "integer", "minimum": 0, "maximum": 2 }
+      }
+    },
+    "metadataChecklistComplete": { "type": "boolean" },
+    "decision": { "const": "rfi-remains-open" },
+    "fileBytesReceived": { "const": false },
+    "recordLevelDataReceived": { "const": false },
+    "patientIdentifiersReceived": { "const": false },
+    "rawResponsesReceived": { "const": false },
+    "findingsContentReceived": { "const": false },
+    "externalTransferPerformed": { "const": false },
+    "phiApproved": { "const": false },
+    "ownerIdentityVerified": { "const": false },
+    "authoritativeContractAccepted": { "const": false },
+    "scoringLogicAccepted": { "const": false },
+    "productionIntegrationAuthorized": { "const": false },
+    "clinicalUseAuthorized": { "const": false },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 100, "maxLength": 500 },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  },
+  "$defs": {
+    "artifactResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "expectedFilename", "metadataDeclared", "filenameMatches", "mediaTypeMatches", "dataClassMatches", "metadataComplete", "candidateDataClass"],
+      "properties": {
+        "id": { "type": "string" },
+        "expectedFilename": { "type": "string" },
+        "metadataDeclared": { "type": "boolean" },
+        "filenameMatches": { "type": "boolean" },
+        "mediaTypeMatches": { "type": "boolean" },
+        "dataClassMatches": { "type": "boolean" },
+        "metadataComplete": { "type": "boolean" },
+        "candidateDataClass": {
+          "type": ["string", "null"],
+          "enum": [null, "configuration-no-records", "deidentified-fixture-metadata", "interface-documentation", "security-control-documentation"]
+        }
+      }
+    },
+    "thresholdWorkbook": {
+      "allOf": [
+        { "$ref": "#/$defs/artifactResult" },
+        { "properties": { "id": { "const": "threshold-response-workbook" }, "expectedFilename": { "const": "meta_thresholds_responses_cs.xlsx" } } }
+      ]
+    },
+    "questionWorkbook": {
+      "allOf": [
+        { "$ref": "#/$defs/artifactResult" },
+        { "properties": { "id": { "const": "question-category-workbook" }, "expectedFilename": { "const": "question_categories_capitalized.xlsx" } } }
+      ]
+    },
+    "scoredEvent": {
+      "allOf": [
+        { "$ref": "#/$defs/artifactResult" },
+        { "properties": { "id": { "const": "authoritative-scored-event" }, "expectedFilename": { "const": "eqpass-authoritative-scored-event.deidentified.json" } } }
+      ]
+    },
+    "fieldDictionary": {
+      "allOf": [
+        { "$ref": "#/$defs/artifactResult" },
+        { "properties": { "id": { "const": "field-dictionary" }, "expectedFilename": { "const": "eqpass-field-dictionary.json" } } }
+      ]
+    },
+    "scoringVersion": {
+      "allOf": [
+        { "$ref": "#/$defs/artifactResult" },
+        { "properties": { "id": { "const": "scoring-version-manifest" }, "expectedFilename": { "const": "eqpass-scoring-version-manifest.json" } } }
+      ]
+    },
+    "reportLifecycle": {
+      "allOf": [
+        { "$ref": "#/$defs/artifactResult" },
+        { "properties": { "id": { "const": "report-lifecycle" }, "expectedFilename": { "const": "eqpass-report-lifecycle.json" } } }
+      ]
+    },
+    "attachmentInterface": {
+      "allOf": [
+        { "$ref": "#/$defs/artifactResult" },
+        { "properties": { "id": { "const": "attachment-interface" }, "expectedFilename": { "const": "eqpass-pdf-attachment-interface.json" } } }
+      ]
+    },
+    "securityDataFlow": {
+      "allOf": [
+        { "$ref": "#/$defs/artifactResult" },
+        { "properties": { "id": { "const": "security-data-flow" }, "expectedFilename": { "const": "eqpass-security-data-flow.json" } } }
+      ]
+    }
+  }
+}

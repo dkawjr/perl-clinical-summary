@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/incident-response-rehearsal-event.schema.json",
+  "title": "PERL local incident-response rehearsal evidence event",
+  "description": "A hash-linked tabletop rehearsal of the fixed PERL response playbook. It prohibits production incident, containment, notification, authority, restart, and clinical-release claims.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status", "scope",
+    "scenarioId", "scenarioTitle", "scenarioHash", "severity", "responseTarget",
+    "stopAuthorityRole", "stopAction", "stopAuthorityAssigned", "ownerAssignmentsComplete",
+    "notificationTreeConnected", "externalNotificationsSent", "productionIncidentDeclared",
+    "productionServiceStopped", "productionContainmentClaimed", "clinicalRestartAuthorized",
+    "clinicalReleaseAuthorized", "localControlSimulation", "phases", "notificationTree",
+    "evidenceSources", "restartCriteria", "verification", "monitoringEvidenceHash",
+    "recoveryEvidenceHash", "rollbackEvidenceHash", "integrityEvidenceHash", "incidentChainHead",
+    "actor", "startedAt", "completedAt", "durationMs", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "oneOf": [{ "const": "GENESIS" }, { "$ref": "#/$defs/hash" }] },
+    "contractVersion": { "const": "perl-incident-response-rehearsal/1.0" },
+    "type": { "const": "tabletop-response-rehearsed" },
+    "status": { "const": "tabletop-complete" },
+    "scope": { "const": "local-synthetic-tabletop" },
+    "scenarioId": { "enum": ["critical-safety-routing", "artifact-integrity-failure", "unauthorized-access-suspected", "backup-restoration-failure", "generation-provider-failure", "delivery-dead-letter"] },
+    "scenarioTitle": { "type": "string", "minLength": 8, "maxLength": 96 },
+    "scenarioHash": { "$ref": "#/$defs/hash" },
+    "severity": { "enum": ["SEV1", "SEV2", "SEV3", "SEV4"] },
+    "responseTarget": { "type": "string", "minLength": 6, "maxLength": 32 },
+    "stopAuthorityRole": { "enum": ["clinical-lead", "engineering-owner", "security-privacy-owner", "legal-owner", "eqpass-owner"] },
+    "stopAction": { "type": "string", "minLength": 24, "maxLength": 240 },
+    "stopAuthorityAssigned": { "const": false },
+    "ownerAssignmentsComplete": { "const": false },
+    "notificationTreeConnected": { "const": false },
+    "externalNotificationsSent": { "const": false },
+    "productionIncidentDeclared": { "const": false },
+    "productionServiceStopped": { "const": false },
+    "productionContainmentClaimed": { "const": false },
+    "clinicalRestartAuthorized": { "const": false },
+    "clinicalReleaseAuthorized": { "const": false },
+    "localControlSimulation": { "const": true },
+    "phases": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": { "type": "object", "additionalProperties": false, "required": ["id", "label", "result", "detail", "evidenceHash"], "properties": {
+        "id": { "enum": ["classify", "contain", "preserve", "restart"] },
+        "label": { "type": "string", "minLength": 5, "maxLength": 40 },
+        "result": { "const": "verified-design" },
+        "detail": { "type": "string", "minLength": 12, "maxLength": 240 },
+        "evidenceHash": { "$ref": "#/$defs/hash" }
+      }}
+    },
+    "notificationTree": {
+      "type": "array", "minItems": 2, "maxItems": 5,
+      "items": { "type": "object", "additionalProperties": false, "required": ["roleId", "label", "ownerState", "externalNotificationSent"], "properties": {
+        "roleId": { "enum": ["clinical-lead", "engineering-owner", "security-privacy-owner", "legal-owner", "eqpass-owner"] },
+        "label": { "type": "string", "minLength": 5, "maxLength": 48 },
+        "ownerState": { "const": "unassigned-production-owner" },
+        "externalNotificationSent": { "const": false }
+      }}
+    },
+    "evidenceSources": { "type": "array", "minItems": 4, "maxItems": 4, "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]{2,48}$" } },
+    "restartCriteria": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": { "type": "object", "additionalProperties": false, "required": ["criterion", "tabletopEvaluated", "productionEvidencePresent"], "properties": {
+        "criterion": { "type": "string", "minLength": 12, "maxLength": 160 },
+        "tabletopEvaluated": { "const": true },
+        "productionEvidencePresent": { "const": false }
+      }}
+    },
+    "verification": {
+      "type": "object", "additionalProperties": false,
+      "required": ["scenarioRecognized", "severityMapped", "stopRuleDefined", "evidencePlanBounded", "notificationTreeDefined", "restartCriteriaDefined", "currentMonitoringLinked", "currentRecoveryLinked", "currentRollbackLinked", "studySafetyControlPresent"],
+      "properties": {
+        "scenarioRecognized": { "const": true }, "severityMapped": { "const": true }, "stopRuleDefined": { "const": true },
+        "evidencePlanBounded": { "const": true }, "notificationTreeDefined": { "const": true }, "restartCriteriaDefined": { "const": true },
+        "currentMonitoringLinked": { "const": true }, "currentRecoveryLinked": { "const": true }, "currentRollbackLinked": { "const": true },
+        "studySafetyControlPresent": { "const": true }
+      }
+    },
+    "monitoringEvidenceHash": { "$ref": "#/$defs/hash" },
+    "recoveryEvidenceHash": { "$ref": "#/$defs/hash" },
+    "rollbackEvidenceHash": { "$ref": "#/$defs/hash" },
+    "integrityEvidenceHash": { "$ref": "#/$defs/hash" },
+    "incidentChainHead": { "oneOf": [{ "const": "GENESIS" }, { "$ref": "#/$defs/hash" }] },
+    "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "durationMs": { "type": "integer", "minimum": 0 },
+    "note": { "type": "string", "minLength": 1, "maxLength": 420 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": { "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" } }
+}

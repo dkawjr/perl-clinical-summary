@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/deployment-presentation.schema.json",
+  "title": "PERL deployment presentation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion", "candidateVersion", "mode", "label", "environmentLabel", "dataLabel", "serverBacked", "persistent", "productionApiPathExercised", "productionStaticPathExercised", "deploymentReviewReady", "policyControlledContainer", "upstreamTlsRequiredForDeployment", "authenticatedIdentityConfigured", "authoritativeEqpassConnected", "productionModelAuthorized", "phiAccepted", "clinicalValidationComplete", "clinicalUseAuthorized", "patientUseAuthorized", "boundary"
+  ],
+  "properties": {
+    "contractVersion": { "const": "perl-deployment-presentation/1.0" },
+    "candidateVersion": { "const": "2.46" },
+    "mode": { "enum": ["engineering", "deployment-review"] },
+    "label": { "type": "string", "minLength": 8, "maxLength": 64 },
+    "environmentLabel": { "type": "string", "minLength": 8, "maxLength": 80 },
+    "dataLabel": { "const": "Evaluation records · no PHI" },
+    "serverBacked": { "const": true },
+    "persistent": { "const": true },
+    "productionApiPathExercised": { "const": true },
+    "productionStaticPathExercised": { "const": true },
+    "deploymentReviewReady": { "type": "boolean" },
+    "policyControlledContainer": { "type": "boolean" },
+    "upstreamTlsRequiredForDeployment": { "const": true },
+    "authenticatedIdentityConfigured": { "const": false },
+    "authoritativeEqpassConnected": { "const": false },
+    "productionModelAuthorized": { "const": false },
+    "phiAccepted": { "const": false },
+    "clinicalValidationComplete": { "const": false },
+    "clinicalUseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "boundary": { "type": "string", "minLength": 160, "maxLength": 1000 }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/perl/schemas/integration-rehearsal-observatory.schema.json",
+  "title": "PERL Findings-to-summary integration rehearsal observatory",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "mode", "authoritativeEqpassContract", "phiApproved", "providerPreflight", "counts", "integrity", "runs", "clinicalDecisionAutomated", "findingsPdfIngested", "remoteWriteClaimed", "boundary", "generatedAt", "observatoryFingerprint"],
+  "properties": {
+    "contractVersion": { "const": "perl-findings-summary-integration-rehearsal/1.0" },
+    "mode": { "const": "synthetic-findings-to-summary-automation" },
+    "authoritativeEqpassContract": { "const": false },
+    "phiApproved": { "const": false },
+    "providerPreflight": { "$ref": "#/$defs/binding" },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runs", "awaitingClinician", "preparedAndHeld", "receipts", "attention", "exactCandidateMatches"],
+      "properties": {
+        "runs": { "type": "integer", "minimum": 0 },
+        "awaitingClinician": { "type": "integer", "minimum": 0 },
+        "preparedAndHeld": { "type": "integer", "minimum": 0 },
+        "receipts": { "type": "integer", "minimum": 0 },
+        "attention": { "type": "integer", "minimum": 0 },
+        "exactCandidateMatches": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["valid", "chainHeads"],
+      "properties": {
+        "valid": { "type": "boolean" },
+        "chainHeads": {
+          "type": "object",
+          "additionalProperties": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" }
+        }
+      }
+    },
+    "runs": { "type": "array", "items": { "$ref": "#/$defs/run" } },
+    "clinicalDecisionAutomated": { "const": false },
+    "findingsPdfIngested": { "const": false },
+    "remoteWriteClaimed": { "const": false },
+    "boundary": { "type": "string", "minLength": 100 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "observatoryFingerprint": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "hashOrNull": { "anyOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] },
+    "textOrNull": { "type": ["string", "null"] },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "exactCandidateAdvanced", "exactMatch", "providerMode", "providerId", "modelVersion", "promptVersion", "outputContract", "policyVersion", "policyHash", "candidateFingerprint", "advancementFreezeFingerprint", "airlockFingerprint", "matchedFields", "mismatchedFields", "candidateTransportAuthorized", "statement"],
+      "properties": {
+        "status": { "enum": ["candidate-not-advanced", "deterministic-baseline", "exact-candidate-match", "exact-candidate-mismatch", "candidate-unbound"] },
+        "exactCandidateAdvanced": { "type": "boolean" },
+        "exactMatch": { "type": "boolean" },
+        "providerMode": { "$ref": "#/$defs/textOrNull" },
+        "providerId": { "$ref": "#/$defs/textOrNull" },
+        "modelVersion": { "$ref": "#/$defs/textOrNull" },
+        "promptVersion": { "$ref": "#/$defs/textOrNull" },
+        "outputContract": { "$ref": "#/$defs/textOrNull" },
+        "policyVersion": { "$ref": "#/$defs/textOrNull" },
+        "policyHash": { "$ref": "#/$defs/hashOrNull" },
+        "candidateFingerprint": { "$ref": "#/$defs/hashOrNull" },
+        "advancementFreezeFingerprint": { "$ref": "#/$defs/hashOrNull" },
+        "airlockFingerprint": { "$ref": "#/$defs/hashOrNull" },
+        "matchedFields": { "type": "array", "uniqueItems": true, "items": { "enum": ["providerId", "modelVersion", "promptVersion", "outputContract", "policyVersion", "policyHash"] } },
+        "mismatchedFields": { "type": "array", "uniqueItems": true, "items": { "enum": ["providerId", "modelVersion", "promptVersion", "outputContract", "policyVersion", "policyHash"] } },
+        "candidateTransportAuthorized": { "const": false },
+        "statement": { "type": "string", "minLength": 20 }
+      }
+    },
+    "stage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "status", "detail", "evidenceHash", "at"],
+      "properties": {
+        "id": { "enum": ["findings", "generation", "clinical-review", "report", "handoff", "delivery"] },
+        "label": { "type": "string", "minLength": 3 },
+        "status": { "enum": ["verified", "waiting", "held", "attention"] },
+        "detail": { "type": "string", "minLength": 10 },
+        "evidenceHash": { "$ref": "#/$defs/hashOrNull" },
+        "at": { "anyOf": [{ "type": "string", "format": "date-time" }, { "type": "null" }] }
+      }
+    },
+    "run": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runId", "assessmentId", "status", "label", "startedAt", "lastActivityAt", "completedStages", "totalStages", "candidateBinding", "stages", "noPhi", "remoteWriteClaimed", "evidenceFingerprint"],
+      "properties": {
+        "runId": { "type": "string", "pattern": "^FF-RUN-[A-F0-9]{20}$" },
+        "assessmentId": { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]+$" },
+        "status": { "enum": ["integrity-attention", "attention", "rehearsed-not-attached", "ready-for-authorized-connector", "prepared-and-held", "preparing-handoff", "awaiting-clinician-review"] },
+        "label": { "type": "string", "minLength": 10 },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "lastActivityAt": { "type": "string", "format": "date-time" },
+        "completedStages": { "type": "integer", "minimum": 0, "maximum": 6 },
+        "totalStages": { "const": 6 },
+        "candidateBinding": { "$ref": "#/$defs/binding" },
+        "stages": { "type": "array", "minItems": 6, "maxItems": 6, "items": { "$ref": "#/$defs/stage" } },
+        "noPhi": { "const": true },
+        "remoteWriteClaimed": { "const": false },
+        "evidenceFingerprint": { "$ref": "#/$defs/hash" }
+      }
+    }
+  }
+}

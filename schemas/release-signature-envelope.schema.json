@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.org/schemas/release-signature-envelope.schema.json",
+  "title": "PERL release signature envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "signatureContractVersion",
+    "artifactId",
+    "archiveSha256",
+    "manifestSha256",
+    "provenanceSha256",
+    "sbomSha256",
+    "keyId",
+    "purpose",
+    "signedAt",
+    "expiresAt",
+    "artifactIntegrityAttested",
+    "deploymentAuthorized",
+    "clinicalReleaseAuthorized",
+    "trafficActivationAuthorized",
+    "patientUseAuthorized",
+    "signature"
+  ],
+  "properties": {
+    "signatureContractVersion": { "const": "perl-release-signature/1.0" },
+    "artifactId": { "type": "string", "pattern": "^perl-rc-[a-f0-9]{20}$" },
+    "archiveSha256": { "$ref": "#/$defs/digest" },
+    "manifestSha256": { "$ref": "#/$defs/digest" },
+    "provenanceSha256": { "$ref": "#/$defs/digest" },
+    "sbomSha256": { "$ref": "#/$defs/digest" },
+    "keyId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,63}$" },
+    "purpose": { "const": "verify-exact-release-candidate" },
+    "signedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "artifactIntegrityAttested": { "const": true },
+    "deploymentAuthorized": { "const": false },
+    "clinicalReleaseAuthorized": { "const": false },
+    "trafficActivationAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "signature": { "type": "string", "pattern": "^[A-Za-z0-9+/]{86}==$", "maxLength": 88 }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

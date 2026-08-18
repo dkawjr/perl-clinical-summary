@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/rollback-rehearsal-event.schema.json",
+  "title": "PERL local application rollback compatibility event",
+  "description": "Tamper-evident evidence that the local engineering baseline remains identifiable and compatible. It does not claim that a deployable artifact or production environment was rolled back.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status", "baselineId",
+    "baselineVersion", "manifestHash", "artifactRepository", "expectedVersions", "observedVersions",
+    "expectedPolicyHash", "observedPolicyHash", "caseSet", "sourceFileCount", "sourceFiles",
+    "regressionEvidenceHash", "recoveryEvidenceHash", "verification", "deployableArtifactRestored",
+    "productionRollbackPerformed", "clinicalValidation", "clinicalReleaseAuthorized", "errorCode",
+    "actor", "startedAt", "completedAt", "durationMs", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "oneOf": [{ "const": "GENESIS" }, { "$ref": "#/$defs/hash" }] },
+    "contractVersion": { "const": "perl-application-rollback-rehearsal/1.0" },
+    "type": { "const": "local-lkg-compatibility-rehearsed" },
+    "status": { "enum": ["verified-local-compatibility", "failed"] },
+    "baselineId": { "type": "string", "pattern": "^perl-local-lkg-\\d{4}-\\d{2}-\\d{2}$" },
+    "baselineVersion": { "type": "string", "pattern": "^\\d{4}\\.\\d{2}\\.\\d{2}\\.\\d+$" },
+    "manifestHash": { "$ref": "#/$defs/hash" },
+    "artifactRepository": { "const": "working-tree-only" },
+    "expectedVersions": { "$ref": "#/$defs/versions" },
+    "observedVersions": { "$ref": "#/$defs/versions" },
+    "expectedPolicyHash": { "$ref": "#/$defs/hash" },
+    "observedPolicyHash": { "$ref": "#/$defs/hash" },
+    "caseSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "manifestHash"],
+      "properties": {
+        "id": { "type": "string", "minLength": 5 },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+        "manifestHash": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "sourceFileCount": { "type": "integer", "minimum": 10 },
+    "sourceFiles": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "expectedHash", "actualHash", "match"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1, "maxLength": 180 },
+          "expectedHash": { "$ref": "#/$defs/hash" },
+          "actualHash": { "oneOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] },
+          "match": { "type": "boolean" }
+        }
+      }
+    },
+    "regressionEvidenceHash": { "oneOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] },
+    "recoveryEvidenceHash": { "oneOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifestValid", "runtimeVersionsMatch", "policyMatch", "caseSetMatch",
+        "sourceFilesMatch", "stateSchemaCompatible", "generationSnapshotsValid",
+        "reportArtifactsValid", "syntheticRegressionPassed", "recoveryPrerequisiteVerified",
+        "studySafetyActive"
+      ],
+      "properties": {
+        "manifestValid": { "type": "boolean" },
+        "runtimeVersionsMatch": { "type": "boolean" },
+        "policyMatch": { "type": "boolean" },
+        "caseSetMatch": { "type": "boolean" },
+        "sourceFilesMatch": { "type": "boolean" },
+        "stateSchemaCompatible": { "type": "boolean" },
+        "generationSnapshotsValid": { "type": "boolean" },
+        "reportArtifactsValid": { "type": "boolean" },
+        "syntheticRegressionPassed": { "type": "boolean" },
+        "recoveryPrerequisiteVerified": { "type": "boolean" },
+        "studySafetyActive": { "type": "boolean" }
+      }
+    },
+    "deployableArtifactRestored": { "const": false },
+    "productionRollbackPerformed": { "const": false },
+    "clinicalValidation": { "const": false },
+    "clinicalReleaseAuthorized": { "const": false },
+    "errorCode": { "oneOf": [{ "type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,63}$" }, { "type": "null" }] },
+    "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "durationMs": { "type": "integer", "minimum": 0 },
+    "note": { "type": "string", "minLength": 1, "maxLength": 420 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "versions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model", "report-template", "disclaimer", "state-schema", "release-evaluator"],
+      "properties": {
+        "model": { "type": "string", "minLength": 2 },
+        "report-template": { "type": "string", "minLength": 2 },
+        "disclaimer": { "type": "string", "minLength": 2 },
+        "state-schema": { "type": "string", "minLength": 2 },
+        "release-evaluator": { "type": "string", "minLength": 2 }
+      }
+    }
+  }
+}

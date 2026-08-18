@@ -1,0 +1,36 @@
+services:
+  perl:
+    image: perl-clinical-summary:2.46
+    build:
+      context: ..
+      dockerfile: deploy/Containerfile
+      args:
+        PERL_NODE_IMAGE: ${PERL_NODE_IMAGE:?Set an approved digest-pinned Node image}
+    environment:
+      PERL_PRESENTATION_MODE: deployment-review
+    ports:
+      - "127.0.0.1:4173:4173"
+    read_only: true
+    user: "10001:10001"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=16m,uid=10001,gid=10001
+    volumes:
+      - perl-data:/var/lib/perl
+      - ./runtime-policy.json:/run/perl/runtime-policy.json:ro
+    healthcheck:
+      test: ["CMD", "node", "tools/runtime-healthcheck.mjs"]
+      interval: 30s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+    restart: unless-stopped
+    pids_limit: 128
+    mem_limit: 512m
+    cpus: 1.0
+
+volumes:
+  perl-data:

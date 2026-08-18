@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/candidate-advancement-registry.schema.json",
+  "title": "PERL candidate cycle-action or advancement trust registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "registryId", "version", "issuedAt", "expiresAt", "keys"],
+  "properties": {
+    "contractVersion": { "enum": ["perl-candidate-cycle-action-registry/1.0", "perl-candidate-advancement-registry/1.0"] },
+    "registryId": { "type": "string", "pattern": "^FF-(CYCLE-ACTION|CANDIDATE-ADVANCEMENT)-REGISTRY-[A-Z0-9-]{3,80}$" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "keys": {
+      "type": "array",
+      "maxItems": 16,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["keyId", "algorithm", "purpose", "publicKeyPem", "notBefore", "notAfter"],
+        "properties": {
+          "keyId": { "type": "string", "pattern": "^FF-(CYCLE-ACTION|CANDIDATE-ADVANCEMENT)-KEY-[A-Z0-9-]{3,80}$" },
+          "algorithm": { "const": "Ed25519" },
+          "purpose": { "$ref": "#/$defs/purpose" },
+          "publicKeyPem": { "type": "string", "minLength": 1, "maxLength": 1024 },
+          "notBefore": { "type": "string", "format": "date-time" },
+          "notAfter": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "purpose": {
+      "enum": [
+        "clinical-cycle-action",
+        "evaluation-custody-confirmation",
+        "clinical-suitability-advancement",
+        "privacy-security-transport-fit",
+        "eqpass-integration-fit",
+        "product-sponsor-advancement-freeze"
+      ]
+    }
+  }
+}

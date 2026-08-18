@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/workspace-experience.schema.json",
+  "title": "PERL workspace experience",
+  "type": "object",
+  "required": ["contractVersion", "actor", "generatedAt", "profile", "context", "display", "options", "demographics", "saved", "savedAt", "displayOnly", "clinicalAuthorityChanged", "patientLevelDemographicsAvailable", "phiIncluded", "boundary", "chain"],
+  "properties": {
+    "contractVersion": { "const": "perl-workspace-experience/1.0" },
+    "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "profile": { "$ref": "#/$defs/profile" },
+    "context": { "type": "object" },
+    "display": {
+      "type": "object",
+      "required": ["alwaysVisibleModules", "configurableModules", "visibleModules", "safetyCanBeHidden", "clinicalContentChanged"],
+      "properties": {
+        "alwaysVisibleModules": { "const": ["safety", "limitations", "approval"] },
+        "configurableModules": { "type": "array" },
+        "visibleModules": { "type": "array" },
+        "safetyCanBeHidden": { "const": false },
+        "clinicalContentChanged": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "options": { "type": "object" },
+    "demographics": {
+      "type": "object",
+      "required": ["mode", "selectedDimension", "totalSyntheticRecords", "minimumCellSize", "smallCellSuppressionEnforced", "dimensions", "personLevelRecordsAvailable", "protectedAttributeDecisioningAllowed", "clinicalOutcomeEstablished", "phiIncluded"],
+      "properties": {
+        "mode": { "const": "constructed-aggregate-demonstration" },
+        "selectedDimension": { "enum": ["age-band", "gender", "first-generation", "service-language"] },
+        "totalSyntheticRecords": { "const": 42 },
+        "minimumCellSize": { "const": 5 },
+        "smallCellSuppressionEnforced": { "const": true },
+        "dimensions": { "type": "array", "minItems": 4, "maxItems": 4 },
+        "personLevelRecordsAvailable": { "const": false },
+        "protectedAttributeDecisioningAllowed": { "const": false },
+        "clinicalOutcomeEstablished": { "const": false },
+        "phiIncluded": { "const": false }
+      },
+      "additionalProperties": false
+    },
+    "saved": { "type": "boolean" },
+    "savedAt": { "type": ["string", "null"], "format": "date-time" },
+    "displayOnly": { "const": true },
+    "clinicalAuthorityChanged": { "const": false },
+    "patientLevelDemographicsAvailable": { "const": false },
+    "phiIncluded": { "const": false },
+    "boundary": { "type": "string", "minLength": 200 },
+    "chain": { "$ref": "#/$defs/chain" }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "profile": {
+      "type": "object",
+      "required": ["defaultMode", "clinicianRole", "careSetting", "reviewFocus", "density", "visibleModules", "demographicDimension"],
+      "properties": {
+        "defaultMode": { "enum": ["clinical", "studio"] },
+        "clinicianRole": { "enum": ["licensed-clinician", "clinical-supervisor", "care-coordinator", "operations-lead"] },
+        "careSetting": { "enum": ["university-counseling", "community-behavioral-health", "private-practice", "utilization-review"] },
+        "reviewFocus": { "enum": ["balanced", "safety-first", "evidence-first", "conversation-first"] },
+        "density": { "enum": ["calm", "compact"] },
+        "visibleModules": { "type": "array", "uniqueItems": true, "items": { "enum": ["metadata", "evidence", "patterns", "questions", "quality", "handoff", "lineage", "audit"] } },
+        "demographicDimension": { "enum": ["age-band", "gender", "first-generation", "service-language"] }
+      },
+      "additionalProperties": false
+    },
+    "chain": {
+      "type": "object",
+      "required": ["valid", "count", "failedAt", "head"],
+      "properties": {
+        "valid": { "type": "boolean" },
+        "count": { "type": "integer", "minimum": 0 },
+        "failedAt": { "type": ["integer", "null"], "minimum": 1 },
+        "head": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

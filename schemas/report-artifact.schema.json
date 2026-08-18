@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/report-artifact.schema.json",
+  "title": "PERL approved clinician report artifact",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "sequence", "previousHash", "type", "reportFormat", "disclaimerVersion", "assessmentId", "audience", "sourceAssessmentHash", "assessment", "narrative", "interpretation", "review", "provider", "createdAt", "note", "hash"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "type": { "enum": ["approved", "legacy-baseline"] },
+    "reportFormat": { "const": "perl-clinician-report/1.0" },
+    "disclaimerVersion": { "const": "ff-clinical-disclaimer/draft-2026-08" },
+    "assessmentId": { "type": "string", "pattern": "^FF-TEST-" },
+    "audience": { "const": "clinician" },
+    "sourceAssessmentHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "sourceProvenance": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["contractVersion", "contractStatus", "sourceEventReceiptHash", "sourceEventHash", "scoringVersion", "findingsReportVersion", "findingsReportHash"],
+      "properties": {
+        "contractVersion": { "const": "eqpass-perl-score-event/rfi-0.1" },
+        "contractStatus": { "const": "proposed-rfi-only" },
+        "sourceEventReceiptHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "sourceEventHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "scoringVersion": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "findingsReportVersion": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "findingsReportHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "assessment": { "type": "object" },
+    "narrative": { "type": "object" },
+    "interpretation": { "type": "object" },
+    "clinicalBrief": { "$ref": "clinical-brief.schema.json" },
+    "review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reviewer", "safetyAcknowledged", "approvedAt"],
+      "properties": {
+        "status": { "const": "approved" },
+        "reviewer": { "type": "string", "minLength": 1 },
+        "safetyAcknowledged": { "type": "boolean" },
+        "approvedAt": { "type": ["string", "null"], "format": "date-time" },
+        "updatedAt": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "mode"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "mode": { "type": "string", "minLength": 1 },
+        "promptVersion": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "policyHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "inputSchemaVersion": { "const": "perl-scored-profile/1.0" },
+        "outputSchemaVersion": { "const": "perl-generation-bundle/1.0" }
+      }
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 20, "maxLength": 300 },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

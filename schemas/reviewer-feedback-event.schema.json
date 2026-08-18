@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.example/schemas/reviewer-feedback-event.schema.json",
+  "title": "PERL reviewer feedback integrity event",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sequence", "previousHash", "type", "feedbackId", "feedbackHash", "createdAt", "note", "hash"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+        "type": { "const": "recorded" },
+        "feedbackId": { "type": "string", "minLength": 1 },
+        "feedbackHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "note": { "const": "Structured reviewer return committed at submission." },
+        "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sequence", "previousHash", "type", "feedbackId", "feedbackHash", "createdAt", "note", "hash"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+        "type": { "const": "legacy-baseline" },
+        "feedbackId": { "type": "string", "minLength": 1 },
+        "feedbackHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "note": { "type": "string", "pattern": "does not prove pre-migration immutability" },
+        "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    }
+  ]
+}

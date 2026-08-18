@@ -1,0 +1,104 @@
+{
+  "evidenceFormat": "perl-report-render-evidence/1.0",
+  "recordedAt": "2026-08-13T18:01:29.000Z",
+  "environment": "synthetic-sandbox",
+  "phiApproved": false,
+  "clinicalValidation": false,
+  "clinicalReleaseAuthorized": false,
+  "report": {
+    "assessmentId": "FF-TEST-2388-B",
+    "state": "approved-legacy-baseline",
+    "reportFormat": "perl-clinician-report/1.0",
+    "disclaimerVersion": "ff-clinical-disclaimer/draft-2026-08",
+    "provider": {
+      "id": "deterministic-calibration",
+      "version": "cal-0.9.3",
+      "mode": "rules"
+    },
+    "sourceAssessmentHash": "a9ddbd9a430fcb62bf1d168d859f7ea43da68a7e60b2856bd0c62c0f0cb0a582",
+    "artifactHash": "68350b970c7a93fc2368e9011d38cf248fac0ba4e9de62893310647c3b40ca83",
+    "legacyApprovalTimeRecorded": false
+  },
+  "artifacts": [
+    {
+      "path": "qa/clinician-report-draft-desktop.png",
+      "sha256": "1763e732a7cf1d419ab2df5b104e797d74f9e5e99bab852c4eb5ebfe833a0d72",
+      "mediaType": "image/png",
+      "pixelWidth": 1265,
+      "pixelHeight": 1196,
+      "state": "draft"
+    },
+    {
+      "path": "qa/clinician-report-approved-desktop.png",
+      "sha256": "fb37ac869a70a975afda076c60a09ca0d52470cc2d87a8948a1c46a4ff13d2ed",
+      "mediaType": "image/png",
+      "pixelWidth": 1265,
+      "pixelHeight": 1196,
+      "state": "approved-legacy-baseline"
+    },
+    {
+      "path": "qa/clinician-report-approved-mobile.png",
+      "sha256": "0e2d3de66866ef6dcda2dd53e04f0597486a988e68f3f6190aaad5b9015daadd",
+      "mediaType": "image/png",
+      "pixelWidth": 390,
+      "pixelHeight": 2082,
+      "state": "approved-legacy-baseline",
+      "reportViewportCssWidth": 390,
+      "layout": "single-column"
+    },
+    {
+      "path": "output/pdf/PERL-clinician-summary-approved-synthetic.pdf",
+      "sha256": "8c89e2a2feadf42727055c7194379feaedd84f89b8341edced9616f545f10478",
+      "mediaType": "application/pdf",
+      "bytes": 198209,
+      "pages": 1,
+      "pageSizePoints": {
+        "width": 612,
+        "height": 792
+      },
+      "tagged": true,
+      "state": "approved-legacy-baseline"
+    }
+  ],
+  "checks": {
+    "desktop": {
+      "letterSheetCssPixels": {
+        "width": 816,
+        "height": 1056
+      },
+      "horizontalOverflow": false,
+      "fontsLoaded": true,
+      "draftWatermarkVerified": true,
+      "approvedWatermarkAbsent": true
+    },
+    "mobile": {
+      "viewportCssWidth": 390,
+      "majorGridsSingleColumn": true,
+      "clinicalContentClipped": false,
+      "sourceMetadataVisible": true,
+      "safetyDispositionVisible": true,
+      "approvalAndProvenanceVisible": true
+    },
+    "pdf": {
+      "renderedPageCount": 1,
+      "pageSize": "Letter",
+      "visualInspectionPassed": true,
+      "clipping": false,
+      "overlap": false,
+      "brokenGlyphs": false,
+      "titleExtracted": true,
+      "allQuestionsExtracted": true,
+      "clinicalBoundaryExtracted": true,
+      "versionProvenanceExtracted": true,
+      "syntheticBoundaryExtracted": true
+    },
+    "browserConsoleErrors": 0
+  },
+  "limits": [
+    "Synthetic product-render evidence only.",
+    "The approved artifact is an explicit migration baseline and does not prove pre-migration immutability.",
+    "The reviewer name is synthetic and the approval time was not recorded.",
+    "The disclaimer is a draft pending legal approval.",
+    "This evidence does not establish clinical validity, production security, PHI authorization, or live-release readiness."
+  ]
+}

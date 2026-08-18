@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.example/schemas/candidate-trial-planning-snapshot-event.schema.json",
+  "title": "PERL Candidate Trial Planning Snapshot Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status", "protocolFingerprint", "counts", "gateSnapshot", "evidenceSnapshot", "decision",
+    "credentialsReceived", "endpointReceived", "transportConfigured", "assessmentPayloadIncluded", "rawResponsesReceived", "findingsContentReceived", "modelOutputReceived", "recordLevelDataReceived", "reviewerIdentityReceived", "patientIdentifiersReceived", "fileBytesReceived", "phiReceived", "externalTransferPerformed", "providerCallPerformed", "vendorVerified", "candidateTransportAuthorized", "counselorPanelAccepted", "clinicalStandardAccepted", "securityApproved", "privacyApproved", "trialExecutionAuthorized", "accuracyEstablished", "reliabilityEstablished", "clinicalValidation", "engineSelected", "carePlanChanged", "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized", "actor", "createdAt", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "contractVersion": { "const": "perl-candidate-trial-protocol/1.0" },
+    "type": { "const": "candidate-trial-planning-snapshot-recorded" },
+    "status": { "enum": ["awaiting-candidate-metadata", "pre-execution-authority-required"] },
+    "protocolFingerprint": { "$ref": "#/$defs/hash" },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidateSlots", "syntheticCases", "candidateRunsPlanned", "blindArmsPerCase", "blindCellsPlanned", "measuresPredeclared", "gatesRequired", "gatesLocallySatisfied", "candidateMetadataComplete", "candidateTransportsAuthorized", "counselorPanelRegistered", "candidateOutputsReceived", "trialExecutionsAuthorized"],
+      "properties": {
+        "candidateSlots": { "const": 3 },
+        "syntheticCases": { "const": 3 },
+        "candidateRunsPlanned": { "const": 9 },
+        "blindArmsPerCase": { "const": 4 },
+        "blindCellsPlanned": { "const": 12 },
+        "measuresPredeclared": { "const": 6 },
+        "gatesRequired": { "const": 7 },
+        "gatesLocallySatisfied": { "type": "integer", "minimum": 0, "maximum": 4 },
+        "candidateMetadataComplete": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "candidateTransportsAuthorized": { "const": 0 },
+        "counselorPanelRegistered": { "const": 0 },
+        "candidateOutputsReceived": { "const": 0 },
+        "trialExecutionsAuthorized": { "const": 0 }
+      }
+    },
+    "gateSnapshot": {
+      "type": "array",
+      "minItems": 7,
+      "maxItems": 7,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "index", "label", "authority", "state", "satisfied", "detail"],
+        "properties": {
+          "id": { "type": "string", "minLength": 2, "maxLength": 80 },
+          "index": { "type": "string", "pattern": "^0[1-7]$" },
+          "label": { "type": "string", "minLength": 2, "maxLength": 120 },
+          "authority": { "type": "string", "minLength": 2, "maxLength": 120 },
+          "state": { "enum": ["external-evidence-required", "candidate-metadata-incomplete", "metadata-complete-unverified", "local-structure-ready", "local-structure-incomplete", "working-definition-required", "working-draft-recorded-not-accepted"] },
+          "satisfied": { "type": "boolean" },
+          "detail": { "type": "string", "minLength": 20, "maxLength": 400 }
+        }
+      }
+    },
+    "evidenceSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["modelTrial", "caseSet", "modelInput", "generation", "clinicalStandard", "counselorPanel", "candidateTransports"],
+      "properties": {
+        "modelTrial": {
+          "type": "object", "additionalProperties": false,
+          "required": ["status", "metadataComplete", "slotsRequired", "eventCount", "chainHead"],
+          "properties": {
+            "status": { "type": "string", "minLength": 2, "maxLength": 120 },
+            "metadataComplete": { "type": "integer", "minimum": 0, "maximum": 3 },
+            "slotsRequired": { "const": 3 },
+            "eventCount": { "type": "integer", "minimum": 0 },
+            "chainHead": { "$ref": "#/$defs/chain" }
+          }
+        },
+        "caseSet": {
+          "type": "object", "additionalProperties": false,
+          "required": ["id", "version", "manifestHash", "caseIds", "caseFingerprints", "syntheticCases", "frozen"],
+          "properties": {
+            "id": { "type": "string", "minLength": 2, "maxLength": 120 },
+            "version": { "type": "string", "minLength": 2, "maxLength": 120 },
+            "manifestHash": { "$ref": "#/$defs/hash" },
+            "caseIds": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "type": "string", "minLength": 2, "maxLength": 120 } },
+            "caseFingerprints": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/hash" } },
+            "syntheticCases": { "const": 3 },
+            "frozen": { "const": true }
+          }
+        },
+        "modelInput": {
+          "type": "object", "additionalProperties": false,
+          "required": ["contractVersion", "projection", "assessmentPayloadIncluded", "recordLevelDataReceived", "phiReceived"],
+          "properties": {
+            "contractVersion": { "type": "string", "minLength": 2, "maxLength": 120 },
+            "projection": { "const": "scoring-only" },
+            "assessmentPayloadIncluded": { "const": false },
+            "recordLevelDataReceived": { "const": false },
+            "phiReceived": { "const": false }
+          }
+        },
+        "generation": {
+          "type": "object", "additionalProperties": false,
+          "required": ["outputContract", "policyVersion", "policyHash", "outputGateCount", "generationRecords", "chainHead", "externalTransmission"],
+          "properties": {
+            "outputContract": { "type": "string", "minLength": 2, "maxLength": 120 },
+            "policyVersion": { "type": "string", "minLength": 2, "maxLength": 120 },
+            "policyHash": { "$ref": "#/$defs/hash" },
+            "outputGateCount": { "const": 10 },
+            "generationRecords": { "type": "integer", "minimum": 1 },
+            "chainHead": { "$ref": "#/$defs/chain" },
+            "externalTransmission": { "const": false }
+          }
+        },
+        "clinicalStandard": {
+          "type": "object", "additionalProperties": false,
+          "required": ["draftCount", "chainHead", "accepted"],
+          "properties": {
+            "draftCount": { "type": "integer", "minimum": 0 },
+            "chainHead": { "$ref": "#/$defs/chain" },
+            "accepted": { "const": false }
+          }
+        },
+        "counselorPanel": {
+          "type": "object", "additionalProperties": false,
+          "required": ["registered", "rosterAccepted", "credentialsVerified"],
+          "properties": { "registered": { "const": 0 }, "rosterAccepted": { "const": false }, "credentialsVerified": { "const": false } }
+        },
+        "candidateTransports": {
+          "type": "object", "additionalProperties": false,
+          "required": ["required", "authorized", "configured", "externalCallsPerformed"],
+          "properties": { "required": { "const": 3 }, "authorized": { "const": 0 }, "configured": { "const": 0 }, "externalCallsPerformed": { "const": false } }
+        }
+      }
+    },
+    "decision": { "const": "trial-execution-and-engine-selection-not-authorized" },
+    "credentialsReceived": { "const": false },
+    "endpointReceived": { "const": false },
+    "transportConfigured": { "const": false },
+    "assessmentPayloadIncluded": { "const": false },
+    "rawResponsesReceived": { "const": false },
+    "findingsContentReceived": { "const": false },
+    "modelOutputReceived": { "const": false },
+    "recordLevelDataReceived": { "const": false },
+    "reviewerIdentityReceived": { "const": false },
+    "patientIdentifiersReceived": { "const": false },
+    "fileBytesReceived": { "const": false },
+    "phiReceived": { "const": false },
+    "externalTransferPerformed": { "const": false },
+    "providerCallPerformed": { "const": false },
+    "vendorVerified": { "const": false },
+    "candidateTransportAuthorized": { "const": false },
+    "counselorPanelAccepted": { "const": false },
+    "clinicalStandardAccepted": { "const": false },
+    "securityApproved": { "const": false },
+    "privacyApproved": { "const": false },
+    "trialExecutionAuthorized": { "const": false },
+    "accuracyEstablished": { "const": false },
+    "reliabilityEstablished": { "const": false },
+    "clinicalValidation": { "const": false },
+    "engineSelected": { "const": false },
+    "carePlanChanged": { "const": false },
+    "pilotAuthorized": { "const": false },
+    "productionReleaseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 150, "maxLength": 600 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "chain": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" }
+  }
+}

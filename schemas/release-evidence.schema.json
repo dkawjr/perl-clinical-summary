@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/release-evidence.schema.json",
+  "title": "PERL synthetic release-evidence report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generatedAt", "evaluator", "provider", "caseSet", "population", "clinicalValidation", "engineeringRegressionPassed", "outcomes", "diagnostics", "cases", "boundary"],
+  "properties": {
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "evaluator": { "const": "deterministic-offline-v2" },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "mode"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "mode": { "type": "string", "minLength": 1 },
+        "promptVersion": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "policyVersion": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "policyHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "inputSchemaVersion": { "const": "perl-scored-profile/1.0" },
+        "outputSchemaVersion": { "const": "perl-generation-bundle/1.0" },
+        "approvedBy": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "approvalScope": { "const": "synthetic-calibration-only" },
+        "phiApproved": { "const": false },
+        "externalTransmission": { "type": "boolean" },
+        "failureMode": { "type": "string", "minLength": 10, "maxLength": 120 }
+      }
+    },
+    "caseSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version", "manifested", "evaluated"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "version": { "type": "string", "minLength": 1 },
+        "manifested": { "type": "integer", "minimum": 1 },
+        "evaluated": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "population": { "const": "frozen synthetic engineering-rehearsal cases" },
+    "clinicalValidation": { "const": false },
+    "engineeringRegressionPassed": { "type": "boolean" },
+    "outcomes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inputContract", "criticalScreenHandling", "diagnosticRestraint", "evidenceLineage"],
+      "properties": {
+        "inputContract": { "$ref": "#/$defs/outcome" },
+        "criticalScreenHandling": { "$ref": "#/$defs/outcome" },
+        "diagnosticRestraint": { "$ref": "#/$defs/outcome" },
+        "evidenceLineage": { "$ref": "#/$defs/outcome" }
+      }
+    },
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["narrativeSimilarity", "hypothesisTitleCoverage", "interpretation"],
+      "properties": {
+        "narrativeSimilarity": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "hypothesisTitleCoverage": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "interpretation": { "type": "string", "minLength": 20 }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "partition", "strata", "inputContract", "criticalRequired", "criticalScreenHandled", "diagnosticRestraint", "evidenceLinkedHypotheses", "hypotheses", "narrativeSimilarity", "hypothesisTitleCoverage"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^FF-TEST-" },
+          "partition": { "enum": ["development", "holdout"] },
+          "strata": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "inputContract": { "type": "boolean" },
+          "criticalRequired": { "type": "boolean" },
+          "criticalScreenHandled": { "type": "boolean" },
+          "diagnosticRestraint": { "type": "boolean" },
+          "evidenceLinkedHypotheses": { "type": "integer", "minimum": 0 },
+          "hypotheses": { "type": "integer", "minimum": 0 },
+          "narrativeSimilarity": { "type": "number", "minimum": 0, "maximum": 1 },
+          "hypothesisTitleCoverage": { "type": "number", "minimum": 0, "maximum": 1 }
+        }
+      }
+    },
+    "boundary": { "type": "string", "minLength": 80 }
+  },
+  "$defs": {
+    "outcome": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label", "numerator", "denominator", "rate", "threshold", "status", "unit", "definition"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "type": "string", "minLength": 1 },
+        "numerator": { "type": "integer", "minimum": 0 },
+        "denominator": { "type": "integer", "minimum": 0 },
+        "rate": { "type": ["number", "null"], "minimum": 0, "maximum": 1 },
+        "threshold": { "type": "number", "minimum": 0, "maximum": 1 },
+        "status": { "enum": ["passed", "failed", "not-observed"] },
+        "unit": { "type": "string", "minLength": 1 },
+        "definition": { "type": "string", "minLength": 20 }
+      }
+    }
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/perl/schemas/eqpass-scored-event.proposed.schema.json",
+  "title": "Proposed e-QPASS scored assessment event for PERL",
+  "description": "RFI-only transport proposal. It is not an authoritative e-QPASS contract and does not authorize PHI processing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion",
+    "eventId",
+    "eventType",
+    "occurredAt",
+    "environment",
+    "tenantRef",
+    "sourceAssessment",
+    "scoring",
+    "findingsReport",
+    "trace"
+  ],
+  "properties": {
+    "contractVersion": { "const": "eqpass-perl-score-event/rfi-0.1" },
+    "eventId": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "eventType": { "enum": ["assessment.scored", "assessment.rescored"] },
+    "occurredAt": { "type": "string", "format": "date-time" },
+    "environment": { "enum": ["calibration", "pilot", "production"] },
+    "tenantRef": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "sourceAssessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assessmentRef", "instrument", "completedAt", "scoringVersion"],
+      "properties": {
+        "assessmentRef": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "subjectRef": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "instrument": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["name", "version", "itemCount"],
+          "properties": {
+            "name": { "const": "e-QPASS" },
+            "version": { "type": "string", "minLength": 1, "maxLength": 80 },
+            "itemCount": { "const": 105 }
+          }
+        },
+        "completedAt": { "type": "string", "format": "date-time" },
+        "durationSeconds": { "type": "integer", "minimum": 0, "maximum": 86400 },
+        "scoringVersion": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "responseVersion": { "type": "string", "minLength": 1, "maxLength": 120 }
+      }
+    },
+    "scoring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["answeredItemCount", "scales", "subscales", "criticalFlags"],
+      "properties": {
+        "answeredItemCount": { "const": 105 },
+        "scales": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "depression",
+            "anxiety",
+            "anger",
+            "gpi",
+            "phobicAvoidance",
+            "obsessiveCompulsive",
+            "psychoticism",
+            "suicideRisk",
+            "violenceRisk"
+          ],
+          "properties": {
+            "depression": { "$ref": "#/$defs/scoredConstruct" },
+            "anxiety": { "$ref": "#/$defs/scoredConstruct" },
+            "anger": { "$ref": "#/$defs/scoredConstruct" },
+            "gpi": { "$ref": "#/$defs/scoredConstruct" },
+            "phobicAvoidance": { "$ref": "#/$defs/scoredConstruct" },
+            "obsessiveCompulsive": { "$ref": "#/$defs/scoredConstruct" },
+            "psychoticism": { "$ref": "#/$defs/scoredConstruct" },
+            "suicideRisk": { "$ref": "#/$defs/scoredConstruct" },
+            "violenceRisk": { "$ref": "#/$defs/scoredConstruct" }
+          }
+        },
+        "redFlagSectionScore": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Open RFI field. Include only if the e-QPASS owner confirms its calculation and lifecycle authority."
+        },
+        "subscales": {
+          "type": "array",
+          "minItems": 14,
+          "maxItems": 14,
+          "items": { "$ref": "#/$defs/scoredSubscale" }
+        },
+        "criticalFlags": {
+          "type": "array",
+          "maxItems": 22,
+          "items": { "$ref": "#/$defs/criticalFlag" }
+        }
+      }
+    },
+    "findingsReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reportRef", "reportVersion", "status", "mimeType", "sha256"],
+      "properties": {
+        "reportRef": { "type": "string", "minLength": 1, "maxLength": 200 },
+        "reportVersion": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "status": { "enum": ["finalized", "superseded"] },
+        "mimeType": { "const": "application/pdf" },
+        "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+      }
+    },
+    "trace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["correlationId", "idempotencyKey"],
+      "properties": {
+        "correlationId": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "idempotencyKey": { "type": "string", "minLength": 16, "maxLength": 240 }
+      }
+    }
+  },
+  "$defs": {
+    "scoredConstruct": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "level"],
+      "properties": {
+        "score": { "type": "integer", "minimum": 0 },
+        "level": { "enum": ["minimal", "mild", "moderate", "severe"] }
+      }
+    },
+    "scoredSubscale": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "label", "domain", "score", "level"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "label": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "domain": { "enum": ["depression", "anxiety", "anger"] },
+        "score": { "type": "integer", "minimum": 0 },
+        "level": { "enum": ["minimal", "mild", "moderate", "severe"] }
+      }
+    },
+    "criticalFlag": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "category", "score", "directReviewRequired"],
+      "properties": {
+        "code": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "category": { "enum": ["suicide", "violence", "other-red-flag"] },
+        "score": { "type": "integer", "minimum": 0 },
+        "directReviewRequired": { "type": "boolean" },
+        "labelRef": { "type": "string", "minLength": 1, "maxLength": 120 }
+      }
+    }
+  },
+  "x-status": "proposed-rfi-only",
+  "x-model-projection": "scoring only",
+  "x-prohibited-model-fields": [
+    "tenantRef",
+    "sourceAssessment.assessmentRef",
+    "sourceAssessment.subjectRef",
+    "name",
+    "dateOfBirth",
+    "email",
+    "phone",
+    "address",
+    "rawItemResponses"
+  ]
+}

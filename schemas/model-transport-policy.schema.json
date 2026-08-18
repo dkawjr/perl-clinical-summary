@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/perl/schemas/model-transport-policy.schema.json",
+  "title": "PERL startup model transport policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "policyId", "version", "status", "issuedAt", "expiresAt", "endpoint", "timeoutMs", "maximumRequestBytes", "credential", "candidate"],
+  "properties": {
+    "contractVersion": { "const": "perl-model-transport-policy/1.0" },
+    "policyId": { "type": "string", "pattern": "^FF-MODEL-TRANSPORT-[A-Z0-9][A-Z0-9-]{5,63}$" },
+    "version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$", "not": { "const": "0.0.0" } },
+    "status": { "const": "approved-for-synthetic-calibration" },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "endpoint": { "type": "string", "format": "uri", "pattern": "^https://" },
+    "timeoutMs": { "type": "integer", "minimum": 500, "maximum": 30000 },
+    "maximumRequestBytes": { "type": "integer", "minimum": 16384, "maximum": 262144 },
+    "credential": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "environmentVariable"],
+      "properties": {
+        "type": { "const": "bearer-environment" },
+        "environmentVariable": { "type": "string", "pattern": "^PERL_MODEL_[A-Z0-9_]{3,64}_TOKEN$" }
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["providerId", "modelVersion", "promptVersion", "approvedBy"],
+      "properties": {
+        "providerId": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "modelVersion": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "promptVersion": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "approvedBy": { "type": "string", "minLength": 2, "maxLength": 120 }
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "perl-clinical-summary",
+  "version": "2.46.0",
+  "private": true,
+  "type": "module",
+  "description": "PERL clinical intelligence deployment candidate for Focused Future",
+  "scripts": {
+    "start": "node server.mjs",
+    "preview:deployment": "node tools/start-deployment-review.mjs",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "test:unit": "node --test tests/engine.test.mjs tests/store.test.mjs tests/evaluation.test.mjs",
+    "evaluate": "node tools/evaluate-calibration.mjs",
+    "release:build": "node tools/build-release-candidate.mjs",
+    "release:verify": "node tools/verify-release-candidate.mjs",
+    "release:qualify": "node tools/qualify-release-candidate.mjs",
+    "release:promote": "node tools/prepare-release-promotion.mjs",
+    "runtime:verify": "node tools/verify-runtime-envelope.mjs",
+    "verify:deployment": "node tools/verify-deployment-candidate.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

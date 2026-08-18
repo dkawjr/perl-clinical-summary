@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.org/schemas/release-promotion-attestation.schema.json",
+  "title": "PERL external release promotion attestation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "promotionRequestId", "requestHash", "artifact", "localAdmission", "execution", "image", "gates", "issuedAt", "expiresAt", "keyId", "purpose", "authority", "signature"],
+  "properties": {
+    "contractVersion": { "const": "perl-release-promotion-attestation/1.0" },
+    "promotionRequestId": { "type": "string", "pattern": "^perl-prm-[a-f0-9]{20}$" },
+    "requestHash": { "$ref": "#/$defs/digest" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifactId", "archiveSha256", "manifestSha256", "configurationSha256", "provenanceSha256", "sbomSha256", "sourceDigest"],
+      "properties": {
+        "artifactId": { "type": "string", "pattern": "^perl-rc-[a-f0-9]{20}$" },
+        "archiveSha256": { "$ref": "#/$defs/digest" }, "manifestSha256": { "$ref": "#/$defs/digest" }, "configurationSha256": { "$ref": "#/$defs/digest" }, "provenanceSha256": { "$ref": "#/$defs/digest" }, "sbomSha256": { "$ref": "#/$defs/digest" }, "sourceDigest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "localAdmission": {
+      "type": "object", "additionalProperties": false, "required": ["admissionId", "evidenceHash"],
+      "properties": { "admissionId": { "type": "string", "pattern": "^perl-adm-[a-f0-9]{20}$" }, "evidenceHash": { "$ref": "#/$defs/digest" } }
+    },
+    "execution": {
+      "type": "object", "additionalProperties": false,
+      "required": ["system", "runId", "runUri", "startedAt", "completedAt", "isolatedRunner", "networkPolicy", "credentialIsolation", "workloadIdentity"],
+      "properties": {
+        "system": { "type": "string", "minLength": 2, "maxLength": 96 },
+        "runId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:/-]{2,127}$" },
+        "runUri": { "type": "string", "pattern": "^(https://|urn:)[^\\s]{4,500}$" },
+        "startedAt": { "type": "string", "format": "date-time" }, "completedAt": { "type": "string", "format": "date-time" },
+        "isolatedRunner": { "const": true }, "networkPolicy": { "const": "deny-by-default" }, "credentialIsolation": { "const": true }, "workloadIdentity": { "const": true }
+      }
+    },
+    "image": {
+      "type": "object", "additionalProperties": false, "required": ["repository", "digest", "registryResourceId", "immutable"],
+      "properties": {
+        "repository": { "type": "string", "pattern": "^[a-z0-9][a-z0-9._/-]{2,255}$" },
+        "digest": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+        "registryResourceId": { "type": "string", "minLength": 60, "maxLength": 500 },
+        "immutable": { "const": true }
+      }
+    },
+    "gates": {
+      "type": "array", "minItems": 10, "maxItems": 10,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["id", "status", "evidenceRef", "evidenceSha256"],
+        "properties": {
+          "id": { "enum": ["isolated-ci", "exact-archive-retest", "vulnerability-review", "license-review", "oci-image", "immutable-registry", "artifact-signature", "schema-environment", "rollback-reconciliation", "telemetry-runbook"] },
+          "status": { "const": "passed" }, "evidenceRef": { "type": "string", "pattern": "^(https://|urn:)[^\\s]{4,500}$" }, "evidenceSha256": { "$ref": "#/$defs/digest" }
+        }
+      }
+    },
+    "issuedAt": { "type": "string", "format": "date-time" }, "expiresAt": { "type": "string", "format": "date-time" },
+    "keyId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,63}$" },
+    "purpose": { "const": "attest-external-production-artifact-promotion" },
+    "authority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["externalEvidenceVerified", "productionArtifactPromoted", "deploymentAuthorized", "azureDeploymentPerformed", "clinicalValidation", "clinicalReleaseAuthorized", "trafficActivationAuthorized", "patientUseAuthorized"],
+      "properties": {
+        "externalEvidenceVerified": { "const": true }, "productionArtifactPromoted": { "const": true }, "deploymentAuthorized": { "const": false }, "azureDeploymentPerformed": { "const": false }, "clinicalValidation": { "const": false }, "clinicalReleaseAuthorized": { "const": false }, "trafficActivationAuthorized": { "const": false }, "patientUseAuthorized": { "const": false }
+      }
+    },
+    "signature": { "type": "string", "pattern": "^[A-Za-z0-9+/]{86}==$" }
+  },
+  "$defs": { "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" } }
+}

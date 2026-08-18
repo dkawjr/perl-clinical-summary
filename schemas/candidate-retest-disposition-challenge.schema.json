@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/candidate-retest-disposition-challenge.schema.json",
+  "title": "PERL candidate retest disposition challenge",
+  "type": "object", "additionalProperties": false,
+  "required": ["contractVersion", "challengeId", "nonce", "cycleId", "cycleEventHash", "returnSetFingerprint", "retestProtocolFingerprint", "candidateRetestStudioFingerprint", "candidateRefinementChainHead", "candidateRetestReturnChainHead", "candidateRetestReviewChainHead", "reviewAnalysisHash", "independentReviewAdmissionFingerprint", "independentReviewAdmissionChainHead", "clinicalStandardDraftHash", "dispositionPackageHash", "registryFingerprint", "requiredPurposeOrder", "decisionMode", "issuedAt", "expiresAt", "contentBoundary"],
+  "properties": {
+    "contractVersion": { "const": "perl-candidate-retest-disposition-challenge/1.0" },
+    "challengeId": { "type": "string", "pattern": "^FF-RETEST-DISPOSITION-CHALLENGE-[A-F0-9-]{20,80}$" },
+    "nonce": { "type": "string", "pattern": "^[A-Za-z0-9_-]{43}$" },
+    "cycleId": { "type": "string", "pattern": "^FF-REFINEMENT-CYCLE-[A-F0-9-]{20,80}$" },
+    "cycleEventHash": { "$ref": "#/$defs/hash" },
+    "returnSetFingerprint": { "$ref": "#/$defs/hash" },
+    "retestProtocolFingerprint": { "$ref": "#/$defs/hash" },
+    "candidateRetestStudioFingerprint": { "$ref": "#/$defs/hash" },
+    "candidateRefinementChainHead": { "$ref": "#/$defs/hash" },
+    "candidateRetestReturnChainHead": { "$ref": "#/$defs/hash" },
+    "candidateRetestReviewChainHead": { "$ref": "#/$defs/hash" },
+    "reviewAnalysisHash": { "$ref": "#/$defs/hash" },
+    "independentReviewAdmissionFingerprint": { "$ref": "#/$defs/hash" },
+    "independentReviewAdmissionChainHead": { "$ref": "#/$defs/hash" },
+    "clinicalStandardDraftHash": { "$ref": "#/$defs/hash" },
+    "dispositionPackageHash": { "$ref": "#/$defs/hash" },
+    "registryFingerprint": { "$ref": "#/$defs/hash" },
+    "requiredPurposeOrder": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "prefixItems": [
+        { "const": "independent-accuracy-disposition" },
+        { "const": "independent-reliability-disposition" },
+        { "const": "clinical-standard-satisfaction-disposition" },
+        { "const": "independent-result-freeze" }
+      ],
+      "items": false
+    },
+    "decisionMode": { "const": "record-exact-independent-cycle-disposition-no-release-authority" },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "contentBoundary": { "$ref": "#/$defs/boundary" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "boundary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evaluatorNamesIncluded", "humanSignaturesIncluded", "credentialsOrSecretsIncluded", "sourceWorkbookBytesIncluded", "summaryProseIncluded", "findingsContentIncluded", "rawResponsesIncluded", "caseFilesIncluded", "patientIdentifiersIncluded", "patientRecordsIncluded", "phiIncluded", "perlExternalTransmissionPerformed"],
+      "properties": {
+        "evaluatorNamesIncluded": { "const": false }, "humanSignaturesIncluded": { "const": false },
+        "credentialsOrSecretsIncluded": { "const": false }, "sourceWorkbookBytesIncluded": { "const": false },
+        "summaryProseIncluded": { "const": false }, "findingsContentIncluded": { "const": false },
+        "rawResponsesIncluded": { "const": false }, "caseFilesIncluded": { "const": false },
+        "patientIdentifiersIncluded": { "const": false }, "patientRecordsIncluded": { "const": false },
+        "phiIncluded": { "const": false }, "perlExternalTransmissionPerformed": { "const": false }
+      }
+    }
+  }
+}

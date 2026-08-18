@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/clinical-standard-draft-event.schema.json",
+  "title": "PERL clinical-standard draft event",
+  "description": "A hash-linked receipt for an immutable, unaccepted clinical-standard working draft. It cannot freeze a protocol or authorize clinical use.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "sequence", "previousHash", "contractVersion", "type", "draftId", "draftHash", "draftVersion", "preOutcomeCandidate", "actor", "createdAt", "note", "hash"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "oneOf": [{ "const": "GENESIS" }, { "$ref": "#/$defs/hash" }] },
+    "contractVersion": { "const": "perl-clinical-standard-draft/1.0" },
+    "type": { "const": "clinical-standard-draft-recorded" },
+    "draftId": { "type": "string", "format": "uuid" },
+    "draftHash": { "$ref": "#/$defs/hash" },
+    "draftVersion": { "type": "integer", "minimum": 1 },
+    "preOutcomeCandidate": { "type": "boolean" },
+    "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 20, "maxLength": 420 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": { "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" } }
+}

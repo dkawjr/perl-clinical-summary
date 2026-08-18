@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/perl/schemas/generation-snapshot-event.schema.json",
+  "title": "PERL generation-snapshot integrity event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "sequence", "previousHash", "type", "generationId", "generationHash", "assessmentId", "createdAt", "note", "hash"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "type": { "enum": ["generated", "migration-materialized"] },
+    "generationId": { "type": "string", "format": "uuid" },
+    "generationHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "assessmentId": { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]+$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 20, "maxLength": 300 },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

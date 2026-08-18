@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.org/schemas/release-admission-report.schema.json",
+  "title": "PERL local release admission report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["admissionId", "evidenceHash", "contractVersion", "policyVersion", "status", "qualifiedAt", "actor", "artifact", "summary", "checks", "environment", "authority", "boundary"],
+  "properties": {
+    "admissionId": { "type": "string", "pattern": "^perl-adm-[a-f0-9]{20}$" },
+    "evidenceHash": { "$ref": "#/$defs/digest" },
+    "contractVersion": { "const": "perl-release-admission/1.0" },
+    "policyVersion": { "const": "perl-local-archive-qualification/1.0" },
+    "status": { "enum": ["qualified-local", "failed-local"] },
+    "qualifiedAt": { "type": "string", "format": "date-time" },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifactId", "archiveSha256", "manifestSha256", "provenanceSha256", "sbomSha256", "sourceDigest"],
+      "properties": {
+        "artifactId": { "type": "string", "pattern": "^perl-rc-[a-f0-9]{20}$" },
+        "archiveSha256": { "$ref": "#/$defs/digest" },
+        "manifestSha256": { "$ref": "#/$defs/digest" },
+        "provenanceSha256": { "$ref": "#/$defs/digest" },
+        "sbomSha256": { "$ref": "#/$defs/digest" },
+        "sourceDigest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "passed", "failed"],
+      "properties": {
+        "total": { "const": 6 },
+        "passed": { "type": "integer", "minimum": 0, "maximum": 6 },
+        "failed": { "type": "integer", "minimum": 0, "maximum": 6 }
+      }
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "status", "evidence"],
+        "properties": {
+          "id": { "enum": ["archive-integrity", "fixture-completeness", "dependency-boundary", "full-archive-tests", "clinical-calibration", "ephemeral-cleanup"] },
+          "label": { "type": "string", "minLength": 3, "maxLength": 96 },
+          "status": { "enum": ["passed", "failed"] },
+          "evidence": { "type": "object" }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["executionMode", "runtime", "platform", "architecture", "shellUsed", "credentialEnvironmentInherited", "networkIsolationEnforced"],
+      "properties": {
+        "executionMode": { "const": "local-ephemeral-owner-only-copy" },
+        "runtime": { "type": "string", "pattern": "^v[0-9]+\\." },
+        "platform": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "architecture": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "shellUsed": { "const": false },
+        "credentialEnvironmentInherited": { "const": false },
+        "networkIsolationEnforced": { "const": false }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["localArchiveQualificationPassed", "isolatedCiRun", "externalVulnerabilityReviewCompleted", "externalLicenseApprovalCompleted", "productionSignatureVerified", "azureDeploymentPerformed", "clinicalValidation", "clinicalReleaseAuthorized", "trafficActivationAuthorized", "patientUseAuthorized"],
+      "properties": {
+        "localArchiveQualificationPassed": { "type": "boolean" },
+        "isolatedCiRun": { "const": false },
+        "externalVulnerabilityReviewCompleted": { "const": false },
+        "externalLicenseApprovalCompleted": { "const": false },
+        "productionSignatureVerified": { "type": "boolean" },
+        "azureDeploymentPerformed": { "const": false },
+        "clinicalValidation": { "const": false },
+        "clinicalReleaseAuthorized": { "const": false },
+        "trafficActivationAuthorized": { "const": false },
+        "patientUseAuthorized": { "const": false }
+      }
+    },
+    "boundary": { "type": "string", "minLength": 250, "maxLength": 700 }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

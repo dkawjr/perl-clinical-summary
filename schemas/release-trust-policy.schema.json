@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.org/schemas/release-trust-policy.schema.json",
+  "title": "PERL release trust policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion",
+    "status",
+    "policyId",
+    "issuedAt",
+    "expiresAt",
+    "signerRole",
+    "keyId",
+    "algorithm",
+    "publicKeyPem",
+    "maxSignatureAgeSeconds"
+  ],
+  "properties": {
+    "contractVersion": { "const": "perl-release-trust-policy/1.0" },
+    "status": { "const": "approved-for-release-verification" },
+    "policyId": { "type": "string", "pattern": "^FF-RELEASE-POLICY-[A-Z0-9_-]{3,48}$" },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "signerRole": { "const": "production-release-authority" },
+    "keyId": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{2,63}$" },
+    "algorithm": { "const": "Ed25519" },
+    "publicKeyPem": { "type": "string", "pattern": "^-----BEGIN PUBLIC KEY-----\\n[\\s\\S]+\\n-----END PUBLIC KEY-----\\n?$", "maxLength": 4096 },
+    "maxSignatureAgeSeconds": { "type": "integer", "minimum": 300, "maximum": 2592000 }
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/progress-review-event.schema.json",
+  "title": "PERL synthetic Progress Review observation event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "seriesId", "focus", "finding",
+    "disposition", "evidenceSnapshot", "authoritativeSubjectLinkage", "patientIdentityResolved",
+    "clinicianIdentityVerified", "clinicalProgressEstablished", "improvementEstablished",
+    "deteriorationEstablished", "treatmentResponseEstablished", "reliableChangeEstablished",
+    "meaningfulChangeEstablished", "carePlanChanged", "clinicalDecisionAccepted", "clinicalValidation",
+    "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized", "actor", "createdAt", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[0-9a-fA-F-]{20,40}$" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "contractVersion": { "const": "perl-synthetic-progress-review/1.0" },
+    "type": { "const": "synthetic-progress-rehearsal-observation-recorded" },
+    "seriesId": { "const": "FF-TEST-SERIES-01" },
+    "focus": {
+      "enum": ["depression", "anxiety", "anger", "global-distress", "critical-screen", "cross-domain-pattern"]
+    },
+    "finding": {
+      "enum": ["raw-score-lower", "raw-score-higher", "mixed-direction", "no-material-raw-movement", "incomparable-source-state", "safety-change-requires-direct-review"]
+    },
+    "disposition": {
+      "enum": ["carry-to-next-conversation", "clarify-context-before-interpretation", "reassess-source-and-safety", "exclude-as-incomparable"]
+    },
+    "evidenceSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["seriesFingerprint", "assessmentSources", "coreDeltas", "criticalRoutes"],
+      "properties": {
+        "seriesFingerprint": { "$ref": "#/$defs/hash" },
+        "assessmentSources": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "prefixItems": [
+            { "$ref": "#/$defs/earlierSource" },
+            { "$ref": "#/$defs/laterSource" }
+          ]
+        },
+        "coreDeltas": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["scale", "delta"],
+            "properties": {
+              "scale": { "enum": ["depression", "anxiety", "anger", "gpi"] },
+              "delta": { "type": "number" }
+            }
+          }
+        },
+        "criticalRoutes": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["marker", "requiresDirectReview"],
+            "properties": {
+              "marker": { "enum": ["Point 01", "Point 02"] },
+              "requiresDirectReview": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "authoritativeSubjectLinkage": { "const": false },
+    "patientIdentityResolved": { "const": false },
+    "clinicianIdentityVerified": { "const": false },
+    "clinicalProgressEstablished": { "const": false },
+    "improvementEstablished": { "const": false },
+    "deteriorationEstablished": { "const": false },
+    "treatmentResponseEstablished": { "const": false },
+    "reliableChangeEstablished": { "const": false },
+    "meaningfulChangeEstablished": { "const": false },
+    "carePlanChanged": { "const": false },
+    "clinicalDecisionAccepted": { "const": false },
+    "clinicalValidation": { "const": false },
+    "pilotAuthorized": { "const": false },
+    "productionReleaseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 150 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "earlierSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assessmentId", "sourceHash"],
+      "properties": { "assessmentId": { "const": "FF-TEST-2388-B" }, "sourceHash": { "$ref": "#/$defs/hash" } }
+    },
+    "laterSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assessmentId", "sourceHash"],
+      "properties": { "assessmentId": { "const": "FF-TEST-2411-C" }, "sourceHash": { "$ref": "#/$defs/hash" } }
+    }
+  }
+}

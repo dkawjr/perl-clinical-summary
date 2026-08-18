@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/independent-review-admission-attestation.schema.json",
+  "title": "PERL independent-review admission attestation",
+  "type": "object", "additionalProperties": false,
+  "required": ["contractVersion", "attestationId", "challengeId", "nonce", "registryFingerprint", "dossierFingerprint", "referenceDecisionDocketFingerprint", "purpose", "keyId", "issuedAt", "decision", "contentBoundary", "signature"],
+  "properties": {
+    "contractVersion": { "const": "perl-independent-review-admission-attestation/1.0" },
+    "attestationId": { "type": "string", "pattern": "^FF-REVIEW-ADMISSION-ATTEST-[A-Z0-9-]{3,80}$" },
+    "challengeId": { "type": "string", "pattern": "^FF-REVIEW-ADMISSION-CHALLENGE-[A-F0-9-]{20,80}$" },
+    "nonce": { "type": "string", "pattern": "^[A-Za-z0-9_-]{43}$" },
+    "registryFingerprint": { "$ref": "#/$defs/hash" },
+    "dossierFingerprint": { "$ref": "#/$defs/hash" },
+    "referenceDecisionDocketFingerprint": { "$ref": "#/$defs/hash" },
+    "purpose": { "$ref": "#/$defs/purpose" },
+    "keyId": { "type": "string", "pattern": "^FF-REVIEW-ADMISSION-KEY-[A-Z0-9-]{3,80}$" },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "decision": { "oneOf": [{ "$ref": "#/$defs/source" }, { "$ref": "#/$defs/caseSet" }, { "$ref": "#/$defs/standard" }, { "$ref": "#/$defs/evaluator" }, { "$ref": "#/$defs/legal" }, { "$ref": "#/$defs/privacy" }, { "$ref": "#/$defs/protocol" }] },
+    "contentBoundary": { "$ref": "independent-review-admission-challenge.schema.json#/$defs/boundary" },
+    "signature": { "$ref": "#/$defs/signature" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "purpose": { "enum": ["authoritative-source-contract-acceptance", "representative-case-set-freeze", "clinical-standard-acceptance", "evaluator-charter-attestation", "legal-permission-attestation", "privacy-permission-attestation", "independent-review-protocol-freeze"] },
+    "signature": { "type": "object", "additionalProperties": false, "required": ["algorithm", "keyId", "value"], "properties": { "algorithm": { "const": "Ed25519" }, "keyId": { "type": "string", "pattern": "^FF-REVIEW-ADMISSION-KEY-[A-Z0-9-]{3,80}$" }, "value": { "type": "string", "pattern": "^[A-Za-z0-9_-]{86}$" } } },
+    "source": { "type": "object", "additionalProperties": false, "required": ["thresholdWorkbookHash", "categoryWorkbookHash", "scoredEventContractHash", "scoringVersionReference", "findingsLifecycleHash", "outcome"], "properties": { "thresholdWorkbookHash": { "$ref": "#/$defs/hash" }, "categoryWorkbookHash": { "$ref": "#/$defs/hash" }, "scoredEventContractHash": { "$ref": "#/$defs/hash" }, "scoringVersionReference": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,95}$" }, "findingsLifecycleHash": { "$ref": "#/$defs/hash" }, "outcome": { "const": "accepted" } } },
+    "caseSet": { "type": "object", "additionalProperties": false, "required": ["caseInventoryHash", "caseSetReference", "eligibilityProtocolHash", "strataProtocolHash", "developmentPartitionHash", "holdoutPartitionHash", "holdoutAccessPolicyHash", "outcome"], "properties": { "caseInventoryHash": { "$ref": "#/$defs/hash" }, "caseSetReference": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,95}$" }, "eligibilityProtocolHash": { "$ref": "#/$defs/hash" }, "strataProtocolHash": { "$ref": "#/$defs/hash" }, "developmentPartitionHash": { "$ref": "#/$defs/hash" }, "holdoutPartitionHash": { "$ref": "#/$defs/hash" }, "holdoutAccessPolicyHash": { "$ref": "#/$defs/hash" }, "outcome": { "const": "frozen" } } },
+    "standard": { "type": "object", "additionalProperties": false, "required": ["clinicalStandardDraftHash", "analysisPlanHash", "measureDefinitionsHash", "zeroSafetyToleranceAccepted", "preOutcomeStatusReviewed", "outcome"], "properties": { "clinicalStandardDraftHash": { "$ref": "#/$defs/hash" }, "analysisPlanHash": { "$ref": "#/$defs/hash" }, "measureDefinitionsHash": { "$ref": "#/$defs/hash" }, "zeroSafetyToleranceAccepted": { "const": true }, "preOutcomeStatusReviewed": { "const": true }, "outcome": { "const": "accepted" } } },
+    "evaluator": { "type": "object", "additionalProperties": false, "required": ["evaluatorAuthorityReferenceHash", "qualificationsReferenceHash", "conflictDisclosureHash", "charterHash", "independenceConfirmed", "outcome"], "properties": { "evaluatorAuthorityReferenceHash": { "$ref": "#/$defs/hash" }, "qualificationsReferenceHash": { "$ref": "#/$defs/hash" }, "conflictDisclosureHash": { "$ref": "#/$defs/hash" }, "charterHash": { "$ref": "#/$defs/hash" }, "independenceConfirmed": { "const": true }, "outcome": { "const": "verified" } } },
+    "legal": { "type": "object", "additionalProperties": false, "required": ["permissionReferenceHash", "permittedDataClass", "retentionPolicyHash", "deletionPolicyHash", "purposeLimited", "outcome"], "properties": { "permissionReferenceHash": { "$ref": "#/$defs/hash" }, "permittedDataClass": { "const": "approved-deidentified-evaluation-records" }, "retentionPolicyHash": { "$ref": "#/$defs/hash" }, "deletionPolicyHash": { "$ref": "#/$defs/hash" }, "purposeLimited": { "const": true }, "outcome": { "const": "approved" } } },
+    "privacy": { "type": "object", "additionalProperties": false, "required": ["privacyReviewReferenceHash", "transferControlsHash", "accessControlsHash", "deidentificationStandardHash", "minimumNecessaryConfirmed", "outcome"], "properties": { "privacyReviewReferenceHash": { "$ref": "#/$defs/hash" }, "transferControlsHash": { "$ref": "#/$defs/hash" }, "accessControlsHash": { "$ref": "#/$defs/hash" }, "deidentificationStandardHash": { "$ref": "#/$defs/hash" }, "minimumNecessaryConfirmed": { "const": true }, "outcome": { "const": "approved" } } },
+    "protocol": { "type": "object", "additionalProperties": false, "required": ["priorAttestationFingerprints", "frozenProtocolHash", "evaluatorHandoffHash", "analysisPlanHash", "caseSetReference", "referenceDecisionDocketFingerprint", "outcome"], "properties": { "priorAttestationFingerprints": { "type": "array", "minItems": 6, "maxItems": 6, "uniqueItems": true, "items": { "$ref": "#/$defs/hash" } }, "frozenProtocolHash": { "$ref": "#/$defs/hash" }, "evaluatorHandoffHash": { "$ref": "#/$defs/hash" }, "analysisPlanHash": { "$ref": "#/$defs/hash" }, "caseSetReference": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,95}$" }, "referenceDecisionDocketFingerprint": { "$ref": "#/$defs/hash" }, "outcome": { "const": "frozen-for-independent-execution" } } }
+  }
+}

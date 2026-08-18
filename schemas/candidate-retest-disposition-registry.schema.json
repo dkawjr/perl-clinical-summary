@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/candidate-retest-disposition-registry.schema.json",
+  "title": "PERL candidate retest disposition registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "registryId", "version", "issuedAt", "expiresAt", "keys"],
+  "properties": {
+    "contractVersion": { "const": "perl-candidate-retest-disposition-registry/1.0" },
+    "registryId": { "type": "string", "pattern": "^FF-RETEST-DISPOSITION-REGISTRY-[A-Z0-9-]{3,80}$" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "keys": {
+      "type": "array", "minItems": 0, "maxItems": 16,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["keyId", "algorithm", "purpose", "publicKeyPem", "notBefore", "notAfter"],
+        "properties": {
+          "keyId": { "type": "string", "pattern": "^FF-RETEST-DISPOSITION-KEY-[A-Z0-9-]{3,80}$" },
+          "algorithm": { "const": "Ed25519" },
+          "purpose": { "$ref": "#/$defs/purpose" },
+          "publicKeyPem": { "type": "string", "maxLength": 1024 },
+          "notBefore": { "type": "string", "format": "date-time" },
+          "notAfter": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "purpose": { "enum": ["independent-accuracy-disposition", "independent-reliability-disposition", "clinical-standard-satisfaction-disposition", "independent-result-freeze"] }
+  }
+}

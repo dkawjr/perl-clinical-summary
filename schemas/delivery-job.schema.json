@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/perl/schemas/delivery-job.schema.json",
+  "title": "PERL durable synthetic delivery job",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "contractVersion", "assessmentId", "sourceEventReceiptHash", "reportArtifactId",
+    "reportArtifactHash", "attachmentReceiptHash", "renderedContentHash", "idempotencyKey",
+    "maxAttempts", "origin", "createdAt", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "contractVersion": { "const": "perl-delivery-outbox/1.0" },
+    "assessmentId": { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]+$" },
+    "sourceEventReceiptHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "reportArtifactId": { "type": "string", "format": "uuid" },
+    "reportArtifactHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "attachmentReceiptHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "renderedContentHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "idempotencyKey": { "type": "string", "pattern": "^FF-TEST-DELIVERY-[A-F0-9]+$", "minLength": 20, "maxLength": 240 },
+    "maxAttempts": { "const": 3 },
+    "origin": { "enum": ["runtime-automation", "schema-v15-baseline"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

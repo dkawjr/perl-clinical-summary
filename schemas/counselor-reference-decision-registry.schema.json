@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/counselor-reference-decision-registry.schema.json",
+  "title": "PERL counselor-reference decision registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "registryId", "version", "issuedAt", "expiresAt", "keys"],
+  "properties": {
+    "contractVersion": { "const": "perl-counselor-reference-decision-registry/1.0" },
+    "registryId": { "type": "string", "pattern": "^FF-REFERENCE-REGISTRY-[A-Z0-9-]{3,80}$" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "keys": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["keyId", "algorithm", "purpose", "publicKeyPem", "notBefore", "notAfter"],
+        "properties": {
+          "keyId": { "type": "string", "pattern": "^FF-REFERENCE-KEY-[A-Z0-9-]{3,80}$" },
+          "algorithm": { "const": "Ed25519" },
+          "purpose": {
+            "enum": [
+              "reference-authorship-attestation",
+              "reference-language-safety-acceptance",
+              "reference-adjudication-decision",
+              "reference-protocol-freeze"
+            ]
+          },
+          "publicKeyPem": { "type": "string", "maxLength": 1024 },
+          "notBefore": { "type": "string", "format": "date-time" },
+          "notAfter": { "type": "string", "format": "date-time" }
+        }
+      }
+    }
+  }
+}

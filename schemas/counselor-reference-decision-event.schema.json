@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/counselor-reference-decision-event.schema.json",
+  "title": "PERL counselor-reference decision ledger event",
+  "oneOf": [
+    { "$ref": "#/$defs/challengeEvent" },
+    { "$ref": "#/$defs/attestationEvent" }
+  ],
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "chainHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "claims": {
+      "type": "object",
+      "properties": {
+        "authorshipIndependenceVerified": { "type": "boolean" },
+        "languageSafetyAccepted": { "type": "boolean" },
+        "adjudicationDecisionRecorded": { "type": "boolean" },
+        "referenceSetAccepted": { "type": "boolean" },
+        "protocolFrozen": { "type": "boolean" },
+        "independentReviewHandoffReady": { "type": "boolean" },
+        "accuracyEstablished": { "const": false },
+        "reliabilityEstablished": { "const": false },
+        "clinicalValidation": { "const": false },
+        "trialExecutionAuthorized": { "const": false },
+        "pilotAuthorized": { "const": false },
+        "productionReleaseAuthorized": { "const": false },
+        "patientUseAuthorized": { "const": false }
+      }
+    },
+    "baseProperties": {
+      "id": { "type": "string", "pattern": "^[0-9a-f-]{20,40}$" },
+      "sequence": { "type": "integer", "minimum": 1 },
+      "previousHash": { "$ref": "#/$defs/chainHash" },
+      "contractVersion": { "const": "perl-counselor-reference-decision-docket/1.0" },
+      "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+      "createdAt": { "type": "string", "format": "date-time" },
+      "boundary": { "type": "string", "minLength": 700 },
+      "hash": { "$ref": "#/$defs/hash" },
+      "authorshipIndependenceVerified": { "type": "boolean" },
+      "languageSafetyAccepted": { "type": "boolean" },
+      "adjudicationDecisionRecorded": { "type": "boolean" },
+      "referenceSetAccepted": { "type": "boolean" },
+      "protocolFrozen": { "type": "boolean" },
+      "independentReviewHandoffReady": { "type": "boolean" },
+      "accuracyEstablished": { "const": false },
+      "reliabilityEstablished": { "const": false },
+      "clinicalValidation": { "const": false },
+      "trialExecutionAuthorized": { "const": false },
+      "pilotAuthorized": { "const": false },
+      "productionReleaseAuthorized": { "const": false },
+      "patientUseAuthorized": { "const": false }
+    },
+    "commonRequired": {
+      "type": "array",
+      "prefixItems": [
+        { "const": "id" }, { "const": "sequence" }, { "const": "previousHash" }, { "const": "eventType" },
+        { "const": "contractVersion" }, { "const": "actor" }, { "const": "createdAt" },
+        { "const": "authorshipIndependenceVerified" }, { "const": "languageSafetyAccepted" },
+        { "const": "adjudicationDecisionRecorded" }, { "const": "referenceSetAccepted" }, { "const": "protocolFrozen" },
+        { "const": "independentReviewHandoffReady" }, { "const": "accuracyEstablished" }, { "const": "reliabilityEstablished" },
+        { "const": "clinicalValidation" }, { "const": "trialExecutionAuthorized" }, { "const": "pilotAuthorized" },
+        { "const": "productionReleaseAuthorized" }, { "const": "patientUseAuthorized" }, { "const": "boundary" }, { "const": "hash" }
+      ]
+    },
+    "challengeEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sequence", "previousHash", "eventType", "contractVersion", "challenge", "actor", "createdAt", "authorshipIndependenceVerified", "languageSafetyAccepted", "adjudicationDecisionRecorded", "referenceSetAccepted", "protocolFrozen", "independentReviewHandoffReady", "accuracyEstablished", "reliabilityEstablished", "clinicalValidation", "trialExecutionAuthorized", "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized", "boundary", "hash"],
+      "properties": {
+        "$comment": "Base event properties are repeated to keep the published event contract standalone.",
+        "id": { "type": "string", "pattern": "^[0-9a-f-]{20,40}$" },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "previousHash": { "$ref": "#/$defs/chainHash" },
+        "eventType": { "const": "reference-decision-challenge-issued" },
+        "contractVersion": { "const": "perl-counselor-reference-decision-docket/1.0" },
+        "challenge": { "$ref": "counselor-reference-decision-challenge.schema.json" },
+        "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "authorshipIndependenceVerified": { "const": false },
+        "languageSafetyAccepted": { "const": false },
+        "adjudicationDecisionRecorded": { "const": false },
+        "referenceSetAccepted": { "const": false },
+        "protocolFrozen": { "const": false },
+        "independentReviewHandoffReady": { "const": false },
+        "accuracyEstablished": { "const": false },
+        "reliabilityEstablished": { "const": false },
+        "clinicalValidation": { "const": false },
+        "trialExecutionAuthorized": { "const": false },
+        "pilotAuthorized": { "const": false },
+        "productionReleaseAuthorized": { "const": false },
+        "patientUseAuthorized": { "const": false },
+        "boundary": { "type": "string", "minLength": 700 },
+        "hash": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "attestationEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "sequence", "previousHash", "eventType", "contractVersion", "attestation", "attestationFingerprint", "keyFingerprint", "actor", "createdAt", "authorshipIndependenceVerified", "languageSafetyAccepted", "adjudicationDecisionRecorded", "referenceSetAccepted", "protocolFrozen", "independentReviewHandoffReady", "accuracyEstablished", "reliabilityEstablished", "clinicalValidation", "trialExecutionAuthorized", "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized", "boundary", "hash"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[0-9a-f-]{20,40}$" },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "previousHash": { "$ref": "#/$defs/chainHash" },
+        "eventType": { "const": "reference-decision-attestation-verified" },
+        "contractVersion": { "const": "perl-counselor-reference-decision-docket/1.0" },
+        "attestation": { "$ref": "counselor-reference-decision-attestation.schema.json" },
+        "attestationFingerprint": { "$ref": "#/$defs/hash" },
+        "keyFingerprint": { "$ref": "#/$defs/hash" },
+        "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "authorshipIndependenceVerified": { "type": "boolean" },
+        "languageSafetyAccepted": { "type": "boolean" },
+        "adjudicationDecisionRecorded": { "type": "boolean" },
+        "referenceSetAccepted": { "type": "boolean" },
+        "protocolFrozen": { "type": "boolean" },
+        "independentReviewHandoffReady": { "type": "boolean" },
+        "accuracyEstablished": { "const": false },
+        "reliabilityEstablished": { "const": false },
+        "clinicalValidation": { "const": false },
+        "trialExecutionAuthorized": { "const": false },
+        "pilotAuthorized": { "const": false },
+        "productionReleaseAuthorized": { "const": false },
+        "patientUseAuthorized": { "const": false },
+        "boundary": { "type": "string", "minLength": 700 },
+        "hash": { "$ref": "#/$defs/hash" }
+      }
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.example/schemas/site-admission-return-preflight-event.schema.json",
+  "title": "PERL Named-Site Admission Return Preflight Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "returnContractVersion", "type", "status", "candidateId", "dossierFingerprint", "manifestHash", "returnIdHash", "decisionPreview", "decisionRecordReferenceHash", "decisionTimeDeclared", "authorizationTermsHash", "authorizationTermsComplete", "authorityResults", "evidenceResults", "counts", "decisionMetadataComplete", "metadataChecklistComplete", "disposition", "evidenceFilesReceived", "namesOrSignaturesReceived", "patientRecordsReceived", "findingsContentReceived", "credentialsOrSecretsReceived", "phiReceived", "externalTransmissionPerformed", "cryptographicSignatureVerified", "siteIdentityVerified", "identityVerified", "authorityVerified", "evidenceVerified", "externalAcceptanceRecorded", "authorizationRecorded", "pilotAuthorized", "pilotStarted", "productionReleaseAuthorized", "patientUseAuthorized", "actor", "createdAt", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "$ref": "#/$defs/chain" },
+    "contractVersion": { "const": "perl-named-site-admission-dossier/1.0" },
+    "returnContractVersion": { "const": "perl-named-site-admission-return/rfi-1.0" },
+    "type": { "const": "named-site-admission-return-metadata-preflight-recorded" },
+    "status": { "enum": ["metadata-complete-unverified", "metadata-incomplete"] },
+    "candidateId": { "enum": ["north-central-counseling-center", "cooper-psych-clinic-qi"] },
+    "dossierFingerprint": { "$ref": "#/$defs/hash" },
+    "manifestHash": { "$ref": "#/$defs/hash" },
+    "returnIdHash": { "$ref": "#/$defs/hash" },
+    "decisionPreview": { "enum": ["not-recorded", "authorize", "authorize-with-conditions", "do-not-authorize"] },
+    "decisionRecordReferenceHash": { "anyOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] },
+    "decisionTimeDeclared": { "type": "boolean" },
+    "authorizationTermsHash": { "anyOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] },
+    "authorizationTermsComplete": { "type": "boolean" },
+    "authorityResults": {
+      "type": "array", "minItems": 5, "maxItems": 5,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["roleId", "metadataDeclared", "identityReferenceHash", "identityVerified", "authorityVerified"],
+        "properties": {
+          "roleId": { "enum": ["executive-sponsor", "clinical-lead", "legal-owner", "security-privacy-owner", "independent-evaluator"] },
+          "metadataDeclared": { "type": "boolean" },
+          "identityReferenceHash": { "anyOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] },
+          "identityVerified": { "const": false },
+          "authorityVerified": { "const": false }
+        }
+      }
+    },
+    "evidenceResults": {
+      "type": "array", "minItems": 12, "maxItems": 12,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["questionId", "metadataDeclared", "evidenceReferenceHash", "evidenceReceived", "evidenceVerified"],
+        "properties": {
+          "questionId": { "enum": ["authenticated-site", "bounded-setting", "population-denominator", "window-expansion", "eqpass-data-path", "privacy-security", "roster-qualification", "training-accessibility", "measures-support", "stop-restart-closeout", "agreement-commercial", "named-authorization"] },
+          "metadataDeclared": { "type": "boolean" },
+          "evidenceReferenceHash": { "anyOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] },
+          "evidenceReceived": { "const": false },
+          "evidenceVerified": { "const": false }
+        }
+      }
+    },
+    "counts": {
+      "type": "object", "additionalProperties": false,
+      "required": ["authorityRequired", "authorityDeclared", "evidenceRequired", "evidenceDeclared"],
+      "properties": {
+        "authorityRequired": { "const": 5 },
+        "authorityDeclared": { "type": "integer", "minimum": 0, "maximum": 5 },
+        "evidenceRequired": { "const": 12 },
+        "evidenceDeclared": { "type": "integer", "minimum": 0, "maximum": 12 }
+      }
+    },
+    "decisionMetadataComplete": { "type": "boolean" },
+    "metadataChecklistComplete": { "type": "boolean" },
+    "disposition": { "const": "site-authorization-remains-external" },
+    "evidenceFilesReceived": { "const": false },
+    "namesOrSignaturesReceived": { "const": false },
+    "patientRecordsReceived": { "const": false },
+    "findingsContentReceived": { "const": false },
+    "credentialsOrSecretsReceived": { "const": false },
+    "phiReceived": { "const": false },
+    "externalTransmissionPerformed": { "const": false },
+    "cryptographicSignatureVerified": { "const": false },
+    "siteIdentityVerified": { "const": false },
+    "identityVerified": { "const": false },
+    "authorityVerified": { "const": false },
+    "evidenceVerified": { "const": false },
+    "externalAcceptanceRecorded": { "const": false },
+    "authorizationRecorded": { "const": false },
+    "pilotAuthorized": { "const": false },
+    "pilotStarted": { "const": false },
+    "productionReleaseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 230, "maxLength": 700 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "chain": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" }
+  }
+}

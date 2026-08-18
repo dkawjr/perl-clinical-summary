@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/intended-use-draft-event.schema.json",
+  "title": "PERL intended-use working-draft event",
+  "description": "A hash-linked receipt for an immutable provider-first intended-use working draft. It records no approval, freeze, validation, release, or patient-use authority.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status", "draftId", "draftHash", "draftVersion", "pilotContext", "providerFirst", "acceptancesRequired", "acceptancesRecorded", "executiveSponsorAccepted", "clinicalLeadApproved", "legalApproved", "privacySecurityApproved", "eqpassOwnerAccepted", "disclaimerApproved", "intendedUseFrozen", "clinicalValidation", "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized", "actor", "createdAt", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "oneOf": [{ "const": "GENESIS" }, { "$ref": "#/$defs/hash" }] },
+    "contractVersion": { "const": "perl-intended-use-charter/1.0" },
+    "type": { "const": "intended-use-draft-recorded" },
+    "status": { "const": "working-charter-unaccepted" },
+    "draftId": { "type": "string", "format": "uuid" },
+    "draftHash": { "$ref": "#/$defs/hash" },
+    "draftVersion": { "type": "integer", "minimum": 1 },
+    "pilotContext": { "enum": ["session-preparation", "point-of-care-review", "post-assessment-review"] },
+    "providerFirst": { "const": true },
+    "acceptancesRequired": { "const": 5 },
+    "acceptancesRecorded": { "const": 0 },
+    "executiveSponsorAccepted": { "const": false },
+    "clinicalLeadApproved": { "const": false },
+    "legalApproved": { "const": false },
+    "privacySecurityApproved": { "const": false },
+    "eqpassOwnerAccepted": { "const": false },
+    "disclaimerApproved": { "const": false },
+    "intendedUseFrozen": { "const": false },
+    "clinicalValidation": { "const": false },
+    "pilotAuthorized": { "const": false },
+    "productionReleaseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 80, "maxLength": 360 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

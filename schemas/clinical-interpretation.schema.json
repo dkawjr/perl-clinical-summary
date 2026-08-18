@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/perl/schemas/clinical-interpretation.schema.json",
+  "title": "PERL evidence-linked clinical interpretation",
+  "description": "PERL output generated from a canonical scored assessment and always subject to licensed clinical review.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["hypotheses", "questions", "provider", "version", "generatedAt", "source", "evidenceMode"],
+  "properties": {
+    "hypotheses": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "body", "confidence", "evidence"],
+        "properties": {
+          "title": { "type": "string", "minLength": 1, "maxLength": 180 },
+          "body": { "type": "string", "minLength": 20, "maxLength": 1400 },
+          "confidence": { "enum": ["Low", "Moderate", "High"] },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 12,
+            "items": { "type": "string", "minLength": 1, "maxLength": 140 }
+          }
+        }
+      }
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": { "type": "string", "minLength": 8, "maxLength": 500 }
+    },
+    "provider": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "version": { "type": "string", "minLength": 1, "maxLength": 80 },
+    "promptVersion": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "policyHash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "inputSchemaVersion": { "const": "perl-scored-profile/1.0" },
+    "outputSchemaVersion": { "const": "perl-generation-bundle/1.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "source": { "enum": ["generated", "reviewer"] },
+    "evidenceMode": { "const": "scored-constructs" },
+    "actor": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "revision": { "type": "integer", "minimum": 1 },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "changed": {
+      "type": "array",
+      "items": { "enum": ["hypotheses", "follow-up questions"] },
+      "uniqueItems": true
+    }
+  }
+}

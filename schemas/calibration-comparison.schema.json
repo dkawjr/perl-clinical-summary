@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/perl-calibration-comparison.schema.json",
+  "title": "PERL blinded paired calibration comparison",
+  "description": "A completed synthetic blind-v3 comparison after author reveal. Pending mappings are never exposed through this contract.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "caseId",
+    "assessmentId",
+    "preferred",
+    "accuracy",
+    "restraint",
+    "utility",
+    "caseSet",
+    "partition",
+    "strata",
+    "sourceVersion",
+    "referenceVersion",
+    "reviewTiming",
+    "ratings",
+    "comment",
+    "actor",
+    "createdAt",
+    "protocol",
+    "authorMapping",
+    "preferredAuthor"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "caseId": { "type": "string", "format": "uuid" },
+    "assessmentId": { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]+$" },
+    "preferred": { "enum": ["A", "B"] },
+    "accuracy": { "$ref": "#/$defs/rating" },
+    "restraint": { "$ref": "#/$defs/rating" },
+    "utility": { "$ref": "#/$defs/rating" },
+    "caseSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{4,79}$" },
+        "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" }
+      }
+    },
+    "partition": { "enum": ["development", "holdout"] },
+    "strata": { "type": "array", "minItems": 1, "uniqueItems": true, "items": { "type": "string", "pattern": "^[a-z0-9-]+$" } },
+    "sourceVersion": { "type": "string", "minLength": 3 },
+    "referenceVersion": { "type": "string", "minLength": 3 },
+    "reviewTiming": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assignedAt", "submittedAt", "rawSeconds", "pausedSeconds", "activeSeconds", "eligible", "flag", "measurement"],
+      "properties": {
+        "assignedAt": { "type": "string", "format": "date-time" },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "rawSeconds": { "type": "integer", "minimum": 0 },
+        "pausedSeconds": { "type": "integer", "minimum": 0 },
+        "activeSeconds": { "type": "integer", "minimum": 0 },
+        "eligible": { "type": "boolean" },
+        "flag": { "type": ["string", "null"], "enum": [null, "clock-anomaly", "below-protocol-floor", "above-protocol-ceiling"] },
+        "measurement": { "const": "server-wall-clock-v1" }
+      }
+    },
+    "ratings": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A", "B"],
+      "properties": {
+        "A": { "$ref": "#/$defs/ratingSet" },
+        "B": { "$ref": "#/$defs/ratingSet" }
+      }
+    },
+    "comment": { "type": "string", "maxLength": 4000 },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "protocol": { "const": "blind-v3" },
+    "authorMapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["A", "B"],
+      "properties": {
+        "A": { "$ref": "#/$defs/author" },
+        "B": { "$ref": "#/$defs/author" }
+      }
+    },
+    "preferredAuthor": { "$ref": "#/$defs/author" }
+  },
+  "$defs": {
+    "rating": { "type": "integer", "minimum": 1, "maximum": 5 },
+    "ratingSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["accuracy", "restraint", "utility"],
+      "properties": {
+        "accuracy": { "$ref": "#/$defs/rating" },
+        "restraint": { "$ref": "#/$defs/rating" },
+        "utility": { "$ref": "#/$defs/rating" }
+      }
+    },
+    "author": { "enum": ["perl-generated", "human-reference"] }
+  }
+}

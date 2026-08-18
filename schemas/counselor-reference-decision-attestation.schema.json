@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/counselor-reference-decision-attestation.schema.json",
+  "title": "PERL counselor-reference decision attestation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "challengeId", "dossierFingerprint", "registryFingerprint", "keyId", "attestationId", "purpose", "issuedAt", "expiresAt", "evidenceReferences", "decision", "contentBoundary", "signature"],
+  "properties": {
+    "contractVersion": { "const": "perl-counselor-reference-decision-attestation/1.0" },
+    "challengeId": { "type": "string", "pattern": "^FF-REFERENCE-CHALLENGE-[A-F0-9-]{20,80}$" },
+    "dossierFingerprint": { "$ref": "#/$defs/hash" },
+    "registryFingerprint": { "$ref": "#/$defs/hash" },
+    "keyId": { "type": "string", "pattern": "^FF-REFERENCE-KEY-[A-Z0-9-]{3,80}$" },
+    "attestationId": { "type": "string", "pattern": "^FF-REFERENCE-ATTEST-[A-Z0-9-]{3,80}$" },
+    "purpose": {
+      "enum": [
+        "reference-authorship-attestation",
+        "reference-language-safety-acceptance",
+        "reference-adjudication-decision",
+        "reference-protocol-freeze"
+      ]
+    },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "evidenceReferences": { "type": "array", "minItems": 1, "maxItems": 16, "uniqueItems": true, "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]{2,95}$" } },
+    "decision": {
+      "oneOf": [
+        { "$ref": "#/$defs/authorshipDecision" },
+        { "$ref": "#/$defs/languageDecision" },
+        { "$ref": "#/$defs/adjudicationDecision" },
+        { "$ref": "#/$defs/freezeDecision" }
+      ]
+    },
+    "contentBoundary": { "$ref": "#/$defs/boundary" },
+    "signature": { "$ref": "#/$defs/signature" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "hashList": { "type": "array", "minItems": 1, "maxItems": 16, "uniqueItems": true, "items": { "$ref": "#/$defs/hash" } },
+    "authorshipDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["candidateDraftHashes", "distinctAuthorCount", "qualifiedAuthorsVerified", "independenceVerified", "conflictsReviewed", "outcome"],
+      "properties": {
+        "candidateDraftHashes": { "$ref": "#/$defs/hashList" },
+        "distinctAuthorCount": { "type": "integer", "minimum": 2 },
+        "qualifiedAuthorsVerified": { "const": true },
+        "independenceVerified": { "const": true },
+        "conflictsReviewed": { "const": true },
+        "outcome": { "const": "verified" }
+      }
+    },
+    "languageDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["standardReferenceHash", "directReviewRouteAccepted", "indicatorLanguageAccepted", "diagnosticRestraintAccepted", "uncertaintyStandardAccepted", "outcome"],
+      "properties": {
+        "standardReferenceHash": { "$ref": "#/$defs/hash" },
+        "directReviewRouteAccepted": { "const": true },
+        "indicatorLanguageAccepted": { "const": true },
+        "diagnosticRestraintAccepted": { "const": true },
+        "uncertaintyStandardAccepted": { "const": true },
+        "outcome": { "const": "accepted" }
+      }
+    },
+    "caseDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assessmentId", "disposition", "basisDraftHashes", "acceptedReferenceHash", "rationaleHash", "dissentHashes", "dissentDisposition"],
+      "properties": {
+        "assessmentId": { "type": "string", "minLength": 1 },
+        "disposition": { "enum": ["accepted-candidate", "accepted-synthesis", "no-reference"] },
+        "basisDraftHashes": { "type": "array", "maxItems": 16, "uniqueItems": true, "items": { "$ref": "#/$defs/hash" } },
+        "acceptedReferenceHash": { "oneOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] },
+        "rationaleHash": { "$ref": "#/$defs/hash" },
+        "dissentHashes": { "type": "array", "minItems": 1, "maxItems": 8, "uniqueItems": true, "items": { "$ref": "#/$defs/hash" } },
+        "dissentDisposition": { "const": "preserved" }
+      }
+    },
+    "adjudicationDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["caseDecisions", "allDisagreementsDispositioned", "majorityVoteUsed", "outcome"],
+      "properties": {
+        "caseDecisions": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/caseDecision" } },
+        "allDisagreementsDispositioned": { "const": true },
+        "majorityVoteUsed": { "const": false },
+        "outcome": { "enum": ["accepted", "decision-recorded-incomplete"] }
+      }
+    },
+    "freezeDecision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authorshipAttestationFingerprint", "languageSafetyAttestationFingerprint", "adjudicationAttestationFingerprint", "acceptedReferenceSetHash", "protocolHash", "independentReviewHandoffHash", "frozen", "independentReviewHandoffAccepted", "outcome"],
+      "properties": {
+        "authorshipAttestationFingerprint": { "$ref": "#/$defs/hash" },
+        "languageSafetyAttestationFingerprint": { "$ref": "#/$defs/hash" },
+        "adjudicationAttestationFingerprint": { "$ref": "#/$defs/hash" },
+        "acceptedReferenceSetHash": { "$ref": "#/$defs/hash" },
+        "protocolHash": { "$ref": "#/$defs/hash" },
+        "independentReviewHandoffHash": { "$ref": "#/$defs/hash" },
+        "frozen": { "const": true },
+        "independentReviewHandoffAccepted": { "const": true },
+        "outcome": { "const": "frozen-for-independent-review" }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidenceFilesIncluded", "humanNamesIncluded", "humanSignaturesIncluded", "credentialsOrSecretsIncluded", "candidateProseIncluded", "findingsContentIncluded", "rawResponseContentIncluded", "patientRecordsIncluded", "phiIncluded", "perlExternalTransmissionPerformed"],
+      "properties": {
+        "evidenceFilesIncluded": { "const": false },
+        "humanNamesIncluded": { "const": false },
+        "humanSignaturesIncluded": { "const": false },
+        "credentialsOrSecretsIncluded": { "const": false },
+        "candidateProseIncluded": { "const": false },
+        "findingsContentIncluded": { "const": false },
+        "rawResponseContentIncluded": { "const": false },
+        "patientRecordsIncluded": { "const": false },
+        "phiIncluded": { "const": false },
+        "perlExternalTransmissionPerformed": { "const": false }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "keyId", "value"],
+      "properties": {
+        "algorithm": { "const": "Ed25519" },
+        "keyId": { "type": "string", "pattern": "^FF-REFERENCE-KEY-[A-Z0-9-]{3,80}$" },
+        "value": { "type": "string", "pattern": "^[A-Za-z0-9_-]{86}$" }
+      }
+    }
+  }
+}

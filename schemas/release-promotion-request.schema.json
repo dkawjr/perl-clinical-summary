@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.org/schemas/release-promotion-request.schema.json",
+  "title": "PERL external release promotion request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["requestId", "requestHash", "contractVersion", "requestedAt", "artifact", "localAdmission", "target", "gates", "returnContract", "authority", "boundary"],
+  "properties": {
+    "requestId": { "type": "string", "pattern": "^perl-prm-[a-f0-9]{20}$" },
+    "requestHash": { "$ref": "#/$defs/digest" },
+    "contractVersion": { "const": "perl-release-promotion-request/1.0" },
+    "requestedAt": { "type": "string", "format": "date-time" },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifactId", "archiveSha256", "manifestSha256", "configurationSha256", "provenanceSha256", "sbomSha256", "sourceDigest"],
+      "properties": {
+        "artifactId": { "type": "string", "pattern": "^perl-rc-[a-f0-9]{20}$" },
+        "archiveSha256": { "$ref": "#/$defs/digest" },
+        "manifestSha256": { "$ref": "#/$defs/digest" },
+        "configurationSha256": { "$ref": "#/$defs/digest" },
+        "provenanceSha256": { "$ref": "#/$defs/digest" },
+        "sbomSha256": { "$ref": "#/$defs/digest" },
+        "sourceDigest": { "$ref": "#/$defs/digest" }
+      }
+    },
+    "localAdmission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["admissionId", "evidenceHash", "policyVersion", "status"],
+      "properties": {
+        "admissionId": { "type": "string", "pattern": "^perl-adm-[a-f0-9]{20}$" },
+        "evidenceHash": { "$ref": "#/$defs/digest" },
+        "policyVersion": { "const": "perl-local-archive-qualification/1.0" },
+        "status": { "const": "qualified-local" }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform", "artifactFormat", "registryClass", "executionClass", "scope"],
+      "properties": {
+        "platform": { "const": "Microsoft Azure" },
+        "artifactFormat": { "const": "OCI image" },
+        "registryClass": { "const": "approved-immutable-registry" },
+        "executionClass": { "const": "independently-controlled-network-isolated-ci" },
+        "scope": { "const": "production-artifact-promotion-only" }
+      }
+    },
+    "gates": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "requiredEvidence", "blocking"],
+        "properties": {
+          "id": { "enum": ["isolated-ci", "exact-archive-retest", "vulnerability-review", "license-review", "oci-image", "immutable-registry", "artifact-signature", "schema-environment", "rollback-reconciliation", "telemetry-runbook"] },
+          "label": { "type": "string", "minLength": 5, "maxLength": 96 },
+          "requiredEvidence": { "type": "string", "minLength": 40, "maxLength": 300 },
+          "blocking": { "const": true }
+        }
+      }
+    },
+    "returnContract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractVersion", "purpose", "algorithm", "signerRole", "signatureEncoding", "privateKeyAcceptedByPerl"],
+      "properties": {
+        "contractVersion": { "const": "perl-release-promotion-attestation/1.0" },
+        "purpose": { "const": "attest-external-production-artifact-promotion" },
+        "algorithm": { "const": "Ed25519" },
+        "signerRole": { "const": "production-promotion-attestation-authority" },
+        "signatureEncoding": { "const": "base64" },
+        "privateKeyAcceptedByPerl": { "const": false }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["localArchiveQualificationPassed", "externalEvidenceVerified", "productionArtifactPromoted", "deploymentAuthorized", "azureDeploymentPerformed", "clinicalValidation", "clinicalReleaseAuthorized", "trafficActivationAuthorized", "patientUseAuthorized"],
+      "properties": {
+        "localArchiveQualificationPassed": { "const": true },
+        "externalEvidenceVerified": { "const": false },
+        "productionArtifactPromoted": { "const": false },
+        "deploymentAuthorized": { "const": false },
+        "azureDeploymentPerformed": { "const": false },
+        "clinicalValidation": { "const": false },
+        "clinicalReleaseAuthorized": { "const": false },
+        "trafficActivationAuthorized": { "const": false },
+        "patientUseAuthorized": { "const": false }
+      }
+    },
+    "boundary": { "type": "string", "minLength": 350, "maxLength": 900 }
+  },
+  "$defs": { "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" } }
+}

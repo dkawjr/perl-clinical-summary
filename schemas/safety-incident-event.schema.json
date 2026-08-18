@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/safety-incident-event.schema.json",
+  "title": "PERL synthetic study safety incident event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "sequence", "previousHash", "hash", "type", "incidentId", "actor", "createdAt"],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "type": { "enum": ["reported", "resolved"] },
+    "incidentId": { "type": "string", "format": "uuid" },
+    "assessmentId": { "type": ["string", "null"], "pattern": "^FF-TEST-" },
+    "caseId": { "type": ["string", "null"], "format": "uuid" },
+    "category": {
+      "enum": ["critical-screen-omission", "diagnostic-overreach", "invented-evidence", "identity-disclosure", "cross-record-leakage", "blind-integrity", "revision-integrity", "other-safety"]
+    },
+    "severity": { "enum": ["low", "moderate", "high", "critical"] },
+    "summary": { "type": "string", "minLength": 10, "maxLength": 500 },
+    "detail": { "type": "string", "maxLength": 4000 },
+    "resolution": { "type": "string", "minLength": 10, "maxLength": 4000 },
+    "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "createdAt": { "type": "string", "format": "date-time" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "type": { "const": "reported" } } },
+      "then": { "required": ["category", "severity", "summary", "detail"] }
+    },
+    {
+      "if": { "properties": { "type": { "const": "resolved" } } },
+      "then": { "required": ["resolution"] }
+    }
+  ]
+}

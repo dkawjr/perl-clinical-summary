@@ -1,0 +1,129 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.example/schemas/candidate-return-event.schema.json",
+  "title": "PERL manual synthetic candidate-output return event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status", "runId", "candidateSlot", "caseId",
+    "caseFingerprint", "protocolFingerprint", "candidateFingerprint", "providerId", "modelVersion", "promptVersion",
+    "outputContract", "policyVersion", "policyHash", "bundle", "bundleHash", "outputGatePassed", "outputGateCount",
+    "syntheticOnly", "privacyBoundary", "decision", "providerCallPerformedByPerl", "externalTransferPerformedByPerl",
+    "candidateRunExternallyVerified", "vendorVerified", "trialExecutionAuthorized", "counselorPanelAccepted",
+    "blindReviewAuthorized", "clinicalPerformanceEstablished", "accuracyEstablished", "reliabilityEstablished",
+    "safetyEstablished", "usefulnessEstablished", "clinicalValidation", "engineSelected", "carePlanChanged",
+    "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized", "actor", "createdAt", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "$ref": "#/$defs/chain" },
+    "contractVersion": { "const": "perl-manual-candidate-return/1.0" },
+    "type": { "const": "manual-synthetic-candidate-output-return-recorded" },
+    "status": { "const": "structured-return-held-unverified" },
+    "runId": { "type": "string", "pattern": "^FF-CANDIDATE-RUN-[0-9]{2}$" },
+    "candidateSlot": { "enum": ["candidate-01", "candidate-02", "candidate-03"] },
+    "caseId": { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]+$" },
+    "caseFingerprint": { "$ref": "#/$defs/hash" },
+    "protocolFingerprint": { "$ref": "#/$defs/hash" },
+    "candidateFingerprint": { "$ref": "#/$defs/hash" },
+    "providerId": { "$ref": "#/$defs/safeText" },
+    "modelVersion": { "$ref": "#/$defs/safeText" },
+    "promptVersion": { "$ref": "#/$defs/safeText" },
+    "outputContract": { "const": "perl-generation-bundle/1.0" },
+    "policyVersion": { "const": "perl-clinical-generation-policy/1.0" },
+    "policyHash": { "$ref": "#/$defs/hash" },
+    "bundle": { "$ref": "#/$defs/bundle" },
+    "bundleHash": { "$ref": "#/$defs/hash" },
+    "outputGatePassed": { "const": true },
+    "outputGateCount": { "const": 10 },
+    "syntheticOnly": { "const": true },
+    "privacyBoundary": { "$ref": "#/$defs/privacyBoundary" },
+    "decision": { "const": "hold-structured-synthetic-output-for-separately-governed-blind-review" },
+    "providerCallPerformedByPerl": { "const": false },
+    "externalTransferPerformedByPerl": { "const": false },
+    "candidateRunExternallyVerified": { "const": false },
+    "vendorVerified": { "const": false },
+    "trialExecutionAuthorized": { "const": false },
+    "counselorPanelAccepted": { "const": false },
+    "blindReviewAuthorized": { "const": false },
+    "clinicalPerformanceEstablished": { "const": false },
+    "accuracyEstablished": { "const": false },
+    "reliabilityEstablished": { "const": false },
+    "safetyEstablished": { "const": false },
+    "usefulnessEstablished": { "const": false },
+    "clinicalValidation": { "const": false },
+    "engineSelected": { "const": false },
+    "carePlanChanged": { "const": false },
+    "pilotAuthorized": { "const": false },
+    "productionReleaseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 260, "maxLength": 700 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "chain": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "safeText": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._:/-]{1,119}$" },
+    "privacyBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assessmentPayloadIncluded", "rawResponsesIncluded", "findingsContentIncluded", "sourceFileBytesIncluded", "patientIdentifiersIncluded", "counselorIdentityIncluded", "credentialsIncluded", "endpointIncluded", "phiIncluded"],
+      "properties": {
+        "assessmentPayloadIncluded": { "const": false },
+        "rawResponsesIncluded": { "const": false },
+        "findingsContentIncluded": { "const": false },
+        "sourceFileBytesIncluded": { "const": false },
+        "patientIdentifiersIncluded": { "const": false },
+        "counselorIdentityIncluded": { "const": false },
+        "credentialsIncluded": { "const": false },
+        "endpointIncluded": { "const": false },
+        "phiIncluded": { "const": false }
+      }
+    },
+    "bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["narratives", "interpretation"],
+      "properties": {
+        "narratives": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["clinician", "care", "payer", "admin"],
+          "properties": {
+            "clinician": { "type": "string", "minLength": 80, "maxLength": 6000 },
+            "care": { "type": "string", "minLength": 80, "maxLength": 6000 },
+            "payer": { "type": "string", "minLength": 80, "maxLength": 6000 },
+            "admin": { "type": "string", "minLength": 40, "maxLength": 3000 }
+          }
+        },
+        "interpretation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["hypotheses", "questions"],
+          "properties": {
+            "hypotheses": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 6,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["title", "body", "confidence", "evidence"],
+                "properties": {
+                  "title": { "type": "string", "minLength": 1, "maxLength": 180 },
+                  "body": { "type": "string", "minLength": 20, "maxLength": 1400 },
+                  "confidence": { "enum": ["Low", "Moderate", "High"] },
+                  "evidence": { "type": "array", "minItems": 1, "maxItems": 12, "items": { "type": "string", "minLength": 1, "maxLength": 140 } }
+                }
+              }
+            },
+            "questions": { "type": "array", "minItems": 1, "maxItems": 8, "items": { "type": "string", "minLength": 8, "maxLength": 500 } }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/operational-monitoring-event.schema.json",
+  "title": "PERL local operational monitoring evidence event",
+  "description": "Tamper-evident point-in-time evidence from the local synthetic operational control matrix. It does not claim continuous production telemetry, service levels, security monitoring, backup monitoring, or external alert delivery.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status", "scope",
+    "continuousMonitoringClaimed", "productionAlertingConnected", "availabilitySlaClaimed",
+    "latencySloClaimed", "productionBackupMonitoring", "securityMonitoringConnected",
+    "externalNotificationsSent", "probeBudgetMs", "probeDurationMs", "signals", "signalCounts",
+    "localAlerts", "productionGaps", "operationalStateHash", "integrityEvidenceHash", "actor",
+    "startedAt", "completedAt", "durationMs", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "oneOf": [{ "const": "GENESIS" }, { "$ref": "#/$defs/hash" }] },
+    "contractVersion": { "const": "perl-operational-monitoring/1.0" },
+    "type": { "const": "point-in-time-control-probe" },
+    "status": { "enum": ["local-controls-clear", "local-attention-required", "local-control-failure"] },
+    "scope": { "const": "local-synthetic-point-in-time" },
+    "continuousMonitoringClaimed": { "const": false },
+    "productionAlertingConnected": { "const": false },
+    "availabilitySlaClaimed": { "const": false },
+    "latencySloClaimed": { "const": false },
+    "productionBackupMonitoring": { "const": false },
+    "securityMonitoringConnected": { "const": false },
+    "externalNotificationsSent": { "const": false },
+    "probeBudgetMs": { "const": 250 },
+    "probeDurationMs": { "type": "integer", "minimum": 0 },
+    "signals": {
+      "type": "array",
+      "minItems": 11,
+      "maxItems": 11,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "label", "scope", "requiredByLaunchPlan", "status", "severity", "detail", "evidenceHash"],
+        "properties": {
+          "id": { "enum": ["availability", "latency", "generation-failure", "safety-routing", "delivery-queue", "artifact-integrity", "restore-readiness", "rollback-readiness", "unauthorized-access", "backup-job", "external-notification-delivery"] },
+          "label": { "type": "string", "minLength": 3, "maxLength": 48 },
+          "scope": { "enum": ["local", "production-gap"] },
+          "requiredByLaunchPlan": { "type": "boolean" },
+          "status": { "enum": ["pass", "attention", "unavailable", "fail"] },
+          "severity": { "enum": ["info", "warning", "high", "critical"] },
+          "detail": { "type": "string", "minLength": 4, "maxLength": 180 },
+          "evidenceHash": { "oneOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] }
+        }
+      }
+    },
+    "signalCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pass", "attention", "unavailable", "fail"],
+      "properties": {
+        "pass": { "type": "integer", "minimum": 0 },
+        "attention": { "type": "integer", "minimum": 0 },
+        "unavailable": { "type": "integer", "minimum": 0 },
+        "fail": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "localAlerts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["signalId", "severity", "state", "externalNotificationSent"],
+        "properties": {
+          "signalId": { "type": "string", "minLength": 3, "maxLength": 64 },
+          "severity": { "enum": ["warning", "high", "critical"] },
+          "state": { "const": "open-local-evidence" },
+          "externalNotificationSent": { "const": false }
+        }
+      }
+    },
+    "productionGaps": {
+      "type": "array",
+      "prefixItems": [
+        { "const": "unauthorized-access" },
+        { "const": "backup-job" },
+        { "const": "external-notification-delivery" }
+      ],
+      "items": false,
+      "minItems": 3,
+      "maxItems": 3
+    },
+    "operationalStateHash": { "$ref": "#/$defs/hash" },
+    "integrityEvidenceHash": { "$ref": "#/$defs/hash" },
+    "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "durationMs": { "type": "integer", "minimum": 0 },
+    "note": { "type": "string", "minLength": 1, "maxLength": 420 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

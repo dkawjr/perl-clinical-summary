@@ -1,0 +1,14 @@
+ARG PERL_NODE_IMAGE
+FROM ${PERL_NODE_IMAGE}
+
+WORKDIR /app
+COPY --chown=10001:10001 . .
+
+ENV NODE_ENV=production \
+    PERL_REQUIRE_RUNTIME_POLICY=true \
+    PERL_RUNTIME_POLICY_FILE=/run/perl/runtime-policy.json
+
+USER 10001:10001
+EXPOSE 4173
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 CMD ["node", "tools/runtime-healthcheck.mjs"]
+CMD ["node", "server.mjs"]

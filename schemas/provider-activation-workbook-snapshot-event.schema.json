@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.example/schemas/provider-activation-workbook-snapshot-event.schema.json",
+  "title": "PERL Provider Activation Workbook Snapshot Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status", "workbookFingerprint", "counts", "evidenceContext", "decision",
+    "sourceReportedWindowVerified", "siteVerified", "facilitatorAssigned", "rosterReceived", "licensureVerified", "participantsRegistered", "trainingScheduled", "sessionHeld", "attendanceVerified", "objectivesAccepted", "modulesCompleted", "drillsPassed", "completionAccepted", "supportConfirmed", "activationAuthorized", "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized", "actor", "createdAt", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "$ref": "#/$defs/chain" },
+    "contractVersion": { "const": "perl-provider-activation-workbook/1.0" },
+    "type": { "const": "provider-activation-workbook-snapshot-recorded" },
+    "status": { "const": "working-activation-plan-external-training-acceptance-required" },
+    "workbookFingerprint": { "$ref": "#/$defs/hash" },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["workingMinutes", "modules", "objectives", "drills", "criticalDrills", "requiredReturns", "registeredParticipants", "completedModules", "passedDrills", "acceptedCompletions", "activatedSites"],
+      "properties": {
+        "workingMinutes": { "const": 100 },
+        "modules": { "const": 4 },
+        "objectives": { "const": 8 },
+        "drills": { "const": 4 },
+        "criticalDrills": { "const": 2 },
+        "requiredReturns": { "const": 10 },
+        "registeredParticipants": { "const": 0 },
+        "completedModules": { "const": 0 },
+        "passedDrills": { "const": 0 },
+        "acceptedCompletions": { "const": 0 },
+        "activatedSites": { "const": 0 }
+      }
+    },
+    "evidenceContext": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stateSchemaVersion", "pilotPlanFingerprint", "readinessStateHash", "reportContract", "chainHeads"],
+      "properties": {
+        "stateSchemaVersion": { "type": "integer", "minimum": 32, "maximum": 33 },
+        "pilotPlanFingerprint": { "$ref": "#/$defs/hash" },
+        "readinessStateHash": { "$ref": "#/$defs/hash" },
+        "reportContract": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "chainHeads": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pilotOperations", "intendedUse", "languageReview", "reports", "generation", "monitoring", "incidentResponse", "readiness"],
+          "properties": {
+            "pilotOperations": { "$ref": "#/$defs/chain" },
+            "intendedUse": { "$ref": "#/$defs/chain" },
+            "languageReview": { "$ref": "#/$defs/chain" },
+            "reports": { "$ref": "#/$defs/chain" },
+            "generation": { "$ref": "#/$defs/chain" },
+            "monitoring": { "$ref": "#/$defs/chain" },
+            "incidentResponse": { "$ref": "#/$defs/chain" },
+            "readiness": { "$ref": "#/$defs/chain" }
+          }
+        }
+      }
+    },
+    "decision": { "const": "training-completion-and-site-activation-remain-external" },
+    "sourceReportedWindowVerified": { "const": false },
+    "siteVerified": { "const": false },
+    "facilitatorAssigned": { "const": false },
+    "rosterReceived": { "const": false },
+    "licensureVerified": { "const": false },
+    "participantsRegistered": { "const": false },
+    "trainingScheduled": { "const": false },
+    "sessionHeld": { "const": false },
+    "attendanceVerified": { "const": false },
+    "objectivesAccepted": { "const": false },
+    "modulesCompleted": { "const": false },
+    "drillsPassed": { "const": false },
+    "completionAccepted": { "const": false },
+    "supportConfirmed": { "const": false },
+    "activationAuthorized": { "const": false },
+    "pilotAuthorized": { "const": false },
+    "productionReleaseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 220, "maxLength": 700 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "chain": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" }
+  }
+}

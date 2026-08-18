@@ -1,0 +1,35 @@
+name: Verify deployment candidate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify dependency boundary
+        run: npm install --package-lock-only --ignore-scripts
+      - name: Full regression
+        run: npm test
+      - name: Synthetic engineering baseline
+        run: npm run evaluate
+      - name: Runtime envelope
+        run: npm run runtime:verify
+      - name: Deployment candidate
+        run: npm run verify:deployment
+      - name: Reproducible release candidate
+        run: npm run release:build
+      - name: Verify release candidate
+        run: npm run release:verify

@@ -1,0 +1,9 @@
+data/
+dist/
+tmp/
+.DS_Store
+*.log
+.env
+.env.*
+!*.env.example
+!deploy/*.env.example

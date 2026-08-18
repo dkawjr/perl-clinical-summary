@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/independent-review-admission-challenge.schema.json",
+  "title": "PERL independent-review admission challenge",
+  "type": "object", "additionalProperties": false,
+  "required": ["contractVersion", "challengeId", "nonce", "dossierFingerprint", "reviewPackageHash", "dossierChainHead", "referenceDecisionDocketFingerprint", "referenceDecisionChainHead", "referenceFreezeAttestationFingerprint", "clinicalStandardDraftHash", "registryFingerprint", "requiredPurposeOrder", "decisionMode", "issuedAt", "expiresAt", "contentBoundary"],
+  "properties": {
+    "contractVersion": { "const": "perl-independent-review-admission-challenge/1.0" },
+    "challengeId": { "type": "string", "pattern": "^FF-REVIEW-ADMISSION-CHALLENGE-[A-F0-9-]{20,80}$" },
+    "nonce": { "type": "string", "pattern": "^[A-Za-z0-9_-]{43}$" },
+    "dossierFingerprint": { "$ref": "#/$defs/hash" },
+    "reviewPackageHash": { "$ref": "#/$defs/hash" },
+    "dossierChainHead": { "$ref": "#/$defs/hash" },
+    "referenceDecisionDocketFingerprint": { "$ref": "#/$defs/hash" },
+    "referenceDecisionChainHead": { "$ref": "#/$defs/hash" },
+    "referenceFreezeAttestationFingerprint": { "$ref": "#/$defs/hash" },
+    "clinicalStandardDraftHash": { "$ref": "#/$defs/hash" },
+    "registryFingerprint": { "$ref": "#/$defs/hash" },
+    "requiredPurposeOrder": {
+      "type": "array", "minItems": 7, "maxItems": 7,
+      "prefixItems": [
+        { "const": "authoritative-source-contract-acceptance" }, { "const": "representative-case-set-freeze" },
+        { "const": "clinical-standard-acceptance" }, { "const": "evaluator-charter-attestation" },
+        { "const": "legal-permission-attestation" }, { "const": "privacy-permission-attestation" },
+        { "const": "independent-review-protocol-freeze" }
+      ],
+      "items": false
+    },
+    "decisionMode": { "const": "admit-exact-independent-evaluation-protocol-no-results" },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "expiresAt": { "type": "string", "format": "date-time" },
+    "contentBoundary": { "$ref": "#/$defs/boundary" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "boundary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["evidenceFilesIncluded", "humanNamesIncluded", "humanSignaturesIncluded", "credentialsOrSecretsIncluded", "workbookBytesIncluded", "caseRecordsIncluded", "findingsContentIncluded", "rawResponseContentIncluded", "patientRecordsIncluded", "phiIncluded", "perlExternalTransmissionPerformed"],
+      "properties": {
+        "evidenceFilesIncluded": { "const": false }, "humanNamesIncluded": { "const": false },
+        "humanSignaturesIncluded": { "const": false }, "credentialsOrSecretsIncluded": { "const": false },
+        "workbookBytesIncluded": { "const": false }, "caseRecordsIncluded": { "const": false },
+        "findingsContentIncluded": { "const": false }, "rawResponseContentIncluded": { "const": false },
+        "patientRecordsIncluded": { "const": false }, "phiIncluded": { "const": false },
+        "perlExternalTransmissionPerformed": { "const": false }
+      }
+    }
+  }
+}

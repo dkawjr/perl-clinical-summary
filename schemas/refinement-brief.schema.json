@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.example/schemas/refinement-brief.schema.json",
+  "title": "PERL controlled refinement brief",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract", "generatedAt", "population", "clinicalValidation", "status", "thresholds", "sourceCounts", "coverage", "signals", "method", "claimBoundary", "integrity"],
+  "properties": {
+    "contract": { "const": "perl-refinement-brief/1.0" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "population": { "const": "synthetic calibration sandbox" },
+    "clinicalValidation": { "const": false },
+    "status": { "enum": ["awaiting-reviewer-evidence", "signals-observed", "safety-paused"] },
+    "thresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["minimumIndependentCases", "minimumIndependentReviewers"],
+      "properties": {
+        "minimumIndependentCases": { "type": "integer", "minimum": 1 },
+        "minimumIndependentReviewers": { "type": "integer", "minimum": 2 }
+      }
+    },
+    "sourceCounts": { "$ref": "#/$defs/counts" },
+    "coverage": { "$ref": "#/$defs/counts" },
+    "signals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "sourceType", "component", "title", "improvementTarget", "regressionFocus", "evidenceCount", "caseIds", "reviewers", "evidenceIds", "metric", "status", "candidateEligible", "nextEvidence", "clinicalValidation"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "sourceType": { "enum": ["reviewer-feedback", "blind-comparison", "reviewer-revision", "safety-incident"] },
+          "component": { "const": "model" },
+          "title": { "type": "string", "minLength": 1 },
+          "improvementTarget": { "type": "string", "minLength": 1 },
+          "regressionFocus": { "type": "string", "minLength": 1 },
+          "evidenceCount": { "type": "integer", "minimum": 1 },
+          "caseIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+          "reviewers": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+          "evidenceIds": { "type": "array", "uniqueItems": true, "items": { "type": "string" } },
+          "metric": { "type": ["object", "null"] },
+          "status": { "enum": ["collect-more-evidence", "evidence-threshold-met", "safety-escalation"] },
+          "candidateEligible": { "type": "boolean" },
+          "nextEvidence": { "type": "string", "minLength": 1 },
+          "clinicalValidation": { "const": false }
+        }
+      }
+    },
+    "method": { "type": "string", "minLength": 1 },
+    "claimBoundary": { "type": "string", "pattern": "may not change clinical logic automatically" },
+    "integrity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "fingerprint", "sources"],
+      "properties": {
+        "algorithm": { "const": "sha256" },
+        "fingerprint": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+        "sources": { "type": "object" }
+      }
+    }
+  },
+  "$defs": {
+    "counts": {
+      "type": "object",
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    }
+  }
+}

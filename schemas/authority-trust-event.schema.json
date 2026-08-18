@@ -1,0 +1,163 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.example/schemas/authority-trust-event.schema.json",
+  "title": "PERL Governed Authority Trust Event",
+  "oneOf": [
+    { "$ref": "#/$defs/challengeEvent" },
+    { "$ref": "#/$defs/receiptEvent" }
+  ],
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "chain": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "candidate": { "enum": ["north-central-counseling-center", "cooper-psych-clinic-qi"] },
+    "scope": {
+      "enum": [
+        "site:identity",
+        "authority:executive-sponsor", "authority:clinical-lead", "authority:legal-owner", "authority:security-privacy-owner", "authority:independent-evaluator",
+        "evidence:authenticated-site", "evidence:bounded-setting", "evidence:population-denominator", "evidence:window-expansion", "evidence:eqpass-data-path", "evidence:privacy-security", "evidence:roster-qualification", "evidence:training-accessibility", "evidence:measures-support", "evidence:stop-restart-closeout", "evidence:agreement-commercial", "evidence:named-authorization",
+        "gate:intended-use-approval", "gate:authoritative-eqpass", "gate:clinical-beta", "gate:independent-reliability", "gate:security-production", "gate:accessibility-acceptance", "gate:pilot-authorization",
+        "activation:accepted-objectives", "activation:named-facilitator", "activation:counselor-roster", "activation:license-and-role", "activation:scheduled-session", "activation:attendance-evidence", "activation:objective-observations", "activation:critical-drill-pass", "activation:accommodation-check", "activation:support-and-escalation",
+        "authorization:pilot"
+      ]
+    },
+    "contentBoundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidenceFilesIncluded", "humanNamesIncluded", "humanSignaturesIncluded", "credentialsOrSecretsIncluded", "patientRecordsIncluded", "findingsContentIncluded", "phiIncluded", "perlExternalTransmissionPerformed"],
+      "properties": {
+        "evidenceFilesIncluded": { "const": false },
+        "humanNamesIncluded": { "const": false },
+        "humanSignaturesIncluded": { "const": false },
+        "credentialsOrSecretsIncluded": { "const": false },
+        "patientRecordsIncluded": { "const": false },
+        "findingsContentIncluded": { "const": false },
+        "phiIncluded": { "const": false },
+        "perlExternalTransmissionPerformed": { "const": false }
+      }
+    },
+    "challenge": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractVersion", "challengeId", "nonce", "candidateId", "dossierFingerprint", "portfolioFingerprint", "registryFingerprint", "requiredScopes", "issuedAt", "expiresAt", "contentBoundary"],
+      "properties": {
+        "contractVersion": { "const": "perl-governed-authority-challenge/1.0" },
+        "challengeId": { "type": "string", "pattern": "^FF-TRUST-CHALLENGE-[A-F0-9-]{20,80}$" },
+        "nonce": { "type": "string", "pattern": "^[A-Za-z0-9_-]{43}$" },
+        "candidateId": { "$ref": "#/$defs/candidate" },
+        "dossierFingerprint": { "$ref": "#/$defs/hash" },
+        "portfolioFingerprint": { "$ref": "#/$defs/hash" },
+        "registryFingerprint": { "$ref": "#/$defs/hash" },
+        "requiredScopes": { "type": "array", "minItems": 36, "maxItems": 36, "uniqueItems": true, "items": { "$ref": "#/$defs/scope" } },
+        "issuedAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "contentBoundary": { "$ref": "#/$defs/contentBoundary" }
+      }
+    },
+    "assertion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scope", "outcome", "referenceHash"],
+      "properties": {
+        "scope": { "$ref": "#/$defs/scope" },
+        "outcome": { "enum": ["verified", "rejected", "accepted", "declined", "revoked"] },
+        "referenceHash": { "$ref": "#/$defs/hash" }
+      },
+      "oneOf": [
+        {
+          "properties": {
+            "scope": { "enum": ["site:identity", "authority:executive-sponsor", "authority:clinical-lead", "authority:legal-owner", "authority:security-privacy-owner", "authority:independent-evaluator", "evidence:authenticated-site", "evidence:bounded-setting", "evidence:population-denominator", "evidence:window-expansion", "evidence:eqpass-data-path", "evidence:privacy-security", "evidence:roster-qualification", "evidence:training-accessibility", "evidence:measures-support", "evidence:stop-restart-closeout", "evidence:agreement-commercial", "evidence:named-authorization"] },
+            "outcome": { "enum": ["verified", "rejected", "revoked"] }
+          }
+        },
+        {
+          "properties": {
+            "scope": { "enum": ["gate:intended-use-approval", "gate:authoritative-eqpass", "gate:clinical-beta", "gate:independent-reliability", "gate:security-production", "gate:accessibility-acceptance", "gate:pilot-authorization", "activation:accepted-objectives", "activation:named-facilitator", "activation:counselor-roster", "activation:license-and-role", "activation:scheduled-session", "activation:attendance-evidence", "activation:objective-observations", "activation:critical-drill-pass", "activation:accommodation-check", "activation:support-and-escalation", "authorization:pilot"] },
+            "outcome": { "enum": ["accepted", "declined", "revoked"] }
+          }
+        }
+      ]
+    },
+    "receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["contractVersion", "challengeId", "candidateId", "dossierFingerprint", "registryFingerprint", "keyId", "receiptId", "issuedAt", "expiresAt", "assertions", "contentBoundary", "signature"],
+      "properties": {
+        "contractVersion": { "const": "perl-governed-authority-receipt/1.0" },
+        "challengeId": { "type": "string", "pattern": "^FF-TRUST-CHALLENGE-[A-F0-9-]{20,80}$" },
+        "candidateId": { "$ref": "#/$defs/candidate" },
+        "dossierFingerprint": { "$ref": "#/$defs/hash" },
+        "registryFingerprint": { "$ref": "#/$defs/hash" },
+        "keyId": { "type": "string", "pattern": "^FF-TRUST-KEY-[A-Z0-9-]{3,80}$" },
+        "receiptId": { "type": "string", "pattern": "^FF-TRUST-RECEIPT-[A-Z0-9-]{3,80}$" },
+        "issuedAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "assertions": { "type": "array", "minItems": 1, "maxItems": 36, "uniqueItems": true, "items": { "$ref": "#/$defs/assertion" } },
+        "contentBoundary": { "$ref": "#/$defs/contentBoundary" },
+        "signature": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["algorithm", "keyId", "value"],
+          "properties": {
+            "algorithm": { "const": "Ed25519" },
+            "keyId": { "type": "string", "pattern": "^FF-TRUST-KEY-[A-Z0-9-]{3,80}$" },
+            "value": { "type": "string", "pattern": "^[A-Za-z0-9_-]{86}$" }
+          }
+        }
+      }
+    },
+    "common": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "sequence": { "type": "integer", "minimum": 1 },
+        "previousHash": { "$ref": "#/$defs/chain" },
+        "contractVersion": { "const": "perl-governed-authority-trust/1.0" },
+        "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "pilotAuthorizationRecorded": { "const": false },
+        "pilotStarted": { "const": false },
+        "productionReleaseAuthorized": { "const": false },
+        "patientUseAuthorized": { "const": false },
+        "boundary": { "type": "string", "minLength": 1000 },
+        "hash": { "$ref": "#/$defs/hash" }
+      }
+    },
+    "challengeEvent": {
+      "allOf": [
+        { "$ref": "#/$defs/common" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "sequence", "previousHash", "eventType", "contractVersion", "challenge", "actor", "createdAt", "cryptographicSignatureVerified", "scopeVerificationRecorded", "pilotAuthorizationRecorded", "pilotStarted", "productionReleaseAuthorized", "patientUseAuthorized", "boundary", "hash"],
+          "properties": {
+            "id": true, "sequence": true, "previousHash": true, "contractVersion": true, "actor": true, "createdAt": true, "pilotAuthorizationRecorded": true, "pilotStarted": true, "productionReleaseAuthorized": true, "patientUseAuthorized": true, "boundary": true, "hash": true,
+            "eventType": { "const": "challenge-issued" },
+            "challenge": { "$ref": "#/$defs/challenge" },
+            "cryptographicSignatureVerified": { "const": false },
+            "scopeVerificationRecorded": { "const": false }
+          }
+        }
+      ]
+    },
+    "receiptEvent": {
+      "allOf": [
+        { "$ref": "#/$defs/common" },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "sequence", "previousHash", "eventType", "contractVersion", "receipt", "receiptFingerprint", "keyFingerprint", "assertionCount", "actor", "createdAt", "cryptographicSignatureVerified", "scopeVerificationRecorded", "pilotAuthorizationRecorded", "pilotStarted", "productionReleaseAuthorized", "patientUseAuthorized", "boundary", "hash"],
+          "properties": {
+            "id": true, "sequence": true, "previousHash": true, "contractVersion": true, "actor": true, "createdAt": true, "pilotAuthorizationRecorded": true, "pilotStarted": true, "productionReleaseAuthorized": true, "patientUseAuthorized": true, "boundary": true, "hash": true,
+            "eventType": { "const": "receipt-verified" },
+            "receipt": { "$ref": "#/$defs/receipt" },
+            "receiptFingerprint": { "$ref": "#/$defs/hash" },
+            "keyFingerprint": { "$ref": "#/$defs/hash" },
+            "assertionCount": { "type": "integer", "minimum": 1, "maximum": 36 },
+            "cryptographicSignatureVerified": { "const": true },
+            "scopeVerificationRecorded": { "const": true }
+          }
+        }
+      ]
+    }
+  }
+}

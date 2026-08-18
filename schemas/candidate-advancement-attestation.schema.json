@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/candidate-advancement-attestation.schema.json",
+  "title": "PERL candidate cycle-action or advancement attestation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contractVersion", "attestationId", "challengeId", "nonce", "registryFingerprint", "packageHash", "purpose", "keyId", "issuedAt", "decision", "contentBoundary", "signature"],
+  "properties": {
+    "contractVersion": { "enum": ["perl-candidate-cycle-action-attestation/1.0", "perl-candidate-advancement-attestation/1.0"] },
+    "attestationId": { "type": "string", "pattern": "^FF-(CYCLE-ACTION|CANDIDATE-ADVANCEMENT)-ATTEST-[A-Z0-9-]{3,80}$" },
+    "challengeId": { "type": "string", "pattern": "^FF-(CYCLE-ACTION|CANDIDATE-ADVANCEMENT)-CHALLENGE-[A-F0-9-]{20,80}$" },
+    "nonce": { "type": "string", "pattern": "^[A-Za-z0-9_-]{43}$" },
+    "registryFingerprint": { "$ref": "#/$defs/hash" },
+    "packageHash": { "$ref": "#/$defs/hash" },
+    "purpose": { "$ref": "candidate-advancement-registry.schema.json#/$defs/purpose" },
+    "keyId": { "type": "string", "pattern": "^FF-(CYCLE-ACTION|CANDIDATE-ADVANCEMENT)-KEY-[A-Z0-9-]{3,80}$" },
+    "issuedAt": { "type": "string", "format": "date-time" },
+    "decision": { "oneOf": [{ "$ref": "#/$defs/clinicalCycle" }, { "$ref": "#/$defs/custody" }, { "$ref": "#/$defs/clinicalFit" }, { "$ref": "#/$defs/securityFit" }, { "$ref": "#/$defs/integrationFit" }, { "$ref": "#/$defs/sponsorFreeze" }] },
+    "contentBoundary": { "$ref": "candidate-advancement-challenge.schema.json#/$defs/boundary" },
+    "signature": { "$ref": "#/$defs/signature" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "signature": { "type": "object", "additionalProperties": false, "required": ["algorithm", "keyId", "value"], "properties": { "algorithm": { "const": "Ed25519" }, "keyId": { "type": "string", "pattern": "^FF-(CYCLE-ACTION|CANDIDATE-ADVANCEMENT)-KEY-[A-Z0-9-]{3,80}$" }, "value": { "type": "string", "pattern": "^[A-Za-z0-9_-]{86}$" } } },
+    "clinicalCycle": { "type": "object", "additionalProperties": false, "required": ["independentResultAttestationFingerprint", "clinicalActionReferenceHash", "cycleAction", "outcome"], "properties": { "independentResultAttestationFingerprint": { "$ref": "#/$defs/hash" }, "clinicalActionReferenceHash": { "$ref": "#/$defs/hash" }, "cycleAction": { "enum": ["close-this-refinement-cycle", "continue-refinement", "hold-study"] }, "outcome": { "const": "clinical-cycle-action-recorded" } } },
+    "custody": { "type": "object", "additionalProperties": false, "required": ["clinicalCycleActionAttestationFingerprint", "custodyReferenceHash", "cycleAction", "outcome"], "properties": { "clinicalCycleActionAttestationFingerprint": { "$ref": "#/$defs/hash" }, "custodyReferenceHash": { "$ref": "#/$defs/hash" }, "cycleAction": { "enum": ["close-this-refinement-cycle", "continue-refinement", "hold-study"] }, "outcome": { "const": "cycle-action-frozen" } } },
+    "clinicalFit": { "type": "object", "additionalProperties": false, "required": ["candidatePackageHash", "cycleActionAttestationFingerprint", "clinicalEvidenceReferenceHash", "clinicalSuitability", "outcome"], "properties": { "candidatePackageHash": { "$ref": "#/$defs/hash" }, "cycleActionAttestationFingerprint": { "$ref": "#/$defs/hash" }, "clinicalEvidenceReferenceHash": { "$ref": "#/$defs/hash" }, "clinicalSuitability": { "enum": ["fit-for-integration-readiness", "retain-and-refine", "hold"] }, "outcome": { "const": "clinical-suitability-recorded" } } },
+    "securityFit": { "type": "object", "additionalProperties": false, "required": ["clinicalSuitabilityAttestationFingerprint", "securityEvidenceReferenceHash", "transportFit", "outcome"], "properties": { "clinicalSuitabilityAttestationFingerprint": { "$ref": "#/$defs/hash" }, "securityEvidenceReferenceHash": { "$ref": "#/$defs/hash" }, "transportFit": { "enum": ["fit-for-controlled-integration", "not-fit", "hold"] }, "outcome": { "const": "privacy-security-fit-recorded" } } },
+    "integrationFit": { "type": "object", "additionalProperties": false, "required": ["priorAttestationFingerprints", "ownerEvidenceReferenceHash", "integrationFit", "outcome"], "properties": { "priorAttestationFingerprints": { "type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": { "$ref": "#/$defs/hash" } }, "ownerEvidenceReferenceHash": { "$ref": "#/$defs/hash" }, "integrationFit": { "enum": ["fit-for-eqpass-integration-readiness", "not-fit", "hold"] }, "outcome": { "const": "eqpass-integration-fit-recorded" } } },
+    "sponsorFreeze": { "type": "object", "additionalProperties": false, "required": ["priorAttestationFingerprints", "candidatePackageHash", "sponsorDecisionReferenceHash", "advancementDecision", "outcome"], "properties": { "priorAttestationFingerprints": { "type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": { "$ref": "#/$defs/hash" } }, "candidatePackageHash": { "$ref": "#/$defs/hash" }, "sponsorDecisionReferenceHash": { "$ref": "#/$defs/hash" }, "advancementDecision": { "enum": ["advance-exact-candidate-to-integration-readiness", "retain-baseline-and-refine", "hold-candidate-decision"] }, "outcome": { "const": "candidate-advancement-frozen" } } }
+  }
+}

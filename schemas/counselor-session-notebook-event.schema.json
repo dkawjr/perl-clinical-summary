@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.local/schemas/counselor-session-notebook-event.schema.json",
+  "title": "PERL counselor session rehearsal notebook event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "sequence",
+    "previousHash",
+    "contractVersion",
+    "type",
+    "sessionId",
+    "decisionId",
+    "disposition",
+    "finding",
+    "evidenceSource",
+    "assessmentId",
+    "evidenceSnapshot",
+    "counselorIdentityVerified",
+    "attendanceRecorded",
+    "trainingCompleted",
+    "clinicalDecisionAccepted",
+    "counselorReferenceAccepted",
+    "protocolFrozen",
+    "independentReviewCompleted",
+    "accuracyEstablished",
+    "reliabilityEstablished",
+    "clinicalValidation",
+    "pilotAuthorized",
+    "productionReleaseAuthorized",
+    "patientUseAuthorized",
+    "actor",
+    "createdAt",
+    "note",
+    "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "pattern": "^[0-9a-fA-F-]{20,40}$" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" },
+    "contractVersion": { "const": "perl-counselor-session-notebook/1.0" },
+    "type": { "const": "counselor-session-rehearsal-note-recorded" },
+    "sessionId": { "enum": ["language-safety", "usefulness-workflow", "freeze-handoff"] },
+    "decisionId": {
+      "enum": [
+        "indicator-language",
+        "uncertainty-pattern",
+        "evidence-citation",
+        "critical-screen-route",
+        "prohibited-claims",
+        "source-fidelity",
+        "clinical-restraint",
+        "next-conversation-utility",
+        "correction-burden",
+        "workflow-time",
+        "reference-readiness",
+        "change-register",
+        "analysis-plan-readiness",
+        "unresolved-risk",
+        "independent-handoff"
+      ]
+    },
+    "disposition": { "enum": ["carry-forward-for-rehearsal", "revise-before-next-rehearsal", "defer-awaiting-evidence", "stopping-concern"] },
+    "finding": { "enum": ["source-supported", "needs-more-evidence", "overreach-risk", "omission-risk", "workflow-friction", "reviewer-disagreement", "external-prerequisite-missing"] },
+    "evidenceSource": { "enum": ["synthetic-regression", "blind-outcome-ledger", "reviewer-feedback-ledger", "revision-ledger", "safety-incident-ledger", "workflow-timing-ledger", "source-contract-rfi", "no-local-evidence"] },
+    "assessmentId": {
+      "oneOf": [
+        { "type": "null" },
+        { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]{3,40}$" }
+      ]
+    },
+    "evidenceSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["counts", "heads", "caseSet", "sourceContractStatus"],
+      "properties": {
+        "counts": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["pairedBlindComparisons", "structuredFeedbackEntries", "revisions", "workflowTimingObservations", "openSafetyIncidents"],
+          "properties": {
+            "pairedBlindComparisons": { "type": "integer", "minimum": 0 },
+            "structuredFeedbackEntries": { "type": "integer", "minimum": 0 },
+            "revisions": { "type": "integer", "minimum": 0 },
+            "workflowTimingObservations": { "type": "integer", "minimum": 0 },
+            "openSafetyIncidents": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "heads": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["feedback", "revisions", "blindOutcomes", "incidents", "workflowTiming"],
+          "properties": {
+            "feedback": { "$ref": "#/$defs/nullableHash" },
+            "revisions": { "$ref": "#/$defs/nullableHash" },
+            "blindOutcomes": { "$ref": "#/$defs/nullableHash" },
+            "incidents": { "$ref": "#/$defs/nullableHash" },
+            "workflowTiming": { "$ref": "#/$defs/nullableHash" }
+          }
+        },
+        "caseSet": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "version"],
+          "properties": {
+            "id": { "type": "string", "minLength": 2 },
+            "version": { "type": "string", "minLength": 1 }
+          }
+        },
+        "sourceContractStatus": { "const": "proposed-rfi-only" }
+      }
+    },
+    "counselorIdentityVerified": { "const": false },
+    "attendanceRecorded": { "const": false },
+    "trainingCompleted": { "const": false },
+    "clinicalDecisionAccepted": { "const": false },
+    "counselorReferenceAccepted": { "const": false },
+    "protocolFrozen": { "const": false },
+    "independentReviewCompleted": { "const": false },
+    "accuracyEstablished": { "const": false },
+    "reliabilityEstablished": { "const": false },
+    "clinicalValidation": { "const": false },
+    "pilotAuthorized": { "const": false },
+    "productionReleaseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 120 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "sessionId": { "const": "language-safety" } }, "required": ["sessionId"] },
+      "then": { "properties": { "decisionId": { "enum": ["indicator-language", "uncertainty-pattern", "evidence-citation", "critical-screen-route", "prohibited-claims"] } } }
+    },
+    {
+      "if": { "properties": { "sessionId": { "const": "usefulness-workflow" } }, "required": ["sessionId"] },
+      "then": { "properties": { "decisionId": { "enum": ["source-fidelity", "clinical-restraint", "next-conversation-utility", "correction-burden", "workflow-time"] } } }
+    },
+    {
+      "if": { "properties": { "sessionId": { "const": "freeze-handoff" } }, "required": ["sessionId"] },
+      "then": { "properties": { "decisionId": { "enum": ["reference-readiness", "change-register", "analysis-plan-readiness", "unresolved-risk", "independent-handoff"] } } }
+    }
+  ],
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "nullableHash": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "#/$defs/hash" }
+      ]
+    }
+  }
+}

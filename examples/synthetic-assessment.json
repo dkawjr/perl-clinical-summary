@@ -1,0 +1,31 @@
+{
+  "id": "FF-TEST-2501-D",
+  "completedAt": "Demo · 2:15 PM",
+  "duration": "10:08",
+  "status": "ready",
+  "reviewer": "Unassigned",
+  "source": "Synthetic import example",
+  "itemsAnswered": 105,
+  "scales": {
+    "depression": 18,
+    "anxiety": 24,
+    "anger": 12,
+    "gpi": 61,
+    "phobicAvoidance": 1,
+    "obsessiveCompulsive": 2,
+    "psychoticism": 1,
+    "suicideRisk": 0,
+    "violenceRisk": 0
+  },
+  "subscales": [
+    { "label": "Dysphoria", "domain": "Depression", "score": 2, "level": "minimal", "evidence": "Synthetic item set" },
+    { "label": "Unsustained effort", "domain": "Depression", "score": 3, "level": "minimal", "evidence": "Synthetic item set" },
+    { "label": "Negative cognition", "domain": "Depression", "score": 3, "level": "minimal", "evidence": "Synthetic item set" },
+    { "label": "Anhedonia", "domain": "Depression", "score": 3, "level": "minimal", "evidence": "Synthetic item set" },
+    { "label": "Apprehension", "domain": "Anxiety", "score": 8, "level": "mild", "evidence": "Synthetic item set" },
+    { "label": "Interpersonal anxiety", "domain": "Anxiety", "score": 3, "level": "mild", "evidence": "Synthetic item set" },
+    { "label": "Physiological arousal", "domain": "Anxiety", "score": 3, "level": "mild", "evidence": "Synthetic item set" },
+    { "label": "Angry mood", "domain": "Anger", "score": 2, "level": "minimal", "evidence": "Synthetic item set" }
+  ],
+  "criticalResponses": []
+}

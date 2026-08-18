@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/perl/schemas/delivery-acknowledgement.schema.json",
+  "title": "PERL synthetic attachment delivery acknowledgement",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion", "requestId", "jobId", "idempotencyKey", "environment", "status",
+    "remoteWriteClaimed", "receiptId", "receivedAt"
+  ],
+  "properties": {
+    "contractVersion": { "const": "perl-attachment-delivery-ack/0.1" },
+    "requestId": { "type": "string", "format": "uuid" },
+    "jobId": { "type": "string", "format": "uuid" },
+    "idempotencyKey": { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]+$", "minLength": 20, "maxLength": 240 },
+    "environment": { "const": "calibration" },
+    "status": { "const": "rehearsed-not-attached" },
+    "remoteWriteClaimed": { "const": false },
+    "receiptId": { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]+$" },
+    "receivedAt": { "type": "string", "format": "date-time" }
+  },
+  "x-status": "synthetic-rehearsal-only",
+  "x-authoritative-contract": false
+}

@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.example/schemas/recovery-rehearsal-event.schema.json",
+  "title": "PERL isolated recovery rehearsal event",
+  "description": "Tamper-evident evidence from restoring the local synthetic sandbox into an ephemeral isolated environment. This is not a production backup or an RPO/RTO claim.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status", "mode",
+    "productionRecoveryClaimed", "rpoConfigured", "rtoConfigured", "sourceSchemaVersion",
+    "sourceFileHash", "restoredFileHash", "sourceStateDigest", "restoredStateDigest",
+    "recordCounts", "recordCountsHash", "reconciledRecords", "ledgerCount",
+    "ledgerEvidenceHash", "verification", "errorCode", "actor", "startedAt", "completedAt",
+    "durationMs", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "format": "uuid" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "oneOf": [{ "const": "GENESIS" }, { "$ref": "#/$defs/hash" }] },
+    "contractVersion": { "const": "perl-recovery-rehearsal/1.0" },
+    "type": { "const": "isolated-restore-rehearsed" },
+    "status": { "enum": ["verified", "failed"] },
+    "mode": { "const": "ephemeral-isolated-copy" },
+    "productionRecoveryClaimed": { "const": false },
+    "rpoConfigured": { "const": false },
+    "rtoConfigured": { "const": false },
+    "sourceSchemaVersion": { "type": "integer", "minimum": 16 },
+    "sourceFileHash": { "$ref": "#/$defs/hash" },
+    "restoredFileHash": { "oneOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] },
+    "sourceStateDigest": { "$ref": "#/$defs/hash" },
+    "restoredStateDigest": { "oneOf": [{ "$ref": "#/$defs/hash" }, { "type": "null" }] },
+    "recordCounts": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": { "type": "integer", "minimum": 0 }
+    },
+    "recordCountsHash": { "$ref": "#/$defs/hash" },
+    "reconciledRecords": { "type": "integer", "minimum": 0 },
+    "ledgerCount": { "type": "integer", "minimum": 1 },
+    "ledgerEvidenceHash": { "$ref": "#/$defs/hash" },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fileHashMatch", "stateDigestMatch", "schemaMatch", "recordCountsMatch",
+        "ledgerEvidenceMatch", "allLedgersValid", "sourceFileOwnerOnly",
+        "restoredFileOwnerOnly", "isolationDirectoryOwnerOnly", "isolatedCopyRemoved"
+      ],
+      "properties": {
+        "fileHashMatch": { "type": "boolean" },
+        "stateDigestMatch": { "type": "boolean" },
+        "schemaMatch": { "type": "boolean" },
+        "recordCountsMatch": { "type": "boolean" },
+        "ledgerEvidenceMatch": { "type": "boolean" },
+        "allLedgersValid": { "type": "boolean" },
+        "sourceFileOwnerOnly": { "type": "boolean" },
+        "restoredFileOwnerOnly": { "type": "boolean" },
+        "isolationDirectoryOwnerOnly": { "type": "boolean" },
+        "isolatedCopyRemoved": { "type": "boolean" }
+      }
+    },
+    "errorCode": { "oneOf": [{ "type": "string", "pattern": "^[A-Z][A-Z0-9_]{2,63}$" }, { "type": "null" }] },
+    "actor": { "type": "string", "minLength": 2, "maxLength": 48 },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "completedAt": { "type": "string", "format": "date-time" },
+    "durationMs": { "type": "integer", "minimum": 0 },
+    "note": { "type": "string", "minLength": 1, "maxLength": 320 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

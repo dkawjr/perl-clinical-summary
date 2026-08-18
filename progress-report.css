@@ -1,0 +1,111 @@
+:root {
+  --ink: #102f32;
+  --paper: #fffdf7;
+  --paper-2: #f3efe5;
+  --line: #c9cec7;
+  --muted: #65736f;
+  --mint: #84b5a9;
+  --gold: #d8a75f;
+  --rust: #a85d46;
+  --serif: Georgia, "Times New Roman", serif;
+  --sans: "Avenir Next", Avenir, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; color: var(--ink); background: #dfe3de; font-family: var(--sans); font-size: 11px; line-height: 1.45; -webkit-font-smoothing: antialiased; }
+button, a { font: inherit; }
+button:focus-visible, a:focus-visible { outline: 3px solid rgba(216,167,95,.55); outline-offset: 2px; }
+.progress-report-toolbar { position: sticky; top: 0; z-index: 10; display: flex; min-height: 54px; align-items: center; justify-content: space-between; padding: 0 max(20px,calc((100vw - 8.5in)/2)); color: #eef5f1; background: #0b292b; box-shadow: 0 5px 18px rgba(9,32,33,.18); }
+.progress-report-toolbar a { color: #d9e8e2; font-weight: 700; text-underline-offset: 3px; }
+.progress-report-toolbar div { display: flex; align-items: center; gap: 13px; }
+.progress-report-toolbar span { color: #9dbeb5; font-size: 8px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+.progress-report-toolbar button { min-height: 44px; padding: 8px 13px; border: 1px solid rgba(255,255,255,.25); border-radius: 3px; color: #102f32; background: #f4e5ca; font-weight: 750; cursor: pointer; }
+.progress-report-sheet { position: relative; width: min(8.5in,100%); min-height: 11in; margin: 22px auto 44px; overflow: hidden; border: 1px solid #c4cac3; background-color: var(--paper); background-image: linear-gradient(rgba(16,47,50,.025) 1px, transparent 1px), linear-gradient(90deg,rgba(16,47,50,.025) 1px,transparent 1px); background-size: 24px 24px; box-shadow: 0 24px 70px rgba(20,45,44,.16); }
+.progress-report-header { display: flex; min-height: 74px; align-items: center; justify-content: space-between; padding: 17px 32px; color: #f7f4eb; background: var(--ink); }
+.progress-report-brand { display: flex; align-items: center; gap: 10px; }
+.progress-report-brand > span { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid rgba(255,255,255,.25); border-radius: 11px; color: var(--gold); font: 700 17px var(--serif); }
+.progress-report-brand strong, .progress-report-brand small { display: block; }
+.progress-report-brand strong { font-size: 12px; letter-spacing: .2em; }
+.progress-report-brand small { margin-top: 2px; color: #a9c1ba; font-size: 7px; text-transform: uppercase; letter-spacing: .08em; }
+.progress-report-state { text-align: right; }
+.progress-report-state span, .progress-report-state small { display: block; }
+.progress-report-state span { color: #f0c27d; font-size: 8px; font-weight: 750; letter-spacing: .12em; text-transform: uppercase; }
+.progress-report-state small { margin-top: 4px; color: #9db8b1; font: 7px var(--mono); }
+.progress-report-title-block { display: grid; grid-template-columns: minmax(0,1fr) 158px; gap: 30px; padding: 28px 34px 24px; border-bottom: 1px solid var(--line); }
+.section-label { display: block; color: #6d7c77; font-size: 7px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+.progress-report-title-block h1 { max-width: 540px; margin: 8px 0 10px; font: 400 30px/1.02 var(--serif); letter-spacing: -.025em; }
+.progress-report-title-block p { max-width: 585px; margin: 0; color: #485a56; font: 10.25px/1.5 var(--serif); }
+.progress-report-title-block dl { margin: 0; border-top: 1px solid var(--line); }
+.progress-report-title-block dl div { padding: 6px 0; border-bottom: 1px solid var(--line); }
+.progress-report-title-block dt { color: #7a8581; font-size: 6px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+.progress-report-title-block dd { margin: 2px 0 0; font: 7.5px var(--mono); }
+.opening-line { display: grid; grid-template-columns: 102px minmax(0,1fr); gap: 20px; align-items: center; padding: 15px 34px; color: #eaf1ed; background: #21494a; }
+.opening-line > span { color: #a9c8bf; font-size: 7px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.opening-line blockquote { margin: 0; color: #fffaf0; font: italic 16px/1.2 var(--serif); }
+.movement-section, .priority-section { padding: 19px 34px 0; }
+.section-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: 8px; border-bottom: 2px solid var(--ink); }
+.section-head > div { display: flex; align-items: center; gap: 9px; }
+.section-head > div > span { display: grid; width: 24px; height: 24px; place-items: center; border: 1px solid #94aaa3; border-radius: 50%; font: 700 7px var(--mono); }
+.section-head h2 { margin: 0; font: 400 18px/1 var(--serif); }
+.section-head p { margin: 0; color: #71807b; font-size: 7px; }
+.point-head, .movement-row { display: grid; grid-template-columns: minmax(125px,1fr) 64px 24px 64px 112px; gap: 8px; align-items: center; }
+.point-head { padding: 7px 10px 4px; color: #87918d; font-size: 6px; font-weight: 800; letter-spacing: .1em; text-align: center; text-transform: uppercase; }
+.point-head span:first-child { text-align: left; }
+.point-head span:last-child { text-align: right; }
+.movement-list { border-top: 1px solid var(--line); }
+.movement-row { min-height: 42px; padding: 5px 10px; border-bottom: 1px solid #d7dad4; }
+.movement-row > div:first-child span, .movement-row > div:first-child small { display: block; }
+.movement-row > div:first-child span { font-weight: 750; }
+.movement-row > div:first-child small { color: #87908c; font-size: 6px; }
+.movement-row > strong { font: 400 16px var(--serif); text-align: center; }
+.movement-row > i { color: #97a19d; font-style: normal; text-align: center; }
+.movement-delta { text-align: right; }
+.movement-delta b { display: block; color: var(--rust); font: 400 15px var(--serif); }
+.movement-delta small { display: block; color: #796a64; font-size: 6px; font-weight: 800; text-transform: uppercase; }
+.priority-section { padding-top: 18px; }
+.priority-grid { display: grid; grid-template-columns: 1fr 1fr; border-left: 1px solid var(--line); }
+.priority { display: grid; grid-template-columns: 26px minmax(0,1fr); gap: 9px; min-height: 105px; padding: 12px 14px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.priority > span { display: grid; width: 24px; height: 24px; place-items: center; border-radius: 50%; color: #f8f5eb; background: #315c5a; font: 700 7px var(--mono); }
+.priority h3 { margin: 1px 0 4px; font: 600 10px/1.2 var(--sans); }
+.priority p { margin: 0; color: #50605c; font-size: 7.6px; line-height: 1.45; }
+.priority small { display: block; margin-top: 5px; color: #897b70; font-size: 6px; line-height: 1.35; }
+.safety-section { display: grid; grid-template-columns: 190px minmax(0,1fr); gap: 22px; align-items: center; margin: 18px 34px 0; padding: 13px 15px; border: 1px solid #bcd2c9; background: #e5efea; }
+.safety-section h2 { margin: 3px 0 0; font: 400 15px var(--serif); }
+.safety-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.safety-grid > div { display: grid; grid-template-columns: 48px minmax(0,1fr); padding: 7px 9px; border: 1px solid #bfd2cb; background: rgba(255,255,255,.58); }
+.safety-grid span { grid-row: 1 / span 2; align-self: center; color: #58746e; font: 700 6px var(--mono); }
+.safety-grid strong { font-size: 7px; }
+.safety-grid small { color: #6a7d77; font-size: 5.7px; }
+.progress-report-footer { display: grid; grid-template-columns: 1fr 1fr 145px; gap: 18px; margin-top: 19px; padding: 15px 34px 16px; color: #cfdfda; background: var(--ink); }
+.progress-report-footer span { display: block; color: #91b5ab; font-size: 6px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+.progress-report-footer p { margin: 4px 0 0; color: #adc2bc; font-size: 6.3px; line-height: 1.4; }
+.report-provenance code { display: block; margin-top: 5px; color: #e7bd7e; font: 6px var(--mono); }
+.environment-boundary { padding: 7px 34px; color: #687571; background: #e9e5dc; font-size: 6px; font-weight: 800; letter-spacing: .1em; text-align: center; text-transform: uppercase; }
+
+@media (max-width: 720px) {
+  .progress-report-toolbar { position: static; align-items: flex-start; gap: 10px; padding: 10px 14px; }
+  .progress-report-toolbar div { align-items: flex-end; flex-direction: column; gap: 5px; text-align: right; }
+  .progress-report-sheet { min-height: 0; margin: 0; border: 0; }
+  .progress-report-title-block { grid-template-columns: 1fr; padding: 24px 20px 20px; }
+  .progress-report-title-block dl { display: grid; grid-template-columns: 1fr 1fr; }
+  .progress-report-title-block dl div { padding-right: 10px; }
+  .opening-line { grid-template-columns: 1fr; gap: 5px; padding: 14px 20px; }
+  .movement-section, .priority-section { padding-right: 20px; padding-left: 20px; }
+  .section-head { align-items: flex-start; flex-direction: column; gap: 6px; }
+  .point-head, .movement-row { grid-template-columns: minmax(90px,1fr) 40px 16px 40px 74px; gap: 4px; }
+  .priority-grid { grid-template-columns: 1fr; }
+  .safety-section { grid-template-columns: 1fr; margin-right: 20px; margin-left: 20px; }
+  .progress-report-footer { grid-template-columns: 1fr; padding-right: 20px; padding-left: 20px; }
+}
+
+@media print {
+  @page { size: Letter; margin: 0; }
+  body { background: white; }
+  .progress-report-toolbar { display: none; }
+  .progress-report-sheet { width: 8.5in; min-height: 11in; margin: 0; border: 0; box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+}

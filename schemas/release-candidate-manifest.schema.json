@@ -1,0 +1,122 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.org/schemas/release-candidate-manifest.schema.json",
+  "title": "PERL release candidate manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contractVersion",
+    "artifactId",
+    "archiveFilename",
+    "entrypoint",
+    "runtime",
+    "source",
+    "configuration",
+    "sbom",
+    "contents",
+    "authority",
+    "claims",
+    "boundary"
+  ],
+  "properties": {
+    "contractVersion": { "const": "perl-release-candidate-manifest/1.0" },
+    "artifactId": { "type": "string", "pattern": "^perl-rc-[a-f0-9]{20}$" },
+    "archiveFilename": { "type": "string", "pattern": "^PERL-perl-rc-[a-f0-9]{20}\\.tar\\.gz$" },
+    "entrypoint": { "const": "server.mjs" },
+    "runtime": { "const": "node>=18" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["digest", "fileCount", "totalBytes"],
+      "properties": {
+        "digest": { "$ref": "#/$defs/digest" },
+        "fileCount": { "type": "integer", "minimum": 20, "maximum": 512 },
+        "totalBytes": { "type": "integer", "minimum": 1, "maximum": 33554432 }
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "contractVersion"],
+      "properties": {
+        "path": { "const": "release/configuration.json" },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "contractVersion": { "const": "perl-release-configuration/1.0" }
+      }
+    },
+    "sbom": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "format", "specVersion"],
+      "properties": {
+        "path": { "const": "release/sbom.cdx.json" },
+        "sha256": { "$ref": "#/$defs/digest" },
+        "format": { "const": "CycloneDX" },
+        "specVersion": { "const": "1.6" }
+      }
+    },
+    "contents": {
+      "type": "array",
+      "minItems": 20,
+      "maxItems": 512,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "size", "sha256", "mediaType", "mode"],
+        "properties": {
+          "path": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._/-]{0,239}$" },
+          "size": { "type": "integer", "minimum": 0, "maximum": 4194304 },
+          "sha256": { "$ref": "#/$defs/digest" },
+          "mediaType": { "type": "string", "minLength": 3, "maxLength": 96 },
+          "mode": { "const": "0644" }
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["localBuildVerified", "externalSignatureRequired", "deploymentAuthorityExternal"],
+      "properties": {
+        "localBuildVerified": { "const": true },
+        "externalSignatureRequired": { "const": true },
+        "deploymentAuthorityExternal": { "const": true }
+      }
+    },
+    "claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "syntheticOnly",
+        "runtimeStateIncluded",
+        "phiIncluded",
+        "credentialsIncluded",
+        "privateKeysIncluded",
+        "productionSignatureVerified",
+        "azureDeploymentPerformed",
+        "eqpassProductionConnected",
+        "clinicalValidation",
+        "clinicalReleaseAuthorized",
+        "trafficActivationAuthorized",
+        "patientUseAuthorized"
+      ],
+      "properties": {
+        "syntheticOnly": { "const": true },
+        "runtimeStateIncluded": { "const": false },
+        "phiIncluded": { "const": false },
+        "credentialsIncluded": { "const": false },
+        "privateKeysIncluded": { "const": false },
+        "productionSignatureVerified": { "const": false },
+        "azureDeploymentPerformed": { "const": false },
+        "eqpassProductionConnected": { "const": false },
+        "clinicalValidation": { "const": false },
+        "clinicalReleaseAuthorized": { "const": false },
+        "trafficActivationAuthorized": { "const": false },
+        "patientUseAuthorized": { "const": false }
+      }
+    },
+    "boundary": { "type": "string", "minLength": 180, "maxLength": 600 }
+  },
+  "$defs": {
+    "digest": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+  }
+}

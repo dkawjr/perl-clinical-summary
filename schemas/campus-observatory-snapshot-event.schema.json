@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focused-future.example/schemas/campus-observatory-snapshot-event.schema.json",
+  "title": "PERL Campus Operations Observatory Snapshot Event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "status", "observatoryFingerprint", "candidateId", "reviewMomentId", "customizationPositionId", "operatingCounts", "measureStates", "evidenceContext", "decision", "aggregateOnly", "syntheticOnly", "sourceClaimsVerifiedExternally", "recordRowsIncluded", "sourceDenominatorVerified", "siteIdentityVerified", "counselorIdentityVerified", "trainingVerified", "quarterOccurred", "customizationApproved", "reviewCompleted", "clinicalOutcomeEstablished", "pilotAuthorized", "pilotStarted", "productionReleaseAuthorized", "patientUseAuthorized", "phiIncluded", "actor", "createdAt", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 120 },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "$ref": "#/$defs/chain" },
+    "contractVersion": { "const": "perl-campus-operations-observatory/1.0" },
+    "type": { "const": "aggregate-quarterly-review-posture-recorded" },
+    "status": { "const": "synthetic-review-posture-only" },
+    "observatoryFingerprint": { "$ref": "#/$defs/hash" },
+    "candidateId": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$" },
+    "reviewMomentId": { "enum": ["admission", "quarter-one", "midyear", "closeout"] },
+    "customizationPositionId": { "enum": ["no-position-recorded", "keep-standard-page", "evaluate-one-survey-question", "defer-customization"] },
+    "operatingCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assessmentsEligible", "summariesGenerated", "reviewsDisposed", "summariesApproved", "correctionRecords", "criticalScreens", "criticalRoutesRequired", "timingObservations", "usefulnessRatings", "openIncidents"],
+      "properties": {
+        "assessmentsEligible": { "type": "integer", "minimum": 0 },
+        "summariesGenerated": { "type": "integer", "minimum": 0 },
+        "reviewsDisposed": { "type": "integer", "minimum": 0 },
+        "summariesApproved": { "type": "integer", "minimum": 0 },
+        "correctionRecords": { "type": "integer", "minimum": 0 },
+        "criticalScreens": { "type": "integer", "minimum": 0 },
+        "criticalRoutesRequired": { "type": "integer", "minimum": 0 },
+        "timingObservations": { "type": "integer", "minimum": 0 },
+        "usefulnessRatings": { "type": "integer", "minimum": 0 },
+        "openIncidents": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "measureStates": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "numerator", "denominator", "percentage", "state"],
+        "properties": {
+          "id": { "enum": ["eligible-activity", "review-completion", "correction-burden", "critical-routing", "workflow-time", "counselor-usefulness"] },
+          "numerator": { "type": "integer", "minimum": 0 },
+          "denominator": { "type": ["integer", "null"], "minimum": 0 },
+          "percentage": { "type": ["number", "null"], "minimum": 0, "maximum": 100 },
+          "state": { "enum": ["synthetic-observation", "awaiting-evidence"] }
+        }
+      }
+    },
+    "evidenceContext": { "type": "object" },
+    "decision": { "const": "working-review-posture-recorded-authority-remains-external" },
+    "aggregateOnly": { "const": true },
+    "syntheticOnly": { "const": true },
+    "sourceClaimsVerifiedExternally": { "const": false },
+    "recordRowsIncluded": { "const": false },
+    "sourceDenominatorVerified": { "const": false },
+    "siteIdentityVerified": { "const": false },
+    "counselorIdentityVerified": { "const": false },
+    "trainingVerified": { "const": false },
+    "quarterOccurred": { "const": false },
+    "customizationApproved": { "const": false },
+    "reviewCompleted": { "const": false },
+    "clinicalOutcomeEstablished": { "const": false },
+    "pilotAuthorized": { "const": false },
+    "pilotStarted": { "const": false },
+    "productionReleaseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "phiIncluded": { "const": false },
+    "actor": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 220, "maxLength": 700 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "chain": { "type": "string", "pattern": "^(GENESIS|[a-f0-9]{64})$" }
+  }
+}

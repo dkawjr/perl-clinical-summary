@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://focusedfuture.org/schemas/counselor-reference-adjudication-event.schema.json",
+  "title": "PERL source-only counselor reference adjudication dossier event",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id", "sequence", "previousHash", "contractVersion", "type", "dossierFingerprint", "caseSet",
+    "referenceDraftChain", "counts", "cases", "gateStates", "counselorIdentityVerified",
+    "authorshipIndependenceEstablished", "adjudicatorAssigned", "adjudicationCompleted", "referenceAccepted",
+    "protocolFrozen", "accuracyEstablished", "reliabilityEstablished", "clinicalValidation",
+    "trialExecutionAuthorized", "pilotAuthorized", "productionReleaseAuthorized", "patientUseAuthorized",
+    "actor", "createdAt", "note", "hash"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 20, "maxLength": 40, "pattern": "^[0-9A-Fa-f-]+$" },
+    "sequence": { "type": "integer", "minimum": 1 },
+    "previousHash": { "anyOf": [{ "const": "GENESIS" }, { "$ref": "#/$defs/hash" }] },
+    "contractVersion": { "const": "perl-counselor-reference-adjudication-dossier/1.0" },
+    "type": { "const": "counselor-reference-adjudication-dossier-sealed" },
+    "dossierFingerprint": { "$ref": "#/$defs/hash" },
+    "caseSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "version": { "type": "string", "minLength": 1, "maxLength": 40 }
+      }
+    },
+    "referenceDraftChain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["count", "head"],
+      "properties": {
+        "count": { "type": "integer", "minimum": 0 },
+        "head": { "anyOf": [{ "type": "null" }, { "$ref": "#/$defs/hash" }] }
+      }
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["developmentCases", "candidateDrafts", "reviewerCodesObserved", "locallyComparableCases", "contentVisibleCases", "externalDecisionGates", "acceptedReferences"],
+      "properties": {
+        "developmentCases": { "type": "integer", "minimum": 0 },
+        "candidateDrafts": { "type": "integer", "minimum": 0 },
+        "reviewerCodesObserved": { "type": "integer", "minimum": 0 },
+        "locallyComparableCases": { "type": "integer", "minimum": 0 },
+        "contentVisibleCases": { "type": "integer", "minimum": 0 },
+        "externalDecisionGates": { "type": "integer", "minimum": 5, "maximum": 5 },
+        "acceptedReferences": { "const": 0 }
+      }
+    },
+    "cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["assessmentId", "sourceProfileHash", "draftHashes", "draftCount", "reviewerCodeCount", "locallyComparable"],
+        "properties": {
+          "assessmentId": { "type": "string", "pattern": "^FF-TEST-[A-Z0-9-]{3,40}$" },
+          "sourceProfileHash": { "$ref": "#/$defs/hash" },
+          "draftHashes": { "type": "array", "items": { "$ref": "#/$defs/hash" }, "uniqueItems": true },
+          "draftCount": { "type": "integer", "minimum": 0 },
+          "reviewerCodeCount": { "type": "integer", "minimum": 0 },
+          "locallyComparable": { "type": "boolean" }
+        }
+      }
+    },
+    "gateStates": {
+      "type": "array",
+      "minItems": 8,
+      "maxItems": 8,
+      "prefixItems": [
+        { "$ref": "#/$defs/developmentManifestGate" },
+        { "$ref": "#/$defs/sourceLineageGate" },
+        { "$ref": "#/$defs/candidateOverlapGate" },
+        { "$ref": "#/$defs/authorshipGate" },
+        { "$ref": "#/$defs/adjudicatorGate" },
+        { "$ref": "#/$defs/languageGate" },
+        { "$ref": "#/$defs/referenceDecisionGate" },
+        { "$ref": "#/$defs/protocolFreezeGate" }
+      ],
+      "items": false
+    },
+    "counselorIdentityVerified": { "const": false },
+    "authorshipIndependenceEstablished": { "const": false },
+    "adjudicatorAssigned": { "const": false },
+    "adjudicationCompleted": { "const": false },
+    "referenceAccepted": { "const": false },
+    "protocolFrozen": { "const": false },
+    "accuracyEstablished": { "const": false },
+    "reliabilityEstablished": { "const": false },
+    "clinicalValidation": { "const": false },
+    "trialExecutionAuthorized": { "const": false },
+    "pilotAuthorized": { "const": false },
+    "productionReleaseAuthorized": { "const": false },
+    "patientUseAuthorized": { "const": false },
+    "actor": { "type": "string", "minLength": 2, "maxLength": 48, "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}$" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "note": { "type": "string", "minLength": 190, "maxLength": 1200 },
+    "hash": { "$ref": "#/$defs/hash" }
+  },
+  "$defs": {
+    "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "localGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "status": { "enum": ["local-structure-ready", "local-evidence-current", "local-evidence-current-unverified", "local-evidence-required"] }
+      }
+    },
+    "externalGate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "status": { "const": "external-decision-required" }
+      }
+    },
+    "developmentManifestGate": { "allOf": [{ "$ref": "#/$defs/localGate" }, { "properties": { "id": { "const": "development-manifest" } } }] },
+    "sourceLineageGate": { "allOf": [{ "$ref": "#/$defs/localGate" }, { "properties": { "id": { "const": "source-lineage" } } }] },
+    "candidateOverlapGate": { "allOf": [{ "$ref": "#/$defs/localGate" }, { "properties": { "id": { "const": "candidate-overlap" } } }] },
+    "authorshipGate": { "allOf": [{ "$ref": "#/$defs/externalGate" }, { "properties": { "id": { "const": "authorship-independence" } } }] },
+    "adjudicatorGate": { "allOf": [{ "$ref": "#/$defs/externalGate" }, { "properties": { "id": { "const": "named-adjudicator" } } }] },
+    "languageGate": { "allOf": [{ "$ref": "#/$defs/externalGate" }, { "properties": { "id": { "const": "language-safety-standard" } } }] },
+    "referenceDecisionGate": { "allOf": [{ "$ref": "#/$defs/externalGate" }, { "properties": { "id": { "const": "reference-decision" } } }] },
+    "protocolFreezeGate": { "allOf": [{ "$ref": "#/$defs/externalGate" }, { "properties": { "id": { "const": "protocol-freeze" } } }] }
+  }
+}
