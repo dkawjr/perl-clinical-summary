@@ -54,10 +54,10 @@ test("complete synthetic fixtures report full coverage", () => {
   assert.equal(coverageScore(assessments[0]), 100);
 });
 
-test("imports reject identifiers that are not visibly synthetic", () => {
+test("imports require non-identifying internal record IDs", () => {
   const unsafe = structuredClone(assessments[0]);
   unsafe.id = "0000076";
-  assert.ok(validateAssessment(unsafe).some(error => error.includes("synthetic ID")));
+  assert.ok(validateAssessment(unsafe).some(error => error.includes("non-identifying record ID")));
   assert.deepEqual(validateAssessment(assessments[0]), []);
 });
 
@@ -75,13 +75,13 @@ test("canonical payload validation catches incomplete e-QPASS fixtures", () => {
   assert.ok(errors.some(error => error.includes("anxiety")));
 });
 
-test("canonical payload rejects direct-identifier fields and unlabeled sources", () => {
+test("canonical payload rejects direct-identifier fields and unknown sources", () => {
   const unsafe = structuredClone(assessments[1]);
   unsafe.email = "person@example.org";
   unsafe.source = "production export";
   const errors = validateAssessment(unsafe);
   assert.ok(errors.some(error => error.includes("direct-identifier")));
-  assert.ok(errors.some(error => error.includes("explicitly identify")));
+  assert.ok(errors.some(error => error.includes("identify e-QPASS or PERL")));
 });
 
 test("published schema and example fixture stay aligned with runtime validation", async () => {

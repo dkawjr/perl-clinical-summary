@@ -6,9 +6,10 @@ import { buildSyntheticAssessmentFromScoreForm } from "./src/test-form-entry.js"
 import { parseEqpassScoreReport, readEqpassPdfPages } from "./src/eqpass-pdf.js";
 
 const DEFAULT_REVIEWER = "REVIEWER-01";
-const HOSTED_EVALUATION = ["http:", "https:"].includes(window.location.protocol)
-  && !["127.0.0.1", "localhost"].includes(window.location.hostname);
-const HOSTED_EVALUATION_STORAGE_KEY = "perl-hosted-evaluation-v1";
+const HOSTED_EVALUATION = new URLSearchParams(window.location.search).get("mode") === "product"
+  || (["http:", "https:"].includes(window.location.protocol)
+    && !["127.0.0.1", "localhost"].includes(window.location.hostname));
+const HOSTED_EVALUATION_STORAGE_KEY = "perl-product-workspace-v2";
 let mobileNavigationBound = false;
 
 function storedReviewerCode() {
@@ -203,7 +204,7 @@ const AUDIENCE_PRESENTATION = Object.freeze({
     boundary: "Clinician decision-support draft. Approval applies only to this clinician artifact.",
     editLabel: "Edit clinician narrative",
     editKicker: "Clinician edit",
-    editHelp: "Edit for clinical accuracy and clarity. PERL records the change as reviewer feedback for calibration.",
+    editHelp: "Edit for clinical accuracy and clarity. PERL records the change in the review history.",
     printLabel: "Clinician report / PDF"
   }),
   care: Object.freeze({
@@ -240,7 +241,7 @@ const AUDIENCE_PRESENTATION = Object.freeze({
 
 const STUDIO_VIEWS = new Set(["studio", "campus", "calibration", "governance"]);
 const FALLBACK_WORKSPACE_OPTIONS = Object.freeze({
-  modes: [{ id: "clinical", label: "Clinical", note: "One record, one accountable review decision." }, { id: "studio", label: "Practice studio", note: "Configure the workspace and inspect aggregate patterns." }],
+  modes: [{ id: "clinical", label: "Clinical", note: "One record, one accountable review decision." }, { id: "studio", label: "Administration", note: "Configure the workspace and inspect aggregate patterns." }],
   clinicianRoles: [
     { id: "licensed-clinician", label: "Licensed clinician", note: "Prioritizes evidence review, clinical questions, and the approval boundary." },
     { id: "clinical-supervisor", label: "Clinical supervisor", note: "Adds quality, lineage, and coaching context around the review." },
@@ -253,6 +254,29 @@ const FALLBACK_WORKSPACE_OPTIONS = Object.freeze({
   modules: [{ id: "metadata", label: "Record metadata" }, { id: "evidence", label: "Score evidence" }, { id: "patterns", label: "Pattern checks" }, { id: "questions", label: "Follow-up questions" }, { id: "quality", label: "Draft quality" }, { id: "handoff", label: "e-QPASS handoff" }, { id: "lineage", label: "Revision lineage" }, { id: "audit", label: "Audit trail" }],
   demographicDimensions: [{ id: "age-band", label: "Age band" }, { id: "gender", label: "Gender" }, { id: "first-generation", label: "First-generation status" }, { id: "service-language", label: "Service language" }]
 });
+
+const FALLBACK_DEMOGRAPHIC_DIMENSIONS = Object.freeze([
+  { id: "age-band", label: "Age band", question: "Does review access or routing look meaningfully different across age bands?", cells: [
+    { label: "18–20", count: 13, reviewCompletion: 85, directReviewRouting: 15, averageGpi: 76, suppressed: false },
+    { label: "21–24", count: 18, reviewCompletion: 89, directReviewRouting: 11, averageGpi: 82, suppressed: false },
+    { label: "25+", count: 11, reviewCompletion: 82, directReviewRouting: 18, averageGpi: 71, suppressed: false }
+  ] },
+  { id: "gender", label: "Gender", question: "Are completion and direct-review routing patterns visible without identifying a person?", cells: [
+    { label: "Woman", count: 20, reviewCompletion: 90, directReviewRouting: 15, averageGpi: 81, suppressed: false },
+    { label: "Man", count: 15, reviewCompletion: 80, directReviewRouting: 13, averageGpi: 73, suppressed: false },
+    { label: "Nonbinary / self-described", count: 7, reviewCompletion: 86, directReviewRouting: 14, averageGpi: 79, suppressed: false }
+  ] },
+  { id: "first-generation", label: "First-generation status", question: "Does the cohort suggest an access or review-completion question worth investigating?", cells: [
+    { label: "First-generation", count: 18, reviewCompletion: 83, directReviewRouting: 17, averageGpi: 84, suppressed: false },
+    { label: "Not first-generation", count: 19, reviewCompletion: 89, directReviewRouting: 11, averageGpi: 72, suppressed: false },
+    { label: "Not recorded", count: 5, reviewCompletion: 80, directReviewRouting: 20, averageGpi: 78, suppressed: false }
+  ] },
+  { id: "service-language", label: "Service language", question: "Where might language access deserve operational follow-up?", cells: [
+    { label: "English", count: 30, reviewCompletion: 90, directReviewRouting: 13, averageGpi: 76, suppressed: false },
+    { label: "Spanish / bilingual", count: 7, reviewCompletion: 71, directReviewRouting: 14, averageGpi: 87, suppressed: false },
+    { label: "Other / not recorded", count: 5, reviewCompletion: 80, directReviewRouting: 20, averageGpi: 74, suppressed: false }
+  ] }
+]);
 
 function fallbackWorkspaceExperience() {
   const profile = {
@@ -269,11 +293,11 @@ function fallbackWorkspaceExperience() {
     context: { role: FALLBACK_WORKSPACE_OPTIONS.clinicianRoles[0], setting: FALLBACK_WORKSPACE_OPTIONS.careSettings[0], focus: FALLBACK_WORKSPACE_OPTIONS.reviewFocuses[0], statement: "Licensed clinician · University counseling · Balanced review", roleContextGrantsAuthorization: false },
     display: { alwaysVisibleModules: ["safety", "limitations", "approval"], configurableModules: FALLBACK_WORKSPACE_OPTIONS.modules, visibleModules: profile.visibleModules, safetyCanBeHidden: false, clinicalContentChanged: false },
     options: FALLBACK_WORKSPACE_OPTIONS,
-    demographics: { selectedDimension: "age-band", totalSyntheticRecords: 42, minimumCellSize: 5, dimensions: [], personLevelRecordsAvailable: false, protectedAttributeDecisioningAllowed: false, phiIncluded: false },
+    demographics: { selectedDimension: "age-band", totalSyntheticRecords: 42, minimumCellSize: 5, dimensions: structuredClone(FALLBACK_DEMOGRAPHIC_DIMENSIONS), personLevelRecordsAvailable: false, protectedAttributeDecisioningAllowed: false, phiIncluded: false },
     saved: false,
     savedAt: null,
     chain: { valid: true, count: 0, head: null },
-    boundary: "Constructed aggregate demonstration only. Minimum cell size five; no PHI, person-level record, outcome claim, or protected-attribute decisioning."
+    boundary: "Aggregate operational view. Minimum cell size five; no person-level drill-down or protected-attribute decisioning."
   };
 }
 
@@ -294,8 +318,10 @@ function applyExperienceMode(mode) {
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
   });
-  $("#workspace-mode-name").textContent = next === "studio" ? "Practice backplane" : "Clinical surface";
-  $("#active-experience-label").textContent = next === "studio" ? "Practice studio" : "Clinical front";
+  const modeName = $("#workspace-mode-name");
+  const activeLabel = $("#active-experience-label");
+  if (modeName) modeName.textContent = next === "studio" ? "Administration" : "Clinical workspace";
+  if (activeLabel) activeLabel.textContent = next === "studio" ? "Admin" : "Clinical";
 }
 
 function chooseExperienceMode(mode, { focus = true } = {}) {
@@ -321,11 +347,11 @@ function applyWorkspaceProfile(profile = state.workspaceExperience?.profile) {
   const focus = workspaceOption("reviewFocuses", profile.reviewFocus);
   $("#clinical-context-line").textContent = `${role.label} · ${setting.label} · ${focus.label}`;
   $("#review-lede").textContent = ({
-    "licensed-clinician": "Verify the generated draft against scored evidence before it enters the pilot record.",
+    "licensed-clinician": "Verify the generated draft against scored evidence before it enters the clinical workflow.",
     "clinical-supervisor": "Review the draft, its evidence trail, and the decision conditions that support accountable supervision.",
     "care-coordinator": "Read the clinical draft in context, then keep coordination separate from clinical approval.",
     "operations-lead": "Inspect how the configured clinical surface supports review without changing clinical authority."
-  })[profile.clinicianRole] || "Verify the generated draft against scored evidence before it enters the pilot record.";
+  })[profile.clinicianRole] || "Verify the generated draft against scored evidence before it enters the clinical workflow.";
 }
 
 function workspaceDraftFromForm() {
@@ -361,18 +387,18 @@ function renderDemographicLens(dimensionId) {
   const demographics = state.workspaceExperience?.demographics;
   const dimension = demographics?.dimensions?.find(item => item.id === dimensionId) || demographics?.dimensions?.[0];
   if (!dimension) {
-    $("#demographic-question").textContent = "Aggregate demographic demonstration data are available when the local backend is connected.";
-    $("#demographic-cells").innerHTML = '<p class="demographic-empty">Connect the local synthetic workspace to inspect the constructed cohort lens.</p>';
+    $("#demographic-question").textContent = "Aggregate demographic data will appear as the workspace receives eligible records.";
+    $("#demographic-cells").innerHTML = '<p class="demographic-empty">No eligible aggregate groups are available yet.</p>';
     return;
   }
   $("#demographic-question").textContent = dimension.question;
   $("#demographic-cells").innerHTML = dimension.cells.map((cell, index) => cell.suppressed
-    ? `<article class="demographic-cell suppressed"><header><span>${String(index + 1).padStart(2, "0")}</span><h3>Small cell suppressed</h3></header><p>Fewer than ${demographics.minimumCellSize} constructed records. No metrics displayed.</p></article>`
+    ? `<article class="demographic-cell suppressed"><header><span>${String(index + 1).padStart(2, "0")}</span><h3>Small cell suppressed</h3></header><p>Fewer than ${demographics.minimumCellSize} aggregate records. No metrics displayed.</p></article>`
     : `<article class="demographic-cell">
-      <header><span>${String(index + 1).padStart(2, "0")}</span><div><h3>${escapeHTML(cell.label)}</h3><small>${cell.count} constructed records</small></div></header>
+      <header><span>${String(index + 1).padStart(2, "0")}</span><div><h3>${escapeHTML(cell.label)}</h3><small>${cell.count} aggregate records</small></div></header>
       <div class="demographic-metric completion"><span>Review completion</span><strong>${cell.reviewCompletion}%</strong><i aria-hidden="true"><b style="width:${Math.max(0, Math.min(100, cell.reviewCompletion))}%"></b></i></div>
       <div class="demographic-metric routing"><span>Direct-review route</span><strong>${cell.directReviewRouting}%</strong><i aria-hidden="true"><b style="width:${Math.max(0, Math.min(100, cell.directReviewRouting))}%"></b></i></div>
-      <div class="demographic-metric gpi"><span>Average synthetic GPI</span><strong>${cell.averageGpi}</strong><i aria-hidden="true"><b style="width:${Math.max(0, Math.min(100, (cell.averageGpi / 186) * 100))}%"></b></i></div>
+      <div class="demographic-metric gpi"><span>Average GPI</span><strong>${cell.averageGpi}</strong><i aria-hidden="true"><b style="width:${Math.max(0, Math.min(100, (cell.averageGpi / 186) * 100))}%"></b></i></div>
     </article>`).join("");
 }
 
@@ -387,7 +413,7 @@ function renderWorkspaceExperience(workspace) {
   const visible = new Set(profile.visibleModules || []);
   $("#workspace-module-options").innerHTML = options.modules.map(item => `<label><input type="checkbox" value="${escapeHTML(item.id)}"${visible.has(item.id) ? " checked" : ""}><span><strong>${escapeHTML(item.label)}</strong><small>${visible.has(item.id) ? "Shown" : "Hidden"}</small></span></label>`).join("");
   $("#demographic-dimension").innerHTML = optionMarkup(options.demographicDimensions, profile.demographicDimension);
-  $("#studio-save-state").textContent = state.workspaceExperience.saved ? "Profile sealed locally" : "Local profile ready";
+  $("#studio-save-state").textContent = state.workspaceExperience.saved ? "Workspace profile saved" : "Workspace profile ready";
   $("#workspace-save-announcement").textContent = state.workspaceExperience.savedAt
     ? `Saved ${new Date(state.workspaceExperience.savedAt).toLocaleString()} · display choices only.`
     : "No display choices have been changed.";
@@ -415,6 +441,15 @@ function currentAssessment() {
   return state.assessments[state.currentIndex];
 }
 
+function displayRecordId(value) {
+  return String(value || "").replace(/^FF-TEST-/, "");
+}
+
+function displayEngineVersion(value) {
+  const version = String(value || "").trim();
+  return !version || /^cal-/i.test(version) ? "PERL 2.49" : version;
+}
+
 function reviewerInitials(value) {
   return String(value).toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 2) || "DR";
 }
@@ -422,8 +457,8 @@ function reviewerInitials(value) {
 function renderReviewerIdentity() {
   const profile = $("#reviewer-profile");
   profile.textContent = reviewerInitials(state.reviewerCode);
-  profile.setAttribute("aria-label", `Change calibration reviewer; current code ${state.reviewerCode}`);
-  profile.title = `Calibration reviewer: ${state.reviewerCode}`;
+  profile.setAttribute("aria-label", `Change reviewer; current code ${state.reviewerCode}`);
+  profile.title = `Reviewer: ${state.reviewerCode}`;
   $("#reviewer-code").value = state.reviewerCode;
   $("#study-current-reviewer").textContent = `Reviewer · ${state.reviewerCode}`;
 }
@@ -500,32 +535,32 @@ function setConnectionState(connected, health = null) {
   const deploymentReview = connected && presentation?.mode === "deployment-review";
   const hostedEvaluation = !connected && state.hostedEvaluation;
   $("#connection-label").textContent = deploymentReview
-    ? "Deployment candidate"
+    ? "PERL workspace"
     : connected
-      ? "Persistent evaluation workspace"
+      ? "Secure clinical workspace"
       : hostedEvaluation
-        ? "Hosted synthetic evaluation"
+        ? "Private browser workspace"
       : window.location.protocol === "file:"
-        ? "Server connection required"
-        : "Evaluation workspace offline";
-  document.body.dataset.runtimePresentation = deploymentReview ? "deployment-review" : connected ? "engineering" : hostedEvaluation ? "hosted-evaluation" : "source-file";
-  $("#runtime-note-kicker").textContent = deploymentReview ? `Release candidate ${presentation.candidateVersion}` : connected ? "Engineering environment" : hostedEvaluation ? "Shareable evaluation" : "Application source";
-  $("#runtime-note-title").textContent = deploymentReview ? presentation.environmentLabel : connected ? "Protected evaluation" : hostedEvaluation ? "Ready for synthetic testing" : "Server required";
-  $("#runtime-note-copy").textContent = deploymentReview ? `${presentation.dataLabel}. Persistent server and API path active.` : connected ? "Persistent evaluation records. No PHI or live clinical use." : hostedEvaluation ? "Test-form entries stay in this browser. No sign-in, server upload, or patient data." : "Launch PERL to activate persistence, safety controls, and audit history.";
+        ? "Open the live workspace"
+        : "Workspace offline";
+  document.body.dataset.runtimePresentation = deploymentReview ? "deployment-review" : connected ? "clinical-server" : hostedEvaluation ? "hosted-product" : "source-file";
+  $("#runtime-note-kicker").textContent = deploymentReview ? `PERL ${presentation.candidateVersion}` : connected ? "PERL workspace" : hostedEvaluation ? "PERL workspace" : "Application source";
+  $("#runtime-note-title").textContent = deploymentReview ? "Clinical operations" : connected ? "Secure clinical operations" : hostedEvaluation ? "Private browser processing" : "Live workspace required";
+  $("#runtime-note-copy").textContent = deploymentReview ? "Persistent application services and audit controls are active." : connected ? "Persistent records, safety controls, and audit history are active." : hostedEvaluation ? "Reports and workspace settings remain on this device." : "Open the live PERL link to use PDF processing, persistence, and reports.";
   const candidateBar = $("#deployment-candidate-bar");
   candidateBar.hidden = !(deploymentReview || hostedEvaluation);
   if (deploymentReview) {
     $("#deployment-candidate-version").textContent = presentation.candidateVersion;
-    $("#deployment-candidate-state").textContent = presentation.deploymentReviewReady ? "Ready for review" : "Initializing";
-    $("#deployment-candidate-boundary").textContent = "Evaluation records only · PHI and clinical activation remain externally governed.";
-    document.title = `PERL ${presentation.candidateVersion} · Deployment candidate`;
+    $("#deployment-candidate-state").textContent = presentation.deploymentReviewReady ? "Ready" : "Initializing";
+    $("#deployment-candidate-boundary").textContent = "Clinical review and organizational policy govern use of every generated summary.";
+    document.title = `PERL ${presentation.candidateVersion} · Clinical intelligence`;
   } else if (hostedEvaluation) {
-    $("#deployment-candidate-version").textContent = "2.48";
-    $("#deployment-candidate-state").textContent = "Ready to test";
-    $("#deployment-candidate-boundary").textContent = "Synthetic scored forms only · entries remain in this browser.";
-    candidateBar.querySelector("div:nth-child(2) span").textContent = "Evaluation path";
-    candidateBar.querySelector("div:nth-child(2) strong").textContent = "Hosted · self-contained";
-    document.title = "PERL · Hosted synthetic evaluation";
+    $("#deployment-candidate-version").textContent = "2.49";
+    $("#deployment-candidate-state").textContent = "Ready";
+    $("#deployment-candidate-boundary").textContent = "Your selected PDF is processed locally and is not retained by PERL.";
+    candidateBar.querySelector("div:nth-child(2) span").textContent = "PDF processing";
+    candidateBar.querySelector("div:nth-child(2) strong").textContent = "On this device";
+    document.title = "PERL · Clinical intelligence workspace";
   }
   $$(".export-link").forEach(link => {
     link.classList.toggle("disabled", !connected);
@@ -3802,7 +3837,7 @@ async function hydrateFromApi() {
   }
   if (state.hostedEvaluation) {
     setConnectionState(false);
-    showToast("Hosted evaluation ready. Test entries save only in this browser.");
+    showToast("PERL is ready. Assessments and settings save in this browser.");
     return;
   }
   try {
@@ -3816,10 +3851,10 @@ async function hydrateFromApi() {
     await loadProgressReview();
     await loadWorkspaceExperience({ applyDefault: true });
   } catch (error) {
-    console.warn("PERL API unavailable; using the non-persistent synthetic fallback.", error);
+    console.warn("PERL API unavailable; using local browser persistence.", error);
     setConnectionState(false);
     showToast(state.hostedEvaluation
-      ? "Hosted evaluation ready. Test entries save only in this browser."
+      ? "PERL is ready. Assessments and settings save in this browser."
       : "Local persistence is unavailable; this session will remain in memory.");
   }
 }
@@ -3837,7 +3872,6 @@ function prefersReducedMotion() {
 }
 
 function switchView(name, { focus = true } = {}) {
-  applyExperienceMode(STUDIO_VIEWS.has(name) ? "studio" : "clinical");
   $$(".view").forEach(view => {
     const active = view.id === `view-${name}`;
     view.hidden = !active;
@@ -3849,6 +3883,7 @@ function switchView(name, { focus = true } = {}) {
     if (active) button.setAttribute("aria-current", "page");
     else button.removeAttribute("aria-current");
   });
+  applyExperienceMode(STUDIO_VIEWS.has(name) ? "studio" : "clinical");
   $(".sidebar").classList.remove("open");
   $("#mobile-menu").setAttribute("aria-expanded", "false");
   $("#mobile-menu").setAttribute("aria-label", "Open navigation");
@@ -3862,6 +3897,11 @@ function switchView(name, { focus = true } = {}) {
   if (name === "fieldwork") void loadCounselorFieldwork();
   if (name === "campus") void loadCampusObservatory();
   if (name === "governance") void loadGovernance();
+}
+
+function switchViewFromHash() {
+  const name = window.location.hash.slice(1);
+  if (["queue", "review", "studio"].includes(name)) switchView(name, { focus: false });
 }
 
 function authorLabel(value) {
@@ -4074,7 +4114,7 @@ function renderInterpretationStatus(assessment) {
   status.classList.toggle("revised", revised);
   status.textContent = revised
     ? `Reviewer revised · r${provenance.revision}`
-    : `Generated · ${provenance.version || "cal-0.9.3"}`;
+    : `Generated · ${displayEngineVersion(provenance.version)}`;
 }
 
 function hypothesisEditorMarkup(hypothesis, index) {
@@ -4128,7 +4168,7 @@ function renderEvidence(assessment) {
 }
 
 function renderAudit() {
-  $("#audit-list").innerHTML = state.audit.slice(0, 5).map(entry => `<div class="audit-entry"><time>${escapeHTML(entry.time)}</time><div><strong>${escapeHTML(entry.action)}</strong><span>${escapeHTML(entry.actor)} · ${escapeHTML(entry.detail)}</span></div></div>`).join("");
+  $("#audit-list").innerHTML = state.audit.slice(0, 5).map(entry => `<div class="audit-entry"><time>${escapeHTML(entry.time)}</time><div><strong>${escapeHTML(entry.action)}</strong><span>${escapeHTML(entry.actor)} · ${escapeHTML(displayRecordId(entry.detail))}</span></div></div>`).join("");
 }
 
 function renderRevisionLineage() {
@@ -4157,19 +4197,19 @@ function renderAttachmentState() {
   const attachment = state.attachment || { status: "not-source-event", eligible: false, preparation: null };
   const workflow = state.workflow || { status: attachment.status, eligible: attachment.eligible, currentJob: null };
   const content = {
-    "not-source-event": ["Source rehearsal only", "This record was not imported through the proposed e-QPASS event seam."],
-    "awaiting-review": ["Findings received", "PERL routed this synthetic score event into clinician review automatically. Approval remains required."],
+    "not-source-event": ["Report source", "Upload the scored e-QPASS report to keep the summary linked to verified source scores."],
+    "awaiting-review": ["Findings received", "PERL routed this score event into clinician review automatically. Approval remains required."],
     "ready-to-queue": ["Approved · automation gap", "The approved artifact is eligible for bounded preparation, but no workflow job was recorded."],
     queued: ["Handoff preparing", "The approved artifact is in the idempotent preparation queue. No e-QPASS write is occurring."],
     "prepared-not-attached": ["Prepared · boundary held", "Lineage and idempotency are verified. No PDF was written to e-QPASS and no attachment is claimed."],
     failed: ["Preparation stopped safely", "Approval is preserved. Retry the bounded preparation job; no duplicate attachment will be created."]
-  }[workflow.status] || ["Handoff unavailable", "The synthetic workflow state could not be resolved."];
+  }[workflow.status] || ["Handoff unavailable", "The workflow state could not be resolved."];
   $("#attachment-title").textContent = content[0];
   $("#attachment-detail").textContent = content[1];
   button.hidden = workflow.status !== "failed" && workflow.status !== "ready-to-queue";
   button.disabled = !state.connected || !workflow.eligible || !state.reportArtifact;
   button.dataset.action = workflow.status === "failed" ? "retry" : "prepare";
-  button.textContent = workflow.status === "failed" ? "Retry preparation" : "Prepare synthetic handoff";
+  button.textContent = workflow.status === "failed" ? "Retry preparation" : "Prepare handoff";
   card.classList.toggle("prepared", workflow.status === "prepared-not-attached");
   card.classList.toggle("failed", workflow.status === "failed");
   assembly.hidden = workflow.status !== "prepared-not-attached";
@@ -4212,7 +4252,7 @@ function setApprovalState(assessment) {
     checkbox.checked = true;
     checkbox.disabled = true;
     $("#risk-reason").textContent = risk.reason;
-    $("#critical-responses").innerHTML = `<strong>Critical screens · 0</strong><span>No non-zero synthetic response is present.</span>`;
+    $("#critical-responses").innerHTML = `<strong>Critical screens · 0</strong><span>No non-zero critical-screen response is present.</span>`;
     approve.disabled = false;
     safetyCard.classList.add("resolved");
     $("#safety-title").textContent = "No automated hold";
@@ -4230,7 +4270,7 @@ function setApprovalState(assessment) {
   if (assessment.status === "approved") {
     approve.disabled = true;
     approve.textContent = "Approved";
-    $("#dock-status").textContent = "Approved in sandbox";
+    $("#dock-status").textContent = "Approved";
     $("#dock-help").textContent = "The immutable clinician artifact is ready for its next governed step.";
   } else {
     approve.innerHTML = 'Approve clinician summary <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
@@ -4245,12 +4285,12 @@ function setApprovalState(assessment) {
 function renderReview() {
   const assessment = currentAssessment();
   const clinicalBrief = currentClinicalBrief(assessment);
-  $("#record-crumb").textContent = assessment.id;
-  $("#meta-id").textContent = assessment.id;
+  $("#record-crumb").textContent = displayRecordId(assessment.id);
+  $("#meta-id").textContent = displayRecordId(assessment.id);
   $("#meta-completion").textContent = assessment.completedAt;
   $("#meta-duration").textContent = assessment.duration;
   $("#meta-items").textContent = `${assessment.itemsAnswered} / 105`;
-  $("#meta-version").textContent = assessment.interpretationProvenance?.version || state.model?.version || "cal-0.9.3";
+  $("#meta-version").textContent = displayEngineVersion(assessment.interpretationProvenance?.version || state.model?.version);
   $("#generation-mode").textContent = assessment.interpretationProvenance?.provider === "deterministic-calibration" ? "Rules" : "Model";
   $("#summary-text").textContent = getNarrative(assessment);
   $("#coverage-score").textContent = coverageScore(assessment);
@@ -4408,13 +4448,13 @@ function renderQueue(filter = "") {
   const query = filter.trim().toLowerCase();
   const rows = state.assessments.map((assessment, index) => ({ assessment, index })).filter(({ assessment }) => assessment.id.toLowerCase().includes(query));
   $("#queue-body").innerHTML = rows.map(({ assessment, index }) => `<tr data-record-index="${index}">
-    <td><span class="record-id">${escapeHTML(assessment.id)}</span><span class="record-detail">105 responses · synthetic</span></td>
+    <td><span class="record-id">${escapeHTML(displayRecordId(assessment.id))}</span><span class="record-detail">105 scored responses</span></td>
     <td>${escapeHTML(assessment.completedAt)}</td>
     <td><span class="signal-stack">${signalBars(assessment)}</span></td>
     <td>${escapeHTML(assessment.reviewer)}</td>
     <td><span class="status-badge status-${escapeHTML(assessment.status)}">${escapeHTML(assessment.status)}</span></td>
-    <td><button class="row-open" type="button" aria-label="Open record ${escapeHTML(assessment.id)}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></td>
-  </tr>`).join("") || `<tr><td colspan="6">No synthetic records match that ID.</td></tr>`;
+    <td><button class="row-open" type="button" aria-label="Open record ${escapeHTML(displayRecordId(assessment.id))}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7"/></svg></button></td>
+  </tr>`).join("") || `<tr><td colspan="6">No records match that ID.</td></tr>`;
 
   $$("#queue-body tr[data-record-index]").forEach(row => {
     const open = async () => {
@@ -4479,6 +4519,14 @@ function addEventListeners() {
 
   $$(".nav-item").forEach(button => button.addEventListener("click", event => switchView(button.dataset.view, { focus: event.detail === 0 })));
   $$('[data-view-jump]').forEach(button => button.addEventListener("click", event => switchView(button.dataset.viewJump, { focus: event.detail === 0 })));
+  $(".primary-nav")?.addEventListener("click", event => {
+    const button = event.target.closest(".nav-item[data-view]");
+    if (button) switchView(button.dataset.view, { focus: event.detail === 0 });
+  });
+  $("#main-content")?.addEventListener("click", event => {
+    const button = event.target.closest("[data-view-jump]");
+    if (button) switchView(button.dataset.viewJump, { focus: event.detail === 0 });
+  });
   $$("[data-experience-mode]").forEach(button => button.addEventListener("click", event => chooseExperienceMode(button.dataset.experienceMode, { focus: event.detail === 0 })));
   $("#open-clinical-mode").addEventListener("click", event => chooseExperienceMode("clinical", { focus: event.detail === 0 }));
   $("#workspace-profile-form").addEventListener("change", event => {
@@ -4487,11 +4535,11 @@ function addEventListeners() {
       if (label) label.querySelector("small").textContent = event.target.checked ? "Shown" : "Hidden";
     }
     renderStudioPreview(workspaceDraftFromForm());
-    $("#workspace-save-announcement").textContent = "Unsaved display changes · clinical content and permissions remain unchanged.";
+    $("#workspace-save-announcement").textContent = "Unsaved workspace changes · clinical content and permissions remain unchanged.";
   });
   $("#demographic-dimension").addEventListener("change", event => {
     renderDemographicLens(event.target.value);
-    $("#workspace-save-announcement").textContent = "Unsaved demographic-lens choice · aggregate display only.";
+    $("#workspace-save-announcement").textContent = "Unsaved demographic view · aggregate display only.";
   });
   $("#workspace-profile-form").addEventListener("submit", async event => {
     event.preventDefault();
@@ -4503,22 +4551,22 @@ function addEventListeners() {
       if (state.connected) {
         const result = await state.api.saveWorkspaceExperience(profile);
         renderWorkspaceExperience(result.workspace);
-        $("#workspace-save-announcement").textContent = result.changed ? "Practice profile saved to the local display ledger." : "This practice profile already matches the sealed local display.";
+        $("#workspace-save-announcement").textContent = result.changed ? "Workspace profile saved." : "The workspace already matches these settings.";
       } else {
         const savedAt = state.hostedEvaluation ? new Date().toISOString() : null;
         renderWorkspaceExperience({ ...state.workspaceExperience, profile, saved: state.hostedEvaluation, savedAt });
         persistHostedEvaluation();
         $("#workspace-save-announcement").textContent = state.hostedEvaluation
-          ? "Practice profile saved in this browser."
+          ? "Workspace profile saved in this browser."
           : "Profile applied for this in-memory session only.";
       }
-      showToast("Practice profile saved. Safety, evidence content, and clinical authority remain unchanged.");
+      showToast("Workspace profile saved. Safety, evidence content, and clinical authority remain unchanged.");
     } catch (error) {
       $("#workspace-save-announcement").textContent = error.message;
       showToast(error.message);
     } finally {
       button.disabled = false;
-      button.textContent = "Save practice profile";
+      button.textContent = "Save workspace profile";
     }
   });
   $("#campus-candidate-tabs").addEventListener("click", event => {
@@ -4788,7 +4836,7 @@ function addEventListeners() {
     try { window.sessionStorage.setItem("perl-calibration-reviewer", value); } catch { /* session-only memory still works */ }
     renderReviewerIdentity();
     closeDialog("#reviewer-dialog");
-    showToast(`Calibration actions will now be attributed to ${value}.`);
+    showToast(`Clinical review actions will now be attributed to ${value}.`);
     if (!$("#view-calibration").hidden && state.connected) void loadCalibrationCase(true);
     if (!$("#view-fieldwork").hidden && state.connected) void loadCounselorFieldwork(true);
     if (state.connected) void loadWorkspaceExperience({ applyDefault: true });
@@ -6392,17 +6440,17 @@ function addEventListeners() {
       } else {
         assessment.status = "approved";
         assessment.reviewer = state.reviewerCode;
-        audit("Draft approved", "Pilot-ready in sandbox");
+        audit("Clinical summary approved", "Reviewer approval recorded in this browser");
         renderQueue($("#queue-search").value);
         persistHostedEvaluation();
       }
-      $("#dock-status").textContent = "Approved in sandbox";
+      $("#dock-status").textContent = "Approved";
       $("#dock-help").textContent = state.sourceEvent
-        ? "Approved and prepared automatically inside the synthetic boundary; no e-QPASS record was changed."
-        : "Persisted to the local audit trail; no production record was changed.";
+        ? "Approved and prepared for the governed handoff; the source e-QPASS record was not changed."
+        : "Approval was recorded in the local audit trail.";
       showToast(state.sourceEvent
-        ? "Approved. The hash-bound handoff was prepared automatically—nothing was attached."
-        : "Synthetic draft approved and added to the durable audit trail.");
+        ? "Approved. The hash-bound handoff was prepared automatically."
+        : "Clinical summary approved and added to the audit trail.");
     } catch (error) {
       setApprovalState(assessment);
       showToast(error.message);
@@ -6859,7 +6907,7 @@ function addEventListeners() {
         persistHostedEvaluation();
       }
       closeDialog("#edit-dialog");
-      showToast("Revision saved to the calibration history.");
+      showToast("Revision saved to the clinical review history.");
     } catch (error) {
       showToast(error.message);
     } finally {
@@ -6886,7 +6934,7 @@ function addEventListeners() {
       }
       closeDialog("#feedback-dialog");
       $("#feedback-form").reset();
-      showToast("Feedback captured for the calibration error log.");
+      showToast("Feedback captured in the clinical quality log.");
     } catch (error) {
       showToast(error.message);
     } finally {
@@ -7129,7 +7177,7 @@ function addEventListeners() {
         if (!state.connected) throw new Error("The proposed source-event fixture requires the local persistent API.");
         state.selectedFixture = { kind: "source-event", payload: candidate };
         $("#import-errors").style.color = "#347268";
-        $("#import-errors").textContent = `${candidate.eventId || "Synthetic source event"} is ready for strict server validation.`;
+        $("#import-errors").textContent = `${candidate.eventId || "Source event"} is ready for server validation.`;
         return;
       }
       const errors = validateAssessment(candidate);
@@ -7137,7 +7185,7 @@ function addEventListeners() {
       else {
         state.selectedFixture = { kind: "assessment", payload: candidate };
         $("#import-errors").style.color = "#347268";
-        $("#import-errors").textContent = `${candidate.id} passed the synthetic fixture checks.`;
+        $("#import-errors").textContent = `${candidate.id} passed the assessment checks.`;
       }
     } catch (error) {
       $("#import-errors").textContent = error instanceof SyntaxError ? "The selected file is not valid JSON." : error.message;
@@ -7145,7 +7193,7 @@ function addEventListeners() {
   });
 
   $("#load-fixture").addEventListener("click", async () => {
-    if (!state.selectedFixture) return showToast("Choose a valid synthetic JSON fixture first.");
+    if (!state.selectedFixture) return showToast("Choose a valid JSON assessment first.");
     const button = $("#load-fixture");
     button.disabled = true;
     try {
@@ -7162,7 +7210,7 @@ function addEventListeners() {
         state.assessments.unshift(withInterpretation(selected.payload));
         state.currentIndex = 0;
         state.riskAcknowledged = false;
-        state.audit = [{ time: "Now", actor: "Local import", action: "Synthetic fixture loaded", detail: selected.payload.id }];
+        state.audit = [{ time: "Now", actor: "Local import", action: "Assessment imported", detail: selected.payload.id }];
         persistHostedEvaluation();
       }
       renderQueue();
@@ -7170,8 +7218,8 @@ function addEventListeners() {
       closeDialog("#import-dialog");
       switchView("review");
       showToast(state.connected
-        ? (selected.kind === "source-event" ? "Synthetic e-QPASS event validated and imported." : "Synthetic fixture persisted locally.")
-        : "Synthetic fixture loaded into this session.");
+        ? (selected.kind === "source-event" ? "e-QPASS event validated and imported." : "Assessment persisted locally.")
+        : "Assessment loaded into this workspace.");
     } catch (error) {
       showToast(error.message);
     } finally {
@@ -7193,7 +7241,7 @@ function addEventListeners() {
       const errors = validateAssessment(assessment);
       if (errors.length) throw new Error(errors[0]);
       if (state.assessments.some(item => item.id === assessment.id)) {
-        throw new Error("That test record ID already exists. Use a different synthetic ID.");
+        throw new Error("That record ID already exists. Use a different internal reference.");
       }
       if (state.connected) {
         const detail = await state.api.importAssessment(assessment);
@@ -7208,7 +7256,7 @@ function addEventListeners() {
         state.audit = [{
           time: "Now",
           actor: state.reviewerCode,
-          action: cameFromPdf ? "Synthetic e-QPASS PDF extracted and verified" : "Synthetic scored form entered",
+          action: cameFromPdf ? "e-QPASS PDF extracted and verified" : "Scored assessment entered",
           detail: assessment.id
         }];
         persistHostedEvaluation();
@@ -7222,7 +7270,7 @@ function addEventListeners() {
       $("#manual-entry-title").textContent = "Review before generating";
       showToast(cameFromPdf
         ? "e-QPASS PDF scores converted into a clinician-review draft."
-        : "Test scores converted into a clinician-review draft.");
+        : "Assessment scores converted into a clinician-review draft.");
     } catch (error) {
       $("#manual-entry-errors").textContent = error.message;
     } finally {
@@ -7348,6 +7396,7 @@ function addEventListeners() {
       $("#queue-search").focus();
     }
   });
+  window.addEventListener("hashchange", switchViewFromHash);
 }
 
 async function init() {
@@ -7358,6 +7407,7 @@ async function init() {
   renderQueue();
   renderReview();
   addEventListeners();
+  switchViewFromHash();
   await hydrateFromApi();
 }
 

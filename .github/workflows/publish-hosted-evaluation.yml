@@ -1,4 +1,4 @@
-name: Publish hosted synthetic evaluation
+name: Publish PERL
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Verify the evaluation build
+      - name: Verify the product build
         run: |
           npm ci --ignore-scripts
           npm test
@@ -37,7 +37,7 @@ jobs:
         run: npm install --no-save --package-lock=false --ignore-scripts pdfjs-dist@6.2.108
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Assemble browser-only evaluation artifact
+      - name: Assemble private browser product
         run: |
           mkdir -p _site
           cp index.html app.js *.css *.js _site/

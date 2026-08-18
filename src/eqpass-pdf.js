@@ -115,7 +115,7 @@ export function parseEqpassScoreReport(pagesInput, { now = new Date() } = {}) {
   };
   const values = {
     recordId: `PDF-${now.getTime().toString(36).toUpperCase()}`,
-    completedAt: "Today · e-QPASS PDF test",
+    completedAt: "Today · e-QPASS assessment",
     duration: durationFromPages(pages),
     depression: checkedScore(primary[0], "depression"),
     anxiety: checkedScore(primary[1], "anxiety"),

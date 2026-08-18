@@ -1,5 +1,5 @@
 export const DEPLOYMENT_PRESENTATION_CONTRACT = "perl-deployment-presentation/1.0";
-export const DEPLOYMENT_CANDIDATE_VERSION = "2.48";
+export const DEPLOYMENT_CANDIDATE_VERSION = "2.49";
 
 const MODES = new Set(["engineering", "deployment-review"]);
 
