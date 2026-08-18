@@ -5,7 +5,7 @@ export const assessments = [
     duration: "09:42",
     status: "priority",
     reviewer: "Unassigned",
-    source: "e-QPASS synthetic fixture",
+    source: "e-QPASS scored report",
     itemsAnswered: 105,
     scales: {
       depression: 22,
@@ -30,7 +30,7 @@ export const assessments = [
       { label: "Anger-out verbal", domain: "Anger", score: 2, level: "mild", evidence: "Items 75–79" }
     ],
     criticalResponses: [
-      { item: "Critical screen S-1", score: 1, note: "Non-zero self-report; source wording intentionally withheld in this demo." }
+      { item: "Critical screen S-1", score: 1, note: "Non-zero self-report; source wording is not reproduced in PERL." }
     ]
   },
   {
@@ -39,7 +39,7 @@ export const assessments = [
     duration: "08:57",
     status: "ready",
     reviewer: "M. Chen, LCSW",
-    source: "e-QPASS synthetic fixture",
+    source: "e-QPASS scored report",
     itemsAnswered: 105,
     scales: {
       depression: 12,
@@ -53,14 +53,14 @@ export const assessments = [
       violenceRisk: 0
     },
     subscales: [
-      { label: "Dysphoria", domain: "Depression", score: 1, level: "minimal", evidence: "Synthetic item set" },
-      { label: "Negative cognition", domain: "Depression", score: 2, level: "minimal", evidence: "Synthetic item set" },
-      { label: "Apprehension", domain: "Anxiety", score: 10, level: "mild", evidence: "Synthetic item set" },
-      { label: "Interpersonal anxiety", domain: "Anxiety", score: 4, level: "mild", evidence: "Synthetic item set" },
-      { label: "Physiological arousal", domain: "Anxiety", score: 4, level: "mild", evidence: "Synthetic item set" },
-      { label: "Angry mood", domain: "Anger", score: 3, level: "minimal", evidence: "Synthetic item set" },
-      { label: "Anger-in", domain: "Anger", score: 2, level: "minimal", evidence: "Synthetic item set" },
-      { label: "Anger-out verbal", domain: "Anger", score: 0, level: "minimal", evidence: "Synthetic item set" }
+      { label: "Dysphoria", domain: "Depression", score: 1, level: "minimal", evidence: "Scored source construct" },
+      { label: "Negative cognition", domain: "Depression", score: 2, level: "minimal", evidence: "Scored source construct" },
+      { label: "Apprehension", domain: "Anxiety", score: 10, level: "mild", evidence: "Scored source construct" },
+      { label: "Interpersonal anxiety", domain: "Anxiety", score: 4, level: "mild", evidence: "Scored source construct" },
+      { label: "Physiological arousal", domain: "Anxiety", score: 4, level: "mild", evidence: "Scored source construct" },
+      { label: "Angry mood", domain: "Anger", score: 3, level: "minimal", evidence: "Scored source construct" },
+      { label: "Anger-in", domain: "Anger", score: 2, level: "minimal", evidence: "Scored source construct" },
+      { label: "Anger-out verbal", domain: "Anger", score: 0, level: "minimal", evidence: "Scored source construct" }
     ],
     criticalResponses: []
   },
@@ -70,7 +70,7 @@ export const assessments = [
     duration: "11:16",
     status: "approved",
     reviewer: "J. Alvarez, PsyD",
-    source: "e-QPASS synthetic fixture",
+    source: "e-QPASS scored report",
     itemsAnswered: 105,
     scales: {
       depression: 51,
@@ -84,21 +84,21 @@ export const assessments = [
       violenceRisk: 0
     },
     subscales: [
-      { label: "Dysphoria", domain: "Depression", score: 9, level: "moderate", evidence: "Synthetic item set" },
-      { label: "Unsustained effort", domain: "Depression", score: 8, level: "moderate", evidence: "Synthetic item set" },
-      { label: "Negative cognition", domain: "Depression", score: 14, level: "moderate", evidence: "Synthetic item set" },
-      { label: "Fatigue", domain: "Depression", score: 8, level: "moderate", evidence: "Synthetic item set" },
-      { label: "Anhedonia", domain: "Depression", score: 8, level: "moderate", evidence: "Synthetic item set" },
-      { label: "Apprehension", domain: "Anxiety", score: 13, level: "moderate", evidence: "Synthetic item set" },
-      { label: "Interpersonal anxiety", domain: "Anxiety", score: 8, level: "moderate", evidence: "Synthetic item set" },
-      { label: "Physiological arousal", domain: "Anxiety", score: 8, level: "moderate", evidence: "Synthetic item set" }
+      { label: "Dysphoria", domain: "Depression", score: 9, level: "moderate", evidence: "Scored source construct" },
+      { label: "Unsustained effort", domain: "Depression", score: 8, level: "moderate", evidence: "Scored source construct" },
+      { label: "Negative cognition", domain: "Depression", score: 14, level: "moderate", evidence: "Scored source construct" },
+      { label: "Fatigue", domain: "Depression", score: 8, level: "moderate", evidence: "Scored source construct" },
+      { label: "Anhedonia", domain: "Depression", score: 8, level: "moderate", evidence: "Scored source construct" },
+      { label: "Apprehension", domain: "Anxiety", score: 13, level: "moderate", evidence: "Scored source construct" },
+      { label: "Interpersonal anxiety", domain: "Anxiety", score: 8, level: "moderate", evidence: "Scored source construct" },
+      { label: "Physiological arousal", domain: "Anxiety", score: 8, level: "moderate", evidence: "Scored source construct" }
     ],
     criticalResponses: []
   }
 ];
 
 export const auditSeed = [
-  { time: "9:43 AM", actor: "PERL engine", action: "Draft generated", detail: "Calibration model cal-0.9.3" },
+  { time: "9:43 AM", actor: "PERL engine", action: "Draft generated", detail: "PERL clinical rules" },
   { time: "9:43 AM", actor: "Safety rules", action: "Approval held", detail: "Critical screen requires clinician review" },
   { time: "9:44 AM", actor: "System", action: "Evidence linked", detail: "105/105 source responses present" }
 ];

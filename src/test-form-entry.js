@@ -34,7 +34,7 @@ function normalizeRecordId(value, now) {
     ? (entered.startsWith("FF-TEST-") ? entered : `FF-TEST-${entered}`)
     : `FF-TEST-${now.toISOString().replaceAll(/[^0-9]/g, "").slice(2, 14)}`;
   if (!/^FF-TEST-[A-Z0-9-]+$/.test(candidate) || candidate.length > 64) {
-    throw new TypeError("Test record ID may use letters, numbers, and hyphens only.");
+    throw new TypeError("Record ID may use letters, numbers, and hyphens only.");
   }
   return candidate;
 }
@@ -54,11 +54,11 @@ function normalizeLevel(value, label) {
 }
 
 export function buildSyntheticAssessmentFromScoreForm(values, { now = new Date() } = {}) {
-  if (!values || typeof values !== "object") throw new TypeError("Scored test-form values are required.");
+  if (!values || typeof values !== "object") throw new TypeError("Scored assessment values are required.");
   const entrySource = values.entrySource === "pdf" ? "pdf" : "manual";
   const evidence = entrySource === "pdf"
-    ? "Synthetic e-QPASS score report · locally extracted and reviewer verified"
-    : "Synthetic test form · manually transcribed scored output";
+    ? "e-QPASS score report · locally extracted and reviewer verified"
+    : "Scored assessment · manually transcribed and reviewer verified";
   const scales = Object.fromEntries(Object.entries(SCORE_FIELDS).map(([key, maximum]) => [
     key,
     boundedInteger(values[key], key, maximum)
@@ -75,25 +75,25 @@ export function buildSyntheticAssessmentFromScoreForm(values, { now = new Date()
       item: "Suicide-risk screen",
       score: scales.suicideRisk,
       directReviewRequired: true,
-      note: "Non-zero synthetic scored field; source wording is not stored."
+      note: "Non-zero scored field; source wording is not stored."
     } : null,
     scales.violenceRisk > 0 ? {
       item: "Violence-risk screen",
       score: scales.violenceRisk,
       directReviewRequired: true,
-      note: "Non-zero synthetic scored field; source wording is not stored."
+      note: "Non-zero scored field; source wording is not stored."
     } : null
   ].filter(Boolean);
 
   return {
     id: normalizeRecordId(values.recordId, now),
-    completedAt: String(values.completedAt || "Today · test entry").trim().slice(0, 120) || "Today · test entry",
+    completedAt: String(values.completedAt || "Today · e-QPASS assessment").trim().slice(0, 120) || "Today · e-QPASS assessment",
     duration: normalizeDuration(values.duration),
     status: criticalResponses.length ? "priority" : "ready",
     reviewer: "Unassigned",
     source: entrySource === "pdf"
-      ? "PERL hosted synthetic e-QPASS PDF score extraction"
-      : "PERL hosted synthetic scored-form entry",
+      ? "PERL e-QPASS PDF score extraction"
+      : "PERL scored assessment entry",
     itemsAnswered: 105,
     scales,
     subscales,

@@ -96,6 +96,7 @@ svg { display: block; fill: none; stroke: currentColor; stroke-linecap: round; s
   font-weight: 600;
   text-align: left;
   cursor: pointer;
+  text-decoration: none;
 }
 .nav-item svg { width: 18px; }
 .nav-item:hover { color: white; background: rgba(255,255,255,.055); }
@@ -3684,6 +3685,20 @@ input::placeholder, textarea::placeholder { color: #596660; opacity: 1; }
 /* Practice Studio · deliberate dual-mode workspace */
 body[data-experience-mode="clinical"] .nav-item[data-experience="studio"],
 body[data-experience-mode="studio"] .nav-item[data-experience="clinical"] { display: none; }
+
+.legacy-workspace { display: none !important; }
+
+body[data-runtime-presentation="hosted-product"] .deployment-candidate-bar {
+  border-color: rgba(28, 59, 49, .12);
+  background: rgba(255, 255, 255, .84);
+  box-shadow: 0 14px 40px rgba(24, 45, 38, .05);
+  backdrop-filter: blur(24px) saturate(1.2);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+}
+
+body[data-runtime-presentation="hosted-product"] .deployment-candidate-bar p {
+  color: var(--muted);
+}
 .experience-switch { display: grid; grid-template-columns: 1fr 1fr; margin: 0 0 19px; padding: 3px; border: 1px solid rgba(225,237,231,.2); background: #082b2d; }
 .experience-option { min-height: 44px; padding: 7px 9px 6px; color: #8fb0a7; border: 0; background: transparent; text-align: left; cursor: pointer; }
 .experience-option span,.experience-option small { display: block; }
@@ -3855,7 +3870,7 @@ body[data-review-focus="conversation-first"] .interpretation-bar { border-top: 3
   .demographic-observatory footer p { text-align: left; }
 }
 
-/* Release 2.48 · Apple-inspired clinical refinement */
+/* Release 2.49 · Apple-inspired clinical refinement */
 :root {
   --shadow: 0 24px 70px rgba(15, 48, 48, .08), 0 2px 8px rgba(15, 48, 48, .035);
   --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Arial, sans-serif;

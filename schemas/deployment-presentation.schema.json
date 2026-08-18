@@ -9,7 +9,7 @@
   ],
   "properties": {
     "contractVersion": { "const": "perl-deployment-presentation/1.0" },
-    "candidateVersion": { "const": "2.48" },
+    "candidateVersion": { "const": "2.49" },
     "mode": { "enum": ["engineering", "deployment-review"] },
     "label": { "type": "string", "minLength": 8, "maxLength": 64 },
     "environmentLabel": { "type": "string", "minLength": 8, "maxLength": 80 },

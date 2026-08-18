@@ -443,7 +443,7 @@ test("deployment-review API reports a ready software candidate without clinical 
   const payload = await response.json();
   assert.equal(response.status, 200);
   assert.equal(payload.environment, "deployment-review");
-  assert.equal(payload.deploymentPresentation.candidateVersion, "2.48");
+  assert.equal(payload.deploymentPresentation.candidateVersion, "2.49");
   assert.equal(payload.deploymentPresentation.label, "Deployment candidate");
   assert.equal(payload.deploymentPresentation.deploymentReviewReady, true);
   assert.equal(payload.deploymentPresentation.persistent, true);
@@ -1955,7 +1955,7 @@ test("API rejects a fixture that could contain a production identifier", async t
   example.id = "000076";
   const result = await json(await fetch(`${base}/api/assessments/import`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ assessment: example }) }));
   assert.equal(result.response.status, 400);
-  assert.match(result.body.error, /synthetic ID/);
+  assert.match(result.body.error, /non-identifying record ID/);
 });
 
 test("automation atelier starts a unique synthetic Findings-to-summary run and pauses for clinician review", async t => {
@@ -2431,7 +2431,7 @@ test("calibration analysis and exports preserve the synthetic study boundary", a
   assert.match(packageResponse.headers.get("content-disposition"), /attachment/);
   assert.equal(studyPackage.manifest.population, "synthetic calibration sandbox");
   assert.equal(studyPackage.manifest.clinicalValidation, false);
-  assert.equal(studyPackage.manifest.format, "perl-synthetic-calibration-package/2.48");
+  assert.equal(studyPackage.manifest.format, "perl-synthetic-calibration-package/2.49");
   assert.equal(studyPackage.manifest.candidateBlindReviewEventChain.valid, true);
   assert.equal(studyPackage.candidateBlindReview.counts.engineRankingsPublished, 0);
   assert.ok(Array.isArray(studyPackage.candidateBlindReviewEvents));

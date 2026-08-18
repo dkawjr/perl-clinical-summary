@@ -73,16 +73,16 @@ test("Practice Studio separates display customization from safety and demographi
   assert.ok(contrast("#d8b676", "#0b2625") >= 4.5);
 });
 
-test("deployment candidate blocks source-file impersonation and exposes a restrained runtime status", () => {
+test("source-file entry directs users to the live product and exposes a restrained runtime status", () => {
   const deploymentStyles = styles.match(/\.server-required \{[\s\S]*?@media \(max-width: 560px\) \{[\s\S]*?\n\}/)?.[0] || "";
   assert.match(html, /id="server-required"[^>]*role="dialog"[^>]*aria-modal="true"[^>]*aria-labelledby="server-required-title"[^>]*hidden/);
   assert.match(html, /id="server-required-title"/);
-  assert.match(html, /href="http:\/\/127\.0\.0\.1:4173\/"/);
-  assert.match(html, /Launch PERL\.command/);
-  assert.match(html, /id="deployment-candidate-bar"[^>]*aria-label="Deployment candidate status"[^>]*hidden/);
+  assert.match(html, /href="https:\/\/dkawjr\.github\.io\/perl-clinical-summary\/"/);
+  assert.match(html, /Private by design/);
+  assert.match(html, /id="deployment-candidate-bar"[^>]*aria-label="Application status"[^>]*hidden/);
   assert.match(script, /window\.location\.protocol === "file:"/);
   assert.match(script, /\$\("#server-required"\)\.hidden = false/);
-  assert.match(script, /presentation\.deploymentReviewReady \? "Ready for review" : "Initializing"/);
+  assert.match(script, /presentation\.deploymentReviewReady \? "Ready" : "Initializing"/);
   assert.match(styles, /\.server-required-actions > a \{[^}]*min-height: 68px;/);
   assert.match(styles, /@media \(max-width: 560px\) \{[\s\S]*\.server-required \{ display: block; overflow: auto; \}/);
   assert.doesNotMatch(deploymentStyles, /(?:linear|radial|conic)-gradient\(/);

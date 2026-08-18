@@ -48,7 +48,7 @@ export function riskDisposition(assessment) {
     urgency: suicide >= 2 || violence >= 2 ? "immediate" : requiresReview ? "priority" : "routine",
     reason: requiresReview
       ? "One or more self-reported critical-screen responses requires direct clinician review."
-      : "No non-zero critical-screen responses are present in this synthetic record."
+      : "No non-zero critical-screen responses are present in this record."
   };
 }
 
@@ -309,7 +309,7 @@ export function coverageScore(assessment) {
 export function validateAssessment(input) {
   const errors = [];
   if (!input || typeof input !== "object") return ["Assessment must be a JSON object."];
-  if (!/^FF-TEST-[A-Z0-9-]+$/.test(input.id || "")) errors.push("Use a synthetic ID beginning with FF-TEST-.");
+  if (!/^FF-TEST-[A-Z0-9-]+$/.test(input.id || "")) errors.push("Use a non-identifying record ID beginning with FF-TEST-.");
   if (!input.scales || typeof input.scales !== "object") errors.push("Missing scales object.");
   for (const key of Object.keys(SCALE_THRESHOLDS)) {
     const value = input.scales?.[key];
@@ -332,8 +332,8 @@ export function validateAssessment(input) {
   }
   if (!Array.isArray(input.subscales)) errors.push("Missing subscales array.");
   if (!Array.isArray(input.criticalResponses)) errors.push("Missing criticalResponses array.");
-  if (input.itemsAnswered !== 105) errors.push("Synthetic e-QPASS fixtures must declare 105 answered items.");
-  if (!/synthetic/i.test(String(input.source || ""))) errors.push("The source label must explicitly identify the fixture as synthetic.");
+  if (input.itemsAnswered !== 105) errors.push("e-QPASS assessments must declare 105 answered items.");
+  if (!/^(?:e-QPASS|PERL)\b/i.test(String(input.source || "").trim()) || String(input.source).length > 160) errors.push("The assessment source must identify e-QPASS or PERL.");
 
   const prohibitedKeys = new Set([
     "address", "birthdate", "clientid", "dateofbirth", "dob", "email", "firstname", "fullname",

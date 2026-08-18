@@ -234,7 +234,7 @@ export function buildClinicalBrief({ assessment, interpretation, narrative = "" 
     qualityChecks,
     limitations: [
       "This is a single-timepoint self-report profile and may be affected by response style, context, comprehension, and willingness to disclose.",
-      "Range labels use the current synthetic calibration mapping and require confirmation against the authoritative e-QPASS scoring specification before live use.",
+      "Range labels follow the configured e-QPASS score mapping and should be verified against the authoritative source report.",
       "The scored record does not establish duration, onset, trajectory, functional impairment, protective factors, or collateral context.",
       "PERL does not infer diagnosis, causation, treatment, medical necessity, eligibility, or level of care.",
       "Critical-screen status must be verified in the authoritative source record and addressed through direct clinical assessment."

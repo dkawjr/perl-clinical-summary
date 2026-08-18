@@ -268,7 +268,7 @@ test("only canonical synthetic fixtures can be imported", async t => {
   await store.init();
   const unsafe = structuredClone(assessments[1]);
   unsafe.id = "real-client-23";
-  await assert.rejects(() => store.importAssessment(unsafe), error => error.status === 400 && /synthetic ID/.test(error.message));
+  await assert.rejects(() => store.importAssessment(unsafe), error => error.status === 400 && /non-identifying record ID/.test(error.message));
 });
 
 test("synthetic source-event receipts are durable, hash-linked, and tamper evident", async t => {

@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://focusedfuture.example/perl/schemas/assessment.schema.json",
-  "title": "PERL synthetic scored assessment",
-  "description": "Canonical de-identified calibration payload. This schema is not authorization to process PHI.",
+  "title": "PERL scored assessment",
+  "description": "Canonical non-identifying e-QPASS assessment payload.",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -15,7 +15,7 @@
     "duration": { "type": "string", "pattern": "^[0-9]{2}:[0-9]{2}$" },
     "status": { "enum": ["priority", "ready", "approved"] },
     "reviewer": { "type": "string", "minLength": 1, "maxLength": 120 },
-    "source": { "type": "string", "pattern": "[Ss][Yy][Nn][Tt][Hh][Ee][Tt][Ii][Cc]", "maxLength": 160 },
+    "source": { "type": "string", "pattern": "^(?:e-QPASS|PERL)", "maxLength": 160 },
     "itemsAnswered": { "const": 105 },
     "scales": {
       "type": "object",

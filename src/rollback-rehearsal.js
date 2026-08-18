@@ -4,9 +4,9 @@ export const ROLLBACK_REHEARSAL_CONTRACT = "perl-application-rollback-rehearsal/
 export const ROLLBACK_REHEARSAL_BOUNDARY = "This verifies local last-known-good compatibility and safety replay. It does not restore a deployable artifact, change the running application, perform an Azure rollback, or authorize clinical release.";
 
 const files = [
-  ["app.js", "7631e35bb9907b580ada34c0e15db68027a6c5eaab878936b2dfcd6c1739fc16"],
-  ["index.html", "48fddac0ef827537f0043e18b1adb48e983eba1fa7ea962263135396f1fab0de"],
-  ["styles.css", "7deef19353c6057a41f5350722c680ccf98eba7b6203c9415c2dd9ec581d67b3"],
+  ["app.js", "7e0474af387ab199abda4a28e5999d5b512613f5c29f9cf9529f9aff4794eb6e"],
+  ["index.html", "7301edca5171ce3ce268b20f15a5d515dfe48c392b0476c0fdfb9e8d5c15b291"],
+  ["styles.css", "a97c8e497c9333729c72f922b65ef16967bd8cf7cbb47734f38c193f8c729d9e"],
   ["fieldwork.css", "fe064c3697ce8f73572a319439f00bdfae4ab822d9fc598ec4147d5790cbb9c8"],
   ["report.css", "fb0f2762c61005ed0ca9e082c6b6009c6182e7141ef642ab3b1998de0575baf1"],
   ["progress-report.css", "22ab917b9ce0f19c640ee2daa11fe69ca855cf9c1813f6c6d03f1493c8db8a86"],
@@ -37,11 +37,11 @@ const files = [
   ["candidate-advancement.css", "127cf67185223383c44c272d2161122390c22fd3b1d11387a7f9a08c55b56049"],
   ["server.mjs", "2cf8b4badf8b954f6acdaebb7b1b91485014b0276f7b36411c451bc455c0683f"],
   ["src/api-client.js", "c9db0a1cc5787a14611534f22ece14790780bf031a911921a226381aa57ef3e0"],
-  ["src/sandbox-store.js", "370dfb551be0b1947e222b3433226f48ed0fd44728a3bf0ae5823e7fcf59708c"],
-  ["src/engine.js", "3539bf08898ef7775d9112cb79d5f25939d7d4d663b850019287168bf514040f"],
-  ["src/test-form-entry.js", "5db18a66fc81870857eacd54805c7c6aa91292ef55d5c541866ba4cc1e1211be"],
-  ["src/eqpass-pdf.js", "04e6467bd722a5f716d1e20823660c8b717c7e7af675bfa2232511f35f9393c4"],
-  ["src/clinical-brief.js", "6a697f0f43bf65e76d12bfc5f884984af2a7bbdcf1329367e1aa2944debc5ffe"],
+  ["src/sandbox-store.js", "0a2c2c59540b07c617c52c30fd82fe1054ff8b5f2b4454028d87b9696844a7d2"],
+  ["src/engine.js", "f2edcff75a85dea7cd1a5935cdda42b9a46dd33b8c7989b6aa2d77f14acad030"],
+  ["src/test-form-entry.js", "766eb003a8ca3d5afaf56ae1ab34f0118ee8d046702d1b6fd9b9e0b87a4ee654"],
+  ["src/eqpass-pdf.js", "dc542ae329c46ac5ae3ce9e7d803208f3de1be0aeb5411ead1b09f5c1f299852"],
+  ["src/clinical-brief.js", "e2dd8d5b10118ae5d74be36f7cd2bd02d4680cee84b459c951ede02b91ec547b"],
   ["src/model-gateway.js", "db4bd0b3e5e8844d0e1dee87004d6c307e8af29ade1824ee6ea1530b7e599ba9"],
   ["src/model-input.js", "2efbfc9c6f7a50479116e2185d7a878429c583b65bcbd12dabfdb553c0da1eb7"],
   ["src/model-provider.js", "2eed70df99e56e6e8a87c166c51ebf4bb0108f44bd2ec42d72b9cde7cbcbd459"],
@@ -91,12 +91,12 @@ const files = [
   ["src/integration-return.js", "7ad6aa0fd1e1d631aa815156fa462deaceff650a6e637fb66dec4ac4234b304e"],
   ["src/integration-rehearsal.js", "89acf9ef54ec328fa957854969daf7c13b84e5381e08eb7cff33d427847d5baa"],
   ["src/workspace-experience.js", "e628c8455937a7e31f719d873fcbb1c5e1974fdf521f81bea810d15ca467e99f"],
-  ["src/deployment-presentation.js", "60ee692eeb5abd9f3abc5be1ed62afa94176b358c82d1a091ae56b1970acd2bf"],
+  ["src/deployment-presentation.js", "97b526c54c81a3db5233cc3bcb1ec07e85267453b5c0ff9d29bcf17d55d10c44"],
   ["src/operational-monitoring.js", "7424fe29815c0df55dc0e9179625f0e66b02f606f301ec97a313264bee05f18d"],
   ["src/incident-response.js", "5f3b043365f9c0bfe8e69a745db83150e5494a6aa12fa7919a835cf85a2d7041"],
   ["src/pilot-readiness.js", "afe1f05d008cca2d28cf813bcd5d8c7b87cb18ec2b7c1295ebd11a193e898cb4"],
   ["src/executive-handoff.js", "04f5a936402ac13f9e1d62a5473fc6af67994678f52ba3ff3520690628d53402"],
-  ["schemas/assessment.schema.json", "44582a5d8b9fa8396014f0532c65c720b6254116a603d48607397c3d2ee02077"],
+  ["schemas/assessment.schema.json", "01335283b175a9f61ee83856d9bb30c86a5d16020565cdd0fc4315a471d4014d"],
   ["schemas/clinical-interpretation.schema.json", "ea4310d6ed3228e1a226b9b44588f277584e6e3406101e1a779f468a1c7e58bb"],
   ["schemas/clinical-summary.schema.json", "265607e863a9d77ede57e8dd65f3f25b75657eb2d8070b32c6926faeff2317a3"],
   ["schemas/clinical-brief.schema.json", "44db47ef4f7a1fa679ab144073826737977d3500bc6b17d5132b37707baa719f"],
@@ -157,12 +157,12 @@ const files = [
   ["schemas/counselor-reference-decision-event.schema.json", "b288ff8b8d142c186f1d98a635b1280c19b459a7af818cd028058857b1a385e4"],
   ["schemas/progress-review-event.schema.json", "0ca94f1394f57666700ef812779919358dce2aefa755e5268eaa7dd69abce5fc"],
   ["schemas/workspace-experience.schema.json", "095c3541e57b2903b6abbedbf68aa94296eb2f95b47a4765dd01feaf30fd4bc6"],
-  ["schemas/deployment-presentation.schema.json", "06d106917b367e72f3d8523c98c09e220a6c532965d0db01d7443d5e5174631c"]
+  ["schemas/deployment-presentation.schema.json", "70cb4101cef52e447a680f34176cbee133617a7a44942d80a2ffcf396c66b45a"]
 ];
 
 export const LOCAL_LAST_KNOWN_GOOD = Object.freeze({
   id: "perl-local-lkg-2026-08-18",
-  version: "2026.08.18.49",
+  version: "2026.08.18.50",
   status: "local-engineering-baseline",
   artifactRepository: "working-tree-only",
   deployableArtifactAvailable: false,

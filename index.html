@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="PERL clinical intelligence workspace by Focused Future—evidence-linked summaries, accountable clinician review, and deployment governance.">
   <meta property="og:title" content="PERL · Clinical intelligence workspace">
-  <meta property="og:description" content="A deployment-candidate clinical summary workspace built around evidence, safety, and accountable review.">
+  <meta property="og:description" content="Evidence-linked e-QPASS summaries, accountable clinician review, and configurable clinical operations.">
   <meta property="og:type" content="website">
   <title>PERL · Clinical intelligence workspace</title>
   <link rel="icon" href="assets/perl-mark.svg" type="image/svg+xml">
@@ -27,16 +27,16 @@
 <body data-experience-mode="clinical" data-workspace-density="calm" data-review-focus="balanced" data-clinician-role="licensed-clinician" data-runtime-presentation="connecting">
   <a class="skip-link" href="#main-content">Skip to main content</a>
   <section id="server-required" class="server-required" role="dialog" aria-modal="true" aria-labelledby="server-required-title" hidden>
-    <div class="server-required-mark" aria-hidden="true"><span>PERL</span><strong>RC</strong><small>2.48</small></div>
+    <div class="server-required-mark" aria-hidden="true"><span>PERL</span><strong>APP</strong><small>2.49</small></div>
     <div class="server-required-copy">
-      <span>Deployment interlock</span>
-      <h1 id="server-required-title">Open the application.<br><em>Not its source file.</em></h1>
-      <p>This file is part of the verified release package. The usable product runs through PERL’s persistent server, API, safety controls, and audit path—the same application path used by a deployment.</p>
+      <span>PERL application</span>
+      <h1 id="server-required-title">Open the live workspace.</h1>
+      <p>The complete product runs from its secure web address so PDF processing, local persistence, safety controls, and reports work together.</p>
       <div class="server-required-actions">
-        <a href="http://127.0.0.1:4173/">Open server-backed PERL</a>
-        <div><strong>First launch on this Mac</strong><span>Double-click <code>Launch PERL.command</code> in this folder.</span></div>
+        <a href="https://dkawjr.github.io/perl-clinical-summary/">Open PERL</a>
+        <div><strong>Private by design</strong><span>The selected PDF is processed on this device and is not retained by PERL.</span></div>
       </div>
-      <footer><b>Evaluation records only</b><span>No PHI enters the deployment-review candidate.</span></footer>
+      <footer><b>Clinical review required</b><span>PERL supports—not replaces—licensed clinical judgment.</span></footer>
     </div>
   </section>
   <div class="app-shell">
@@ -56,48 +56,48 @@
 
       <div class="experience-switch" role="group" aria-label="Workspace mode">
         <button class="experience-option active" type="button" data-experience-mode="clinical" aria-pressed="true"><span>Clinical</span><small>Front</small></button>
-        <button class="experience-option" type="button" data-experience-mode="studio" aria-pressed="false"><span>Practice</span><small>Studio</small></button>
+        <button class="experience-option" type="button" data-experience-mode="studio" aria-pressed="false"><span>Admin</span><small>Settings</small></button>
       </div>
 
       <nav class="primary-nav">
-        <button type="button" class="nav-item" data-view="queue" data-experience="clinical">
+        <a class="nav-item" data-view="queue" data-experience="clinical" href="#queue">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
-          Review queue <span id="nav-queue-count" class="nav-count">3</span>
-        </button>
-        <button type="button" class="nav-item active" data-view="review" data-experience="clinical" aria-current="page">
+          <span class="nav-label">Review queue</span> <span id="nav-queue-count" class="nav-count">3</span>
+        </a>
+        <a class="nav-item active" data-view="review" data-experience="clinical" aria-current="page" href="#review">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 15 4 4L20 7M4 5h8"/></svg>
-          Summary review
-        </button>
-        <button type="button" class="nav-item" data-view="progress" data-experience="clinical">
+          <span class="nav-label">Summary review</span>
+        </a>
+        <button type="button" class="nav-item legacy-workspace" data-view="progress" data-experience="clinical">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18 9 13l4 2 7-9M4 6v12h16"/></svg>
           Progress review
         </button>
-        <button type="button" class="nav-item" data-view="fieldwork" data-experience="clinical">
+        <button type="button" class="nav-item legacy-workspace" data-view="fieldwork" data-experience="clinical">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4.5h10a3 3 0 0 1 3 3V20H8a3 3 0 0 1-3-3V4.5Zm3 12.5h10M9 8h5m-5 4h6"/></svg>
           Counselor fieldwork
         </button>
-        <button type="button" class="nav-item" data-view="studio" data-experience="studio">
+        <a class="nav-item" data-view="studio" data-experience="studio" href="#studio">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M5 17h14M8 4v6m8 4v6M11 14v6M13 4v6"/></svg>
-          Practice studio
-        </button>
-        <button type="button" class="nav-item" data-view="campus" data-experience="studio">
+          <span class="nav-label">Workspace settings</span>
+        </a>
+        <button type="button" class="nav-item legacy-workspace" data-view="campus" data-experience="studio">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 20V9l6-4 6 4v11M9 13h.01M12 13h.01M15 13h.01M9 16h.01M12 16h.01M15 16h.01"/></svg>
           Campus operations
         </button>
-        <button type="button" class="nav-item" data-view="calibration" data-experience="studio">
+        <button type="button" class="nav-item legacy-workspace" data-view="calibration" data-experience="studio">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19V9m7 10V5m7 14v-7"/></svg>
           Calibration
         </button>
-        <button type="button" class="nav-item" data-view="governance" data-experience="studio">
+        <button type="button" class="nav-item legacy-workspace" data-view="governance" data-experience="studio">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.4 2.8 8.4 7 10 4.2-1.6 7-5.6 7-10V6l-7-3Z"/></svg>
           Governance
         </button>
       </nav>
 
       <div class="sidebar-note" id="runtime-sidebar-note">
-        <span class="note-kicker" id="runtime-note-kicker">Environment 01</span>
-        <strong id="runtime-note-title">Protected evaluation</strong>
-        <p id="runtime-note-copy">Server connection establishing. Evaluation records only.</p>
+        <span class="note-kicker" id="runtime-note-kicker">PERL workspace</span>
+        <strong id="runtime-note-title">Private browser processing</strong>
+        <p id="runtime-note-copy">Reports and workspace settings remain on this device.</p>
       </div>
 
       <div class="sidebar-footer">
@@ -114,32 +114,32 @@
         <button id="mobile-menu" class="icon-button mobile-menu" type="button" aria-label="Open navigation" aria-controls="primary-sidebar" aria-expanded="false">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
         </button>
-        <div class="environment-chip"><span></span><b id="connection-label">Sandbox · synthetic data</b><em id="active-experience-label">Clinical front</em></div>
+        <div class="environment-chip"><span></span><b id="connection-label">Private workspace</b><em id="active-experience-label">Clinical</em></div>
         <div class="topbar-actions">
           <button id="import-open" class="quiet-button" type="button">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L8 8m4-4 4 4M5 14v5h14v-5"/></svg>
-            New test summary
+            New assessment
           </button>
           <button id="command-open" class="icon-button" type="button" aria-label="Open quick guide">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9a4 4 0 1 1 7.5 2c-1 1.3-3.5 1.4-3.5 3M12 18h.01"/></svg>
           </button>
-          <button id="reviewer-profile" class="profile-button" type="button" aria-label="Change calibration reviewer">DR</button>
+          <button id="reviewer-profile" class="profile-button" type="button" aria-label="Change reviewer">DR</button>
         </div>
       </header>
 
-      <aside id="deployment-candidate-bar" class="deployment-candidate-bar" aria-label="Deployment candidate status" hidden>
-        <div><span>Release candidate</span><strong id="deployment-candidate-version">2.48</strong></div>
-        <div><span>Application path</span><strong>Production-equivalent</strong></div>
-        <div><span>Runtime</span><strong id="deployment-candidate-state">Checking</strong></div>
-        <p id="deployment-candidate-boundary">Evaluation records only. Named approvals still govern PHI and clinical activation.</p>
+      <aside id="deployment-candidate-bar" class="deployment-candidate-bar" aria-label="Application status" hidden>
+        <div><span>PERL</span><strong id="deployment-candidate-version">2.49</strong></div>
+        <div><span>PDF processing</span><strong>On this device</strong></div>
+        <div><span>Workspace</span><strong id="deployment-candidate-state">Ready</strong></div>
+        <p id="deployment-candidate-boundary">Your selected PDF is processed locally and is not retained by PERL.</p>
       </aside>
 
       <section id="view-review" class="view active" aria-labelledby="review-title">
         <div class="page-head">
           <div>
-            <div class="eyebrow"><button class="crumb" type="button" data-view-jump="queue">Review queue</button><span>/</span><span id="record-crumb">FF-TEST-2407-A</span></div>
+            <div class="eyebrow"><a class="crumb" data-view-jump="queue" href="#queue">Review queue</a><span>/</span><span id="record-crumb">2407-A</span></div>
             <h1 id="review-title" tabindex="-1">Clinical summary review</h1>
-            <p id="review-lede" class="lede">Verify the generated draft against scored evidence before it enters the pilot record.</p>
+            <p id="review-lede" class="lede">Verify the generated draft against scored evidence before approving the clinical summary.</p>
             <p id="clinical-context-line" class="clinical-context-line">Licensed clinician · University counseling · Balanced review</p>
           </div>
           <div class="page-actions">
@@ -168,7 +168,7 @@
         </div>
 
         <div class="record-meta" aria-label="Assessment metadata" data-workspace-module="metadata">
-          <div><span>Record</span><strong id="meta-id">FF-TEST-2407-A</strong></div>
+          <div><span>Record</span><strong id="meta-id">2407-A</strong></div>
           <div><span>Completion</span><strong id="meta-completion">Today · 9:42 AM</strong></div>
           <div><span>Response time</span><strong id="meta-duration">09:42</strong></div>
           <div><span>Input coverage</span><strong id="meta-items">105 / 105</strong></div>
@@ -287,9 +287,9 @@
 
             <section id="attachment-card" class="rail-card attachment-card" aria-live="polite" data-workspace-module="handoff">
               <div class="card-kicker"><span class="status-dot mint"></span> e-QPASS handoff</div>
-              <h3 id="attachment-title">Source rehearsal only</h3>
-              <p id="attachment-detail">This record was not imported through the proposed e-QPASS event seam.</p>
-              <button id="prepare-attachment" class="secondary-button full-width" type="button" hidden>Prepare synthetic handoff</button>
+              <h3 id="attachment-title">Report source</h3>
+              <p id="attachment-detail">Upload the scored e-QPASS report to keep the summary linked to verified source scores.</p>
+              <button id="prepare-attachment" class="secondary-button full-width" type="button" hidden>Prepare handoff</button>
               <a id="open-assembly-proof" class="assembly-proof-link" target="_blank" rel="noopener" hidden><span>Inspect page-five assembly</span><small>Four source leaves + one PERL page</small></a>
               <code id="attachment-receipt" hidden></code>
             </section>
@@ -768,7 +768,7 @@
       <section id="view-queue" class="view" aria-labelledby="queue-title" hidden>
         <div class="page-head">
           <div>
-            <div class="eyebrow"><span>Clinical calibration</span><span>/</span><span>Queue</span></div>
+            <div class="eyebrow"><span>Clinical workspace</span><span>/</span><span>Queue</span></div>
             <h1 id="queue-title" tabindex="-1">Review queue</h1>
             <p class="lede">A deliberate path from machine draft to accountable clinical judgment.</p>
           </div>
@@ -776,9 +776,9 @@
         </div>
 
         <div class="metric-grid">
-          <article class="metric-card signal-card"><span>Awaiting review</span><strong id="metric-awaiting">3</strong><small>Synthetic calibration set</small></article>
-          <article class="metric-card"><span>Median review time</span><strong>6<span>m</span> 14<span>s</span></strong><small>Demo measurement</small></article>
-          <article class="metric-card"><span>Required correction</span><strong><span id="metric-correction">0</span><span>%</span></strong><small>Local calibration history</small></article>
+          <article class="metric-card signal-card"><span>Awaiting review</span><strong id="metric-awaiting">3</strong><small>Current workspace</small></article>
+          <article class="metric-card"><span>Median review time</span><strong>6<span>m</span> 14<span>s</span></strong><small>Current browser</small></article>
+          <article class="metric-card"><span>Required correction</span><strong><span id="metric-correction">0</span><span>%</span></strong><small>Local review history</small></article>
           <article class="metric-card"><span>Safety holds</span><strong id="metric-safety">1</strong><small>Rules operating as designed</small></article>
         </div>
 
@@ -791,7 +791,7 @@
             <label class="search-field">
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="m16 16 4 4"/></svg>
               <span class="sr-only">Search records</span>
-              <input id="queue-search" type="search" placeholder="Search synthetic ID">
+              <input id="queue-search" type="search" placeholder="Search record ID">
             </label>
           </div>
           <div class="queue-table-wrap">
@@ -807,17 +807,17 @@
         <div class="studio-masthead">
           <div class="studio-index" aria-hidden="true"><span>PERL</span><strong>PS</strong><small>01 / 01</small></div>
           <div class="studio-masthead-copy">
-            <div class="eyebrow studio-eyebrow"><span>Practice backplane</span><span>/</span><span>Display architecture</span></div>
+            <div class="eyebrow studio-eyebrow"><span>Administration</span><span>/</span><span>Workspace design</span></div>
             <h1 id="studio-title" tabindex="-1">The workspace should adapt.<br><em>The evidence should not.</em></h1>
-            <p>Shape what each clinician sees, preserve the non-negotiable safety line, and study constructed cohort patterns without turning a demographic attribute into a decision.</p>
+            <p>Shape what each clinician sees, preserve the non-negotiable safety line, and inspect aggregate demographic patterns without turning an attribute into a clinical decision.</p>
           </div>
           <div class="studio-masthead-action">
-            <span id="studio-save-state">Local profile ready</span>
-            <button id="open-clinical-mode" type="button">Preview clinical mode</button>
+            <span id="studio-save-state">Workspace profile ready</span>
+            <button id="open-clinical-mode" type="button">Return to clinical view</button>
           </div>
         </div>
 
-        <div class="studio-register" aria-label="Practice studio boundaries">
+        <div class="studio-register" aria-label="Workspace settings overview">
           <div><span>Profile</span><strong id="studio-profile-role">Licensed clinician</strong><small id="studio-profile-setting">University counseling</small></div>
           <div><span>Safety surface</span><strong>Always visible</strong><small>Cannot be customized away</small></div>
           <div><span>Demographic lens</span><strong>Aggregate only</strong><small>Minimum cell · 05</small></div>
@@ -863,7 +863,7 @@
 
             <div class="studio-form-foot">
               <p id="workspace-save-announcement" role="status" aria-live="polite">No display choices have been changed.</p>
-              <button id="save-workspace-profile" type="submit">Save practice profile</button>
+              <button id="save-workspace-profile" type="submit">Save workspace profile</button>
             </div>
           </form>
 
@@ -879,11 +879,11 @@
 
         <section class="demographic-observatory" aria-labelledby="demographic-title">
           <header>
-            <div class="demographic-folio" aria-hidden="true"><span>COHORT</span><strong>42</strong><small>CONSTRUCTED</small></div>
+            <div class="demographic-folio" aria-hidden="true"><span>COHORT</span><strong>42</strong><small>AGGREGATE</small></div>
             <div>
-              <span class="section-index light">Privacy-safe cohort lens · demonstration only</span>
+              <span class="section-index light">Privacy-safe cohort lens</span>
               <h2 id="demographic-title">See a pattern.<br><em>Resist the verdict.</em></h2>
-              <p>Explore access and routing questions across constructed demographic aggregates. There is no person-level drill-down and no result may drive a clinical or coverage decision.</p>
+              <p>Explore access and routing questions across aggregate demographic groups. Small cells are suppressed, person-level drill-down is unavailable, and the view is not used for clinical or coverage decisions.</p>
             </div>
             <label for="demographic-dimension">View by
               <select id="demographic-dimension"></select>
@@ -894,11 +894,11 @@
           <div class="demographic-legend" aria-label="Demographic metric legend">
             <span><i class="completion"></i>Review completion</span>
             <span><i class="routing"></i>Direct-review routing</span>
-            <span><i class="gpi"></i>Average synthetic GPI</span>
+            <span><i class="gpi"></i>Average GPI</span>
           </div>
           <footer>
             <code id="demographic-chain">PROFILE GENESIS</code>
-            <p id="demographic-boundary">Constructed aggregate demonstration only. Minimum cell size five; no PHI, person-level record, outcome claim, or protected-attribute decisioning.</p>
+            <p id="demographic-boundary">Aggregate operational view. Minimum cell size five; no person-level drill-down or protected-attribute decisioning.</p>
           </footer>
         </section>
       </section>
@@ -3827,8 +3827,8 @@
 
   <dialog id="reviewer-dialog" class="app-dialog reviewer-dialog" aria-labelledby="reviewer-dialog-title">
     <form method="dialog" id="reviewer-form">
-      <div class="dialog-head"><div><span class="section-index">Calibration identity</span><h2 id="reviewer-dialog-title" tabindex="-1">Choose a reviewer code</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
-      <p class="dialog-help">Use a study code such as <code>COUNSELOR-01</code>. It distinguishes independent reviewers in the synthetic evidence log; it is not authentication or a clinical signature.</p>
+      <div class="dialog-head"><div><span class="section-index">Reviewer identity</span><h2 id="reviewer-dialog-title" tabindex="-1">Choose a reviewer code</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
+      <p class="dialog-help">Use your organization’s reviewer code. It attributes edits, acknowledgements, approvals, and feedback without placing a client name in the interface.</p>
       <label class="reviewer-field">Reviewer code<input id="reviewer-code" type="text" minlength="2" maxlength="48" autocomplete="off" spellcheck="false" pattern="[A-Za-z0-9][A-Za-z0-9 ._-]{1,47}" required><small>Do not enter client names or any protected health information.</small></label>
       <div class="identity-boundary"><span>Session scope</span><p>The code is retained only for this browser session and attached to subsequent edits, acknowledgements, approvals, feedback, and blind comparisons.</p></div>
       <div class="dialog-actions"><button class="secondary-button" value="cancel" type="submit" formnovalidate>Cancel</button><button id="save-reviewer" class="primary-button" value="default" type="button">Use reviewer code</button></div>
@@ -3900,7 +3900,7 @@
 
   <dialog id="feedback-dialog" class="app-dialog" aria-labelledby="feedback-dialog-title">
     <form method="dialog" id="feedback-form">
-      <div class="dialog-head"><div><span class="section-index">Calibration signal</span><h2 id="feedback-dialog-title" tabindex="-1">Return with feedback</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
+      <div class="dialog-head"><div><span class="section-index">Review signal</span><h2 id="feedback-dialog-title" tabindex="-1">Return with feedback</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
       <p class="dialog-help">Your correction becomes structured input for the next prompt and rules review.</p>
       <fieldset class="feedback-reasons"><legend>What needs attention?</legend><label><input type="checkbox" name="reason" value="factual-mismatch"> Factual mismatch</label><label><input type="checkbox" name="reason" value="overreach"> Overreach</label><label><input type="checkbox" name="reason" value="tone"> Clinical tone</label><label><input type="checkbox" name="reason" value="evidence"> Evidence mismatch</label><label><input type="checkbox" name="reason" value="safety"> Safety handling</label><label><input type="checkbox" name="reason" value="omission"> Important omission</label><label><input type="checkbox" name="reason" value="usefulness"> Usefulness</label></fieldset>
       <label class="comment-field">Reviewer note<textarea id="feedback-note" rows="5" placeholder="Describe the correction the next draft should make."></textarea></label>
@@ -3924,7 +3924,7 @@
   <dialog id="evidence-dialog" class="app-dialog evidence-dialog" aria-labelledby="evidence-dialog-title">
     <form method="dialog">
       <div class="dialog-head"><div><span class="section-index">Source trace</span><h2 id="evidence-dialog-title" tabindex="-1">Scored evidence</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
-      <p class="dialog-help">This demo exposes scored constructs and item references—not respondent text or identity.</p>
+      <p class="dialog-help">PERL exposes scored constructs and source references—not respondent text or identity.</p>
       <div id="evidence-table" class="evidence-table"></div>
       <div class="dialog-actions"><button class="primary-button" value="cancel" type="submit" formnovalidate>Done</button></div>
     </form>
@@ -3932,8 +3932,8 @@
 
   <dialog id="import-dialog" class="app-dialog import-dialog" aria-labelledby="import-dialog-title">
     <form method="dialog" id="scored-form-entry">
-      <div class="dialog-head"><div><span class="section-index">Synthetic evaluation</span><h2 id="import-dialog-title" tabindex="-1">Generate from an e-QPASS report</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
-      <div class="import-warning"><strong>Use test information only.</strong><p>Choose a synthetic e-QPASS Score Report Package or verify the scored totals manually. PERL ignores report identifiers and never asks for a name, contact information, raw answers, or free-text history.</p></div>
+      <div class="dialog-head"><div><span class="section-index">New assessment</span><h2 id="import-dialog-title" tabindex="-1">Generate from an e-QPASS report</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
+      <div class="import-warning"><strong>Import the scored report.</strong><p>Choose the e-QPASS Score Report Package or enter the scored totals manually. PERL reads the score tables on this device, ignores report identifiers, and does not retain the source PDF.</p></div>
 
       <section class="pdf-intake-section" aria-labelledby="pdf-intake-title">
         <div class="pdf-intake-copy">
@@ -3957,9 +3957,9 @@
         <div class="manual-entry-head"><div><span>02 / Verify scores</span><h3 id="manual-entry-title">Review before generating</h3></div><p>PDF fills these fields · clinician verifies</p></div>
         <input name="entrySource" type="hidden" value="manual">
         <div class="entry-field-grid entry-record-grid">
-          <label><span>Test record ID</span><input name="recordId" autocomplete="off" maxlength="56" placeholder="SAMPLE-01" required><small>PERL adds FF-TEST- automatically.</small></label>
+          <label><span>Record ID</span><input name="recordId" autocomplete="off" maxlength="56" placeholder="CASE-01" required><small>Use a non-identifying internal reference.</small></label>
           <label><span>Response time</span><input name="duration" inputmode="numeric" pattern="[0-9]{2}:[0-9]{2}" value="10:00" required><small>MM:SS</small></label>
-          <label class="entry-wide"><span>Completion label</span><input name="completedAt" maxlength="120" value="Today · test entry" required><small>No person name or identifying date is needed.</small></label>
+          <label class="entry-wide"><span>Completion label</span><input name="completedAt" maxlength="120" value="Today · e-QPASS assessment" required><small>Use the timing label your team needs for review.</small></label>
         </div>
 
         <div class="entry-section-label"><span>Core scores</span><small>Copy the scored totals—not raw responses.</small></div>
@@ -3989,7 +3989,7 @@
         <button id="create-test-summary" class="primary-button entry-create-button" type="button">Generate clinical summary</button>
       </section>
 
-      <details class="fixture-import-details">
+      <details class="fixture-import-details legacy-fixture-import" hidden>
         <summary>03 / Advanced: import an existing JSON fixture</summary>
         <p>For technical testing, load a canonical scored assessment or proposed synthetic e-QPASS event.</p>
         <label class="upload-zone" for="fixture-file"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 15v4h14v-4"/></svg><strong>Choose a JSON fixture</strong><span>Canonical scored assessment or proposed synthetic e-QPASS event</span><input id="fixture-file" type="file" accept="application/json,.json"></label>
@@ -4002,8 +4002,8 @@
 
   <dialog id="guide-dialog" class="app-dialog guide-dialog" aria-labelledby="guide-dialog-title">
     <form method="dialog">
-      <div class="dialog-head"><div><span class="section-index">Quick guide</span><h2 id="guide-dialog-title" tabindex="-1">How this calibration workspace works</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
-      <ol class="guide-steps"><li><span>1</span><div><strong>Choose a synthetic e-QPASS PDF</strong><p>PERL reads the four-page Score Report Package locally, ignores identifiers, and fills the scored fields without sending the PDF anywhere.</p></div></li><li><span>2</span><div><strong>Verify every extracted score</strong><p>Confirm the populated score fields, then generate and review the clinical draft, evidence, uncertainty, and follow-up prompts.</p></div></li><li><span>3</span><div><strong>Resolve safety holds</strong><p>Non-zero critical screens require direct clinical review and cannot be silently summarized away.</p></div></li><li><span>4</span><div><strong>Approve, edit, and export</strong><p>Refine the clinician draft, preview another audience, then use the report button to print or save a PDF.</p></div></li></ol>
+      <div class="dialog-head"><div><span class="section-index">Quick guide</span><h2 id="guide-dialog-title" tabindex="-1">How the PERL workspace works</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
+      <ol class="guide-steps"><li><span>1</span><div><strong>Choose an e-QPASS PDF</strong><p>PERL reads the four-page Score Report Package on this device, ignores identifiers, and fills the scored fields without uploading or retaining the PDF.</p></div></li><li><span>2</span><div><strong>Verify every extracted score</strong><p>Confirm the populated score fields, then generate and review the clinical draft, evidence, uncertainty, and follow-up prompts.</p></div></li><li><span>3</span><div><strong>Resolve safety holds</strong><p>Non-zero critical screens require direct clinical review and cannot be silently summarized away.</p></div></li><li><span>4</span><div><strong>Approve, edit, and export</strong><p>Refine the clinician draft, preview another audience, then use the report button to print or save a PDF.</p></div></li></ol>
       <div class="dialog-actions"><button class="primary-button" value="cancel" type="submit" formnovalidate>Got it</button></div>
     </form>
   </dialog>
