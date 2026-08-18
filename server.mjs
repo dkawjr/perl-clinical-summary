@@ -2373,7 +2373,15 @@ async function staticResponse(request, response, pathname) {
   const method = request.method || "GET";
   if (!["GET", "HEAD"].includes(method)) return send(response, 405, { error: "Method not allowed." });
 
-  const candidate = resolve(root, pathname === "/" ? "index.html" : `.${pathname}`);
+  const vendorFiles = {
+    "/vendor/pdf.min.mjs": resolve(root, "node_modules", "pdfjs-dist", "build", "pdf.min.mjs"),
+    "/vendor/pdf.worker.min.mjs": resolve(root, "node_modules", "pdfjs-dist", "build", "pdf.worker.min.mjs"),
+    "/vendor/PDFJS-LICENSE.txt": resolve(root, "node_modules", "pdfjs-dist", "LICENSE")
+  };
+  const pdfAsset = pathname.match(/^\/vendor\/(cmaps|standard_fonts)\/([A-Za-z0-9_.-]+)$/);
+  const candidate = vendorFiles[pathname]
+    || (pdfAsset ? resolve(root, "node_modules", "pdfjs-dist", pdfAsset[1], pdfAsset[2]) : null)
+    || resolve(root, pathname === "/" ? "index.html" : `.${pathname}`);
   const traversal = relative(root, candidate);
   if (traversal.startsWith("..") || traversal.includes("../")) return send(response, 404, "Not found", "text/plain; charset=utf-8", method);
 

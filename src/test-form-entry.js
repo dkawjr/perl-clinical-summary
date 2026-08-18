@@ -55,6 +55,10 @@ function normalizeLevel(value, label) {
 
 export function buildSyntheticAssessmentFromScoreForm(values, { now = new Date() } = {}) {
   if (!values || typeof values !== "object") throw new TypeError("Scored test-form values are required.");
+  const entrySource = values.entrySource === "pdf" ? "pdf" : "manual";
+  const evidence = entrySource === "pdf"
+    ? "Synthetic e-QPASS score report · locally extracted and reviewer verified"
+    : "Synthetic test form · manually transcribed scored output";
   const scales = Object.fromEntries(Object.entries(SCORE_FIELDS).map(([key, maximum]) => [
     key,
     boundedInteger(values[key], key, maximum)
@@ -64,7 +68,7 @@ export function buildSyntheticAssessmentFromScoreForm(values, { now = new Date()
     domain: field.domain,
     score: boundedInteger(values[`subscale-${field.id}-score`], field.label, 120),
     level: normalizeLevel(values[`subscale-${field.id}-level`], field.label),
-    evidence: "Synthetic test form · manually transcribed scored output"
+    evidence
   }));
   const criticalResponses = [
     scales.suicideRisk > 0 ? {
@@ -87,7 +91,9 @@ export function buildSyntheticAssessmentFromScoreForm(values, { now = new Date()
     duration: normalizeDuration(values.duration),
     status: criticalResponses.length ? "priority" : "ready",
     reviewer: "Unassigned",
-    source: "PERL hosted synthetic scored-form entry",
+    source: entrySource === "pdf"
+      ? "PERL hosted synthetic e-QPASS PDF score extraction"
+      : "PERL hosted synthetic scored-form entry",
     itemsAnswered: 105,
     scales,
     subscales,
@@ -100,5 +106,7 @@ export const TEST_FORM_ENTRY_CONTRACT = Object.freeze({
   subscales: SUBSCALE_FIELDS,
   acceptsRawResponses: false,
   acceptsIdentifiers: false,
+  acceptsSyntheticEqpassPdf: true,
+  retainsSourcePdf: false,
   syntheticOnly: true
 });

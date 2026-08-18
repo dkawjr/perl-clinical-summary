@@ -58,7 +58,7 @@ test("launcher, container profile, and GitHub workflows preserve the server-back
   assert.match(verification, /npm run release:verify/);
   assert.match(publication, /@sha256:/);
   assert.match(publication, /ghcr\.io/);
-  assert.equal(packageFile.version, "2.47.0");
+  assert.equal(packageFile.version, "2.48.0");
   assert.equal(packageFile.scripts["preview:deployment"], "node tools/start-deployment-review.mjs");
   assert.equal(packageFile.scripts["verify:deployment"], "node tools/verify-deployment-candidate.mjs");
 });

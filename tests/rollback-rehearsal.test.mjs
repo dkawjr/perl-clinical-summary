@@ -20,14 +20,15 @@ test("local last-known-good manifest is sealed, bounded, and explicitly non-depl
   assert.equal(LOCAL_LAST_KNOWN_GOOD.deployableArtifactAvailable, false);
   assert.equal(LOCAL_LAST_KNOWN_GOOD.clinicalValidation, false);
   assert.equal(LOCAL_LAST_KNOWN_GOOD.clinicalReleaseAuthorized, false);
-  assert.equal(LOCAL_LAST_KNOWN_GOOD.sourceFiles.length, 153);
-  assert.equal(new Set(LOCAL_LAST_KNOWN_GOOD.sourceFiles.map(file => file.path)).size, 153);
+  assert.equal(LOCAL_LAST_KNOWN_GOOD.sourceFiles.length, 154);
+  assert.equal(new Set(LOCAL_LAST_KNOWN_GOOD.sourceFiles.map(file => file.path)).size, 154);
   assert.ok(LOCAL_LAST_KNOWN_GOOD.sourceFiles.some(file => file.path === "src/deployment-presentation.js"));
   assert.ok(LOCAL_LAST_KNOWN_GOOD.sourceFiles.some(file => file.path === "schemas/deployment-presentation.schema.json"));
   assert.ok(LOCAL_LAST_KNOWN_GOOD.sourceFiles.some(file => file.path === "src/workspace-experience.js"));
   assert.ok(LOCAL_LAST_KNOWN_GOOD.sourceFiles.some(file => file.path === "schemas/workspace-experience.schema.json"));
   assert.ok(LOCAL_LAST_KNOWN_GOOD.sourceFiles.some(file => file.path === "src/clinical-brief.js"));
   assert.ok(LOCAL_LAST_KNOWN_GOOD.sourceFiles.some(file => file.path === "src/test-form-entry.js"));
+  assert.ok(LOCAL_LAST_KNOWN_GOOD.sourceFiles.some(file => file.path === "src/eqpass-pdf.js"));
   assert.ok(LOCAL_LAST_KNOWN_GOOD.sourceFiles.some(file => file.path === "schemas/clinical-brief.schema.json"));
   assert.ok(LOCAL_LAST_KNOWN_GOOD.sourceFiles.some(file => file.path === "src/release-candidate.js"));
   assert.ok(LOCAL_LAST_KNOWN_GOOD.sourceFiles.some(file => file.path === "schemas/release-candidate-manifest.schema.json"));

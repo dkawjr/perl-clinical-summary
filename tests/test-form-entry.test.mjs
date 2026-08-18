@@ -38,6 +38,14 @@ test("manual scored-form entry creates a canonical synthetic assessment", () => 
   assert.deepEqual(validateAssessment(assessment), []);
   assert.equal(TEST_FORM_ENTRY_CONTRACT.acceptsRawResponses, false);
   assert.equal(TEST_FORM_ENTRY_CONTRACT.acceptsIdentifiers, false);
+  assert.equal(TEST_FORM_ENTRY_CONTRACT.acceptsSyntheticEqpassPdf, true);
+  assert.equal(TEST_FORM_ENTRY_CONTRACT.retainsSourcePdf, false);
+});
+
+test("PDF-derived scored entry records local extraction provenance without retaining the PDF", () => {
+  const assessment = buildSyntheticAssessmentFromScoreForm({ ...valid, entrySource: "pdf" });
+  assert.match(assessment.source, /PDF score extraction/);
+  assert.match(assessment.subscales[0].evidence, /locally extracted and reviewer verified/);
 });
 
 test("manual scored-form entry routes a non-zero critical score to priority review", () => {

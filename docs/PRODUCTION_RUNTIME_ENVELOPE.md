@@ -2,7 +2,7 @@
 
 Contract: `perl-runtime-envelope/1.0`  
 Policy: `perl-runtime-envelope-policy/1.0`  
-Current package export: `perl-synthetic-calibration-package/2.47` (runtime envelope introduced in `2.30`)
+Current package export: `perl-synthetic-calibration-package/2.48` (runtime envelope introduced in `2.30`)
 State schema: `49`
 
 ## Purpose

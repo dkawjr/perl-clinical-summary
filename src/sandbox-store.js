@@ -8263,7 +8263,7 @@ export class SandboxStore {
     }));
     const core = {
       manifest: {
-        format: "perl-synthetic-calibration-package/2.47",
+        format: "perl-synthetic-calibration-package/2.48",
         generatedAt: this.clock().toISOString(),
         environment: this.state.environment,
         schemaVersion: this.state.schemaVersion,

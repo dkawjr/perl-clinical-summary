@@ -90,6 +90,18 @@ test("deployment candidate blocks source-file impersonation and exposes a restra
   assert.ok(contrast("#172821", "#ddb86c") >= 4.5);
 });
 
+test("e-QPASS PDF intake is explicit, local, reviewable, and keyboard-native", () => {
+  assert.match(html, /id="eqpass-pdf-file" type="file" accept="application\/pdf,\.pdf"/);
+  assert.match(html, /id="eqpass-pdf-status"[^>]*role="status"[^>]*aria-live="polite"/);
+  assert.match(html, /No PDF upload · no PDF retention · identifiers ignored/);
+  assert.match(html, /PDF fills these fields · clinician verifies/);
+  assert.match(script, /readEqpassPdfPages\(file\)/);
+  assert.match(script, /parseEqpassScoreReport\(pages\)/);
+  assert.match(script, /Generate from verified scores/);
+  assert.match(styles, /\.eqpass-pdf-zone \{[\s\S]*?min-height: 172px;/);
+  assert.match(styles, /@media \(max-width: 900px\) \{[\s\S]*?\.pdf-intake-section \{ grid-template-columns: 1fr; \}/);
+});
+
 test("every modal has an accessible name, a focus target, and non-validating dismiss controls", () => {
   const dialogs = [...html.matchAll(/<dialog\b([^>]*)>([\s\S]*?)<\/dialog>/g)];
   assert.equal(dialogs.length, 11);

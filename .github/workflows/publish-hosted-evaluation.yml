@@ -31,8 +31,10 @@ jobs:
           cache: npm
       - name: Verify the evaluation build
         run: |
-          npm install --package-lock-only --ignore-scripts
+          npm ci --ignore-scripts
           npm test
+      - name: Stage pinned Mozilla PDF.js runtime
+        run: npm install --no-save --package-lock=false --ignore-scripts pdfjs-dist@6.2.108
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Assemble browser-only evaluation artifact
@@ -40,6 +42,12 @@ jobs:
           mkdir -p _site
           cp index.html app.js *.css *.js _site/
           cp -R assets src _site/
+          mkdir -p _site/vendor
+          cp node_modules/pdfjs-dist/build/pdf.min.mjs _site/vendor/
+          cp node_modules/pdfjs-dist/build/pdf.worker.min.mjs _site/vendor/
+          cp -R node_modules/pdfjs-dist/cmaps _site/vendor/
+          cp -R node_modules/pdfjs-dist/standard_fonts _site/vendor/
+          cp node_modules/pdfjs-dist/LICENSE _site/vendor/PDFJS-LICENSE.txt
           touch _site/.nojekyll
       - name: Upload site
         uses: actions/upload-pages-artifact@v4

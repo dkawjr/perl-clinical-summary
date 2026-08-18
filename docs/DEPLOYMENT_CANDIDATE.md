@@ -1,6 +1,6 @@
-# PERL Deployment Candidate 2.47
+# PERL Deployment Candidate 2.48
 
-PERL 2.47 is ready for deployment review: the clinician experience, Practice Studio, persistent API, evidence chains, release construction, health probes, security headers, source-file interlock, and container contract run through the same server-backed application path used by a deployment. A separately labeled GitHub-hosted evaluation surface adds direct synthetic scored-form entry and per-browser persistence for stakeholder testing.
+PERL 2.48 is ready for deployment review: the clinician experience, Practice Studio, persistent API, evidence chains, release construction, health probes, security headers, source-file interlock, and container contract run through the same server-backed application path used by a deployment. A separately labeled GitHub-hosted evaluation surface adds browser-local extraction of the standard four-page synthetic e-QPASS Score Report Package, direct scored-form entry, and per-browser persistence for stakeholder testing. The PDF is parsed locally, identifiers are ignored, the source file is not retained, and all extracted scores remain visible for reviewer verification before generation.
 
 This status is deliberately narrower than clinical release. The candidate accepts evaluation records only. It is not approved for PHI, authoritative e-QPASS traffic, clinical use, or patient-level decisions until the named external owners complete their duties.
 
@@ -22,7 +22,7 @@ Opening `index.html` directly is now an intentional interlock, not a fallback pr
 
 The deployment-review header reports:
 
-- release candidate `2.47`;
+- release candidate `2.48`;
 - production-equivalent static and API path;
 - live runtime readiness;
 - persistent owner-only evaluation state; and

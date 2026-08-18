@@ -3,6 +3,7 @@ import { ApiClient } from "./src/api-client.js";
 import { SCALE_THRESHOLDS, coverageScore, generateClinicalInterpretation, generateSummary, resolveScaleLevel, riskDisposition, validateAssessment, validateClinicalInterpretation, validateNarrative } from "./src/engine.js";
 import { buildClinicalBrief } from "./src/clinical-brief.js";
 import { buildSyntheticAssessmentFromScoreForm } from "./src/test-form-entry.js";
+import { parseEqpassScoreReport, readEqpassPdfPages } from "./src/eqpass-pdf.js";
 
 const DEFAULT_REVIEWER = "REVIEWER-01";
 const HOSTED_EVALUATION = ["http:", "https:"].includes(window.location.protocol)
@@ -27,6 +28,7 @@ const state = {
   audit: [...auditSeed],
   riskAcknowledged: false,
   selectedFixture: null,
+  pdfImport: null,
   reviewerCode: storedReviewerCode(),
   api: new ApiClient(),
   connected: false,
@@ -518,7 +520,7 @@ function setConnectionState(connected, health = null) {
     $("#deployment-candidate-boundary").textContent = "Evaluation records only · PHI and clinical activation remain externally governed.";
     document.title = `PERL ${presentation.candidateVersion} · Deployment candidate`;
   } else if (hostedEvaluation) {
-    $("#deployment-candidate-version").textContent = "2.47";
+    $("#deployment-candidate-version").textContent = "2.48";
     $("#deployment-candidate-state").textContent = "Ready to test";
     $("#deployment-candidate-boundary").textContent = "Synthetic scored forms only · entries remain in this browser.";
     candidateBar.querySelector("div:nth-child(2) span").textContent = "Evaluation path";
@@ -7061,6 +7063,61 @@ function addEventListeners() {
   $("#command-open").addEventListener("click", () => openDialog("#guide-dialog"));
   $("#import-open").addEventListener("click", () => openDialog("#import-dialog"));
 
+  const setPdfImportStatus = (status, title, detail) => {
+    const element = $("#eqpass-pdf-status");
+    element.dataset.state = status;
+    element.innerHTML = `<span>${escapeHTML(title)}</span><p>${escapeHTML(detail)}</p>`;
+  };
+
+  const populateScoredForm = values => {
+    const form = $("#scored-form-entry");
+    for (const [name, value] of Object.entries(values)) {
+      const control = form.elements.namedItem(name);
+      if (control && "value" in control) control.value = String(value);
+    }
+  };
+
+  const resetPdfImportPresentation = () => {
+    state.pdfImport = null;
+    $("#eqpass-pdf-label").textContent = "Choose e-QPASS PDF";
+    setPdfImportStatus("idle", "Ready", "Select a report to extract all 15 required scores.");
+  };
+
+  $("#eqpass-pdf-file").addEventListener("change", async event => {
+    const file = event.target.files[0];
+    if (!file) return resetPdfImportPresentation();
+    $("#eqpass-pdf-label").textContent = file.name;
+    setPdfImportStatus("reading", "Reading locally", "Finding the verified score tables. The PDF is not being uploaded.");
+    try {
+      const pages = await readEqpassPdfPages(file);
+      const result = parseEqpassScoreReport(pages);
+      populateScoredForm(result.values);
+      state.pdfImport = {
+        format: result.format,
+        pageCount: result.pageCount,
+        extractedFieldCount: result.extractedFieldCount,
+        safetyHoldDetected: result.safetyHoldDetected
+      };
+      setPdfImportStatus(
+        result.safetyHoldDetected ? "attention" : "complete",
+        `${result.extractedFieldCount} scores extracted`,
+        result.safetyHoldDetected
+          ? "A non-zero critical screen was detected. Verify the scores below; PERL will hold approval for direct review."
+          : "Score rows verified. Review the populated fields below, then generate the clinical summary."
+      );
+      $("#manual-entry-title").textContent = "Verify the extracted scores";
+      $("#create-test-summary").textContent = "Generate from verified scores";
+      $("#manual-entry-title").scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (error) {
+      state.pdfImport = null;
+      $("#scored-form-entry").elements.namedItem("entrySource").value = "manual";
+      setPdfImportStatus("error", "PDF needs manual review", error.message);
+      $("#create-test-summary").textContent = "Generate clinical summary";
+    } finally {
+      event.target.value = "";
+    }
+  });
+
   $("#fixture-file").addEventListener("change", async event => {
     state.selectedFixture = null;
     $("#import-errors").textContent = "";
@@ -7131,6 +7188,7 @@ function addEventListeners() {
     $("#manual-entry-errors").textContent = "";
     try {
       const values = Object.fromEntries(new FormData(form).entries());
+      const cameFromPdf = values.entrySource === "pdf";
       const assessment = buildSyntheticAssessmentFromScoreForm(values);
       const errors = validateAssessment(assessment);
       if (errors.length) throw new Error(errors[0]);
@@ -7147,7 +7205,12 @@ function addEventListeners() {
         state.assessments.unshift(withInterpretation(assessment));
         state.currentIndex = 0;
         state.riskAcknowledged = false;
-        state.audit = [{ time: "Now", actor: state.reviewerCode, action: "Synthetic scored form entered", detail: assessment.id }];
+        state.audit = [{
+          time: "Now",
+          actor: state.reviewerCode,
+          action: cameFromPdf ? "Synthetic e-QPASS PDF extracted and verified" : "Synthetic scored form entered",
+          detail: assessment.id
+        }];
         persistHostedEvaluation();
       }
       renderQueue();
@@ -7155,12 +7218,16 @@ function addEventListeners() {
       closeDialog("#import-dialog");
       switchView("review");
       form.reset();
-      showToast("Test scores converted into a clinician-review draft.");
+      resetPdfImportPresentation();
+      $("#manual-entry-title").textContent = "Review before generating";
+      showToast(cameFromPdf
+        ? "e-QPASS PDF scores converted into a clinician-review draft."
+        : "Test scores converted into a clinician-review draft.");
     } catch (error) {
       $("#manual-entry-errors").textContent = error.message;
     } finally {
       button.disabled = false;
-      button.textContent = "Create test summary";
+      button.textContent = "Generate clinical summary";
     }
   });
 
