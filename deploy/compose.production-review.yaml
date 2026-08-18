@@ -1,6 +1,6 @@
 services:
   perl:
-    image: perl-clinical-summary:2.46
+    image: perl-clinical-summary:2.47
     build:
       context: ..
       dockerfile: deploy/Containerfile

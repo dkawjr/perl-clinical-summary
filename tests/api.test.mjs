@@ -443,7 +443,7 @@ test("deployment-review API reports a ready software candidate without clinical 
   const payload = await response.json();
   assert.equal(response.status, 200);
   assert.equal(payload.environment, "deployment-review");
-  assert.equal(payload.deploymentPresentation.candidateVersion, "2.46");
+  assert.equal(payload.deploymentPresentation.candidateVersion, "2.47");
   assert.equal(payload.deploymentPresentation.label, "Deployment candidate");
   assert.equal(payload.deploymentPresentation.deploymentReviewReady, true);
   assert.equal(payload.deploymentPresentation.persistent, true);
@@ -487,7 +487,7 @@ test("rollback operations API verifies local compatibility without performing a 
   const headers = { "Content-Type": "application/json", "X-PERL-Demo-Actor": "ROLLBACK-API" };
   let status = await fetch(`${base}/api/operations/rollback`).then(response => response.json());
   assert.equal(status.status, "not-run");
-  assert.equal(status.baseline.sourceFileCount, 152);
+  assert.equal(status.baseline.sourceFileCount, 153);
   assert.equal(status.baseline.deployableArtifactAvailable, false);
 
   await fetch(`${base}/api/operations/recovery/rehearse`, { method: "POST", headers, body: "{}" });
@@ -2431,7 +2431,7 @@ test("calibration analysis and exports preserve the synthetic study boundary", a
   assert.match(packageResponse.headers.get("content-disposition"), /attachment/);
   assert.equal(studyPackage.manifest.population, "synthetic calibration sandbox");
   assert.equal(studyPackage.manifest.clinicalValidation, false);
-  assert.equal(studyPackage.manifest.format, "perl-synthetic-calibration-package/2.46");
+  assert.equal(studyPackage.manifest.format, "perl-synthetic-calibration-package/2.47");
   assert.equal(studyPackage.manifest.candidateBlindReviewEventChain.valid, true);
   assert.equal(studyPackage.candidateBlindReview.counts.engineRankingsPublished, 0);
   assert.ok(Array.isArray(studyPackage.candidateBlindReviewEvents));

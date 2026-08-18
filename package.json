@@ -1,6 +1,6 @@
 {
   "name": "perl-clinical-summary",
-  "version": "2.46.0",
+  "version": "2.47.0",
   "private": true,
   "type": "module",
   "description": "PERL clinical intelligence deployment candidate for Focused Future",

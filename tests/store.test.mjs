@@ -610,7 +610,7 @@ test("local rollback rehearsal verifies the sealed baseline without changing the
   assert.equal(result.clinicalReleaseAuthorized, false);
   assert.equal(result.baseline.artifactRepository, "working-tree-only");
   assert.equal(result.baseline.deployableArtifactAvailable, false);
-  assert.equal(result.event.sourceFileCount, 152);
+  assert.equal(result.event.sourceFileCount, 153);
   assert.ok(result.event.sourceFiles.every(file => file.match));
   assert.ok(Object.values(result.event.verification).every(Boolean));
   assert.equal(result.event.productionRollbackPerformed, false);

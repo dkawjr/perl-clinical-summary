@@ -1,6 +1,6 @@
-# PERL Deployment Candidate 2.46
+# PERL Deployment Candidate 2.47
 
-PERL 2.46 is ready for deployment review: the clinician experience, Practice Studio, persistent API, evidence chains, release construction, health probes, security headers, source-file interlock, and container contract run through the same server-backed application path used by a deployment.
+PERL 2.47 is ready for deployment review: the clinician experience, Practice Studio, persistent API, evidence chains, release construction, health probes, security headers, source-file interlock, and container contract run through the same server-backed application path used by a deployment. A separately labeled GitHub-hosted evaluation surface adds direct synthetic scored-form entry and per-browser persistence for stakeholder testing.
 
 This status is deliberately narrower than clinical release. The candidate accepts evaluation records only. It is not approved for PHI, authoritative e-QPASS traffic, clinical use, or patient-level decisions until the named external owners complete their duties.
 
@@ -22,7 +22,7 @@ Opening `index.html` directly is now an intentional interlock, not a fallback pr
 
 The deployment-review header reports:
 
-- release candidate `2.46`;
+- release candidate `2.47`;
 - production-equivalent static and API path;
 - live runtime readiness;
 - persistent owner-only evaluation state; and
@@ -83,12 +83,13 @@ The template values must be replaced with the approved HTTPS origin, current dat
 
 ## GitHub delivery
 
-The repository contains two workflows:
+The repository contains three workflows:
 
 - `Verify deployment candidate` runs the full regression, synthetic baseline, runtime envelope, deployment verification, and deterministic release build/verification on pull requests and `main`;
-- `Publish private deployment candidate` is a manual workflow that accepts only a digest-pinned Node base image, reruns verification, and publishes the immutable commit-tagged image to GitHub Container Registry.
+- `Publish immutable deployment candidate` is a manual workflow that accepts only a digest-pinned Node base image, reruns verification, and publishes the immutable commit-tagged image to GitHub Container Registry;
+- `Publish hosted synthetic evaluation` verifies the app and deploys the public stakeholder evaluation to GitHub Pages.
 
-GitHub Pages is intentionally not used. A static Pages deployment would bypass the persistent API and misrepresent the product. GitHub is the private source, review, CI, release, and container registry plane; the actual application runs as the server/container candidate.
+The Pages experience is explicitly labeled as a self-contained synthetic evaluation. It stores entered test records only in that browser and does not claim the persistent API, production authentication, authoritative e-QPASS connectivity, PHI handling, or clinical activation. The controlled application deployment remains the server/container candidate.
 
 ## Meaning of “ready”
 

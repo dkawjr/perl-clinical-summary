@@ -2,6 +2,14 @@
 
 A dependency-free deployment candidate for Focused Future’s clinician-facing e-QPASS summary, review, calibration, and practice-operations workflow. The clinician experience and persistent API use the same application path locally, in deployment review, and in the hardened container contract.
 
+## Sendable synthetic evaluation
+
+Open the public product at **[https://dkawjr.github.io/perl-clinical-summary/](https://dkawjr.github.io/perl-clinical-summary/)**.
+
+Choose **New test summary**, copy the scored totals and ranges from a completed synthetic form, and PERL will create the clinician-review draft. Edits, approvals, and imported test records persist in that browser; the report control opens the browser’s print/save-to-PDF flow. The hosted evaluation intentionally requests no names, direct identifiers, raw answers, or free-text clinical history.
+
+The shared URL is the durable stakeholder-evaluation surface. The server-backed deployment path below remains the implementation and integration candidate for a controlled environment.
+
 > **Deployment-review ready · evaluation records only.** The software candidate is runnable and verifiable. PHI, authoritative e-QPASS connectivity, clinical validation, clinical release, traffic activation, and patient use remain subject to named external approval.
 
 ## Open the deployment candidate
@@ -135,6 +143,8 @@ Package `2.44` adds the [Findings-to-Summary Automation Atelier](./docs/INTEGRAT
 Package `2.45` adds the [PERL Practice Studio](./docs/PRACTICE_STUDIO.md) without changing schema 49 or the forty-seven clinical-evidence integrity families. `Clinical / Front` preserves the focused clinician workflow; `Practice / Studio` composes role context, care setting, reading emphasis, density, optional modules, and a constructed aggregate demographic lens. Safety, limitations, and clinician approval remain locked visible. Profiles persist in a separate owner-only, tamper-evident display ledger and cannot change evidence, content, safety routing, permissions, approval, model behavior, release, or patient-level decisions.
 
 Package `2.46` adds the [Deployment Candidate](./docs/DEPLOYMENT_CANDIDATE.md) without changing schema 49 or the forty-seven clinical-evidence integrity families. The deployment-review presentation runs the exact persistent server/static/API path, reports live readiness and release identity, blocks misleading `file://` operation, verifies nine response-security headers, supplies a one-command Mac launcher, and adds hardened Compose plus private GitHub CI/container-publication workflows. It is ready for deployment review with evaluation records; PHI, authoritative integration, production identity/model, clinical validation, release, traffic, and patient use remain externally governed.
+
+Package `2.47` adds the durable [hosted synthetic evaluation](https://dkawjr.github.io/perl-clinical-summary/) without changing schema 49 or the forty-seven clinical-evidence integrity families. Dolores can enter the bounded scored totals and ranges from a completed synthetic test form, receive the same clinician-review draft, edit and approve within the evaluation boundary, switch audience previews, and print or save the report. Test records and display preferences persist only in that browser; no raw answers, names, free-text history, server upload, PHI authorization, clinical validation, or production activation are implied.
 
 ## Product tour
 

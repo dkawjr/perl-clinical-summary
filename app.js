@@ -2,8 +2,12 @@ import { assessments as seedAssessments, auditSeed } from "./src/demo-data.js";
 import { ApiClient } from "./src/api-client.js";
 import { SCALE_THRESHOLDS, coverageScore, generateClinicalInterpretation, generateSummary, resolveScaleLevel, riskDisposition, validateAssessment, validateClinicalInterpretation, validateNarrative } from "./src/engine.js";
 import { buildClinicalBrief } from "./src/clinical-brief.js";
+import { buildSyntheticAssessmentFromScoreForm } from "./src/test-form-entry.js";
 
 const DEFAULT_REVIEWER = "REVIEWER-01";
+const HOSTED_EVALUATION = ["http:", "https:"].includes(window.location.protocol)
+  && !["127.0.0.1", "localhost"].includes(window.location.hostname);
+const HOSTED_EVALUATION_STORAGE_KEY = "perl-hosted-evaluation-v1";
 let mobileNavigationBound = false;
 
 function storedReviewerCode() {
@@ -26,6 +30,7 @@ const state = {
   reviewerCode: storedReviewerCode(),
   api: new ApiClient(),
   connected: false,
+  hostedEvaluation: HOSTED_EVALUATION,
   model: null,
   deploymentPresentation: null,
   calibrationCase: null,
@@ -136,6 +141,40 @@ const state = {
   clinicalBrief: null
 };
 state.api.setActor(state.reviewerCode);
+
+function restoreHostedEvaluation() {
+  if (!state.hostedEvaluation) return;
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(HOSTED_EVALUATION_STORAGE_KEY) || "null");
+    if (!saved || saved.version !== 1 || !Array.isArray(saved.assessments)) return;
+    const restored = saved.assessments.filter(assessment => validateAssessment(assessment).length === 0);
+    if (restored.length) state.assessments = restored;
+    if (saved.narratives && typeof saved.narratives === "object" && !Array.isArray(saved.narratives)) state.narratives = saved.narratives;
+    if (Array.isArray(saved.audit)) state.audit = saved.audit.slice(-120);
+    if (saved.workspaceProfile && typeof saved.workspaceProfile === "object") {
+      state.workspaceExperience = { ...fallbackWorkspaceExperience(), profile: saved.workspaceProfile, saved: true, savedAt: saved.savedAt || null };
+    }
+  } catch {
+    window.localStorage.removeItem(HOSTED_EVALUATION_STORAGE_KEY);
+  }
+}
+
+function persistHostedEvaluation() {
+  if (!state.hostedEvaluation || state.connected) return;
+  try {
+    const payload = {
+      version: 1,
+      assessments: state.assessments,
+      narratives: state.narratives,
+      audit: state.audit.slice(-120),
+      workspaceProfile: state.workspaceExperience?.profile || null,
+      savedAt: new Date().toISOString()
+    };
+    window.localStorage.setItem(HOSTED_EVALUATION_STORAGE_KEY, JSON.stringify(payload));
+  } catch {
+    showToast("This browser blocked local saving. The current test still works until the tab is closed.");
+  }
+}
 
 const $ = selector => document.querySelector(selector);
 const $$ = selector => [...document.querySelectorAll(selector)];
@@ -408,7 +447,8 @@ function setConnectionState(connected, health = null) {
   state.model = health?.model || null;
   state.deploymentPresentation = health?.deploymentPresentation || null;
   const chip = $(".environment-chip");
-  chip.classList.toggle("offline", !connected);
+  chip.classList.toggle("offline", !connected && !state.hostedEvaluation);
+  chip.classList.toggle("hosted", !connected && state.hostedEvaluation);
   chip.classList.toggle("deployment", Boolean(connected && state.deploymentPresentation?.mode === "deployment-review"));
   $("#report-incident").disabled = !connected;
   $("#register-change").disabled = !connected;
@@ -456,24 +496,34 @@ function setConnectionState(connected, health = null) {
   $("#export-campus-observatory").setAttribute("aria-disabled", String(!connected));
   const presentation = state.deploymentPresentation;
   const deploymentReview = connected && presentation?.mode === "deployment-review";
+  const hostedEvaluation = !connected && state.hostedEvaluation;
   $("#connection-label").textContent = deploymentReview
     ? "Deployment candidate"
     : connected
       ? "Persistent evaluation workspace"
+      : hostedEvaluation
+        ? "Hosted synthetic evaluation"
       : window.location.protocol === "file:"
         ? "Server connection required"
         : "Evaluation workspace offline";
-  document.body.dataset.runtimePresentation = deploymentReview ? "deployment-review" : connected ? "engineering" : "source-file";
-  $("#runtime-note-kicker").textContent = deploymentReview ? `Release candidate ${presentation.candidateVersion}` : connected ? "Engineering environment" : "Application source";
-  $("#runtime-note-title").textContent = deploymentReview ? presentation.environmentLabel : connected ? "Protected evaluation" : "Server required";
-  $("#runtime-note-copy").textContent = deploymentReview ? `${presentation.dataLabel}. Persistent server and API path active.` : connected ? "Persistent evaluation records. No PHI or live clinical use." : "Launch PERL to activate persistence, safety controls, and audit history.";
+  document.body.dataset.runtimePresentation = deploymentReview ? "deployment-review" : connected ? "engineering" : hostedEvaluation ? "hosted-evaluation" : "source-file";
+  $("#runtime-note-kicker").textContent = deploymentReview ? `Release candidate ${presentation.candidateVersion}` : connected ? "Engineering environment" : hostedEvaluation ? "Shareable evaluation" : "Application source";
+  $("#runtime-note-title").textContent = deploymentReview ? presentation.environmentLabel : connected ? "Protected evaluation" : hostedEvaluation ? "Ready for synthetic testing" : "Server required";
+  $("#runtime-note-copy").textContent = deploymentReview ? `${presentation.dataLabel}. Persistent server and API path active.` : connected ? "Persistent evaluation records. No PHI or live clinical use." : hostedEvaluation ? "Test-form entries stay in this browser. No sign-in, server upload, or patient data." : "Launch PERL to activate persistence, safety controls, and audit history.";
   const candidateBar = $("#deployment-candidate-bar");
-  candidateBar.hidden = !deploymentReview;
+  candidateBar.hidden = !(deploymentReview || hostedEvaluation);
   if (deploymentReview) {
     $("#deployment-candidate-version").textContent = presentation.candidateVersion;
     $("#deployment-candidate-state").textContent = presentation.deploymentReviewReady ? "Ready for review" : "Initializing";
     $("#deployment-candidate-boundary").textContent = "Evaluation records only · PHI and clinical activation remain externally governed.";
     document.title = `PERL ${presentation.candidateVersion} · Deployment candidate`;
+  } else if (hostedEvaluation) {
+    $("#deployment-candidate-version").textContent = "2.47";
+    $("#deployment-candidate-state").textContent = "Ready to test";
+    $("#deployment-candidate-boundary").textContent = "Synthetic scored forms only · entries remain in this browser.";
+    candidateBar.querySelector("div:nth-child(2) span").textContent = "Evaluation path";
+    candidateBar.querySelector("div:nth-child(2) strong").textContent = "Hosted · self-contained";
+    document.title = "PERL · Hosted synthetic evaluation";
   }
   $$(".export-link").forEach(link => {
     link.classList.toggle("disabled", !connected);
@@ -3748,6 +3798,11 @@ async function hydrateFromApi() {
     setConnectionState(false);
     return;
   }
+  if (state.hostedEvaluation) {
+    setConnectionState(false);
+    showToast("Hosted evaluation ready. Test entries save only in this browser.");
+    return;
+  }
   try {
     const health = await state.api.health();
     setConnectionState(true, health);
@@ -3761,7 +3816,9 @@ async function hydrateFromApi() {
   } catch (error) {
     console.warn("PERL API unavailable; using the non-persistent synthetic fallback.", error);
     setConnectionState(false);
-    showToast("Local persistence is unavailable; this session will remain in memory.");
+    showToast(state.hostedEvaluation
+      ? "Hosted evaluation ready. Test entries save only in this browser."
+      : "Local persistence is unavailable; this session will remain in memory.");
   }
 }
 
@@ -4446,8 +4503,12 @@ function addEventListeners() {
         renderWorkspaceExperience(result.workspace);
         $("#workspace-save-announcement").textContent = result.changed ? "Practice profile saved to the local display ledger." : "This practice profile already matches the sealed local display.";
       } else {
-        renderWorkspaceExperience({ ...state.workspaceExperience, profile, saved: false, savedAt: null });
-        $("#workspace-save-announcement").textContent = "Profile applied for this in-memory session only.";
+        const savedAt = state.hostedEvaluation ? new Date().toISOString() : null;
+        renderWorkspaceExperience({ ...state.workspaceExperience, profile, saved: state.hostedEvaluation, savedAt });
+        persistHostedEvaluation();
+        $("#workspace-save-announcement").textContent = state.hostedEvaluation
+          ? "Practice profile saved in this browser."
+          : "Profile applied for this in-memory session only.";
       }
       showToast("Practice profile saved. Safety, evidence content, and clinical authority remain unchanged.");
     } catch (error) {
@@ -6303,8 +6364,10 @@ function addEventListeners() {
         await refreshCurrent();
       } else {
         state.riskAcknowledged = desired;
+        currentAssessment().safetyAcknowledged = desired;
         if (desired) audit("Safety hold acknowledged", "Source response marked reviewed");
         setApprovalState(currentAssessment());
+        persistHostedEvaluation();
       }
     } catch (error) {
       state.riskAcknowledged = !desired;
@@ -6326,9 +6389,10 @@ function addEventListeners() {
         await refreshCurrent();
       } else {
         assessment.status = "approved";
-        assessment.reviewer = "Demo reviewer";
+        assessment.reviewer = state.reviewerCode;
         audit("Draft approved", "Pilot-ready in sandbox");
         renderQueue($("#queue-search").value);
+        persistHostedEvaluation();
       }
       $("#dock-status").textContent = "Approved in sandbox";
       $("#dock-help").textContent = state.sourceEvent
@@ -6765,6 +6829,7 @@ function addEventListeners() {
         assessment.interpretationProvenance = { ...assessment.interpretationProvenance, source: "reviewer", revision: Number(assessment.interpretationProvenance?.revision || 0) + 1, actor: "Demo reviewer" };
         audit("Interpretation revised", "hypotheses and follow-up questions");
         renderReview();
+        persistHostedEvaluation();
       }
       closeDialog("#interpretation-dialog");
       showToast("Structured interpretation revision saved with evidence provenance.");
@@ -6789,6 +6854,7 @@ function addEventListeners() {
         state.narratives[`${currentAssessment().id}:${state.audience}`] = value;
         $("#summary-text").textContent = value;
         audit("Narrative revised", `${state.audience} version updated`);
+        persistHostedEvaluation();
       }
       closeDialog("#edit-dialog");
       showToast("Revision saved to the calibration history.");
@@ -6814,6 +6880,7 @@ function addEventListeners() {
         currentAssessment().status = "priority";
         audit("Draft returned", [...reasons, note && "reviewer note"].filter(Boolean).join(", "));
         renderQueue($("#queue-search").value);
+        persistHostedEvaluation();
       }
       closeDialog("#feedback-dialog");
       $("#feedback-form").reset();
@@ -7039,6 +7106,7 @@ function addEventListeners() {
         state.currentIndex = 0;
         state.riskAcknowledged = false;
         state.audit = [{ time: "Now", actor: "Local import", action: "Synthetic fixture loaded", detail: selected.payload.id }];
+        persistHostedEvaluation();
       }
       renderQueue();
       renderReview();
@@ -7051,6 +7119,48 @@ function addEventListeners() {
       showToast(error.message);
     } finally {
       button.disabled = false;
+    }
+  });
+
+  $("#create-test-summary").addEventListener("click", async () => {
+    const form = $("#scored-form-entry");
+    if (!form.reportValidity()) return;
+    const button = $("#create-test-summary");
+    button.disabled = true;
+    button.textContent = "Building summary…";
+    $("#manual-entry-errors").textContent = "";
+    try {
+      const values = Object.fromEntries(new FormData(form).entries());
+      const assessment = buildSyntheticAssessmentFromScoreForm(values);
+      const errors = validateAssessment(assessment);
+      if (errors.length) throw new Error(errors[0]);
+      if (state.assessments.some(item => item.id === assessment.id)) {
+        throw new Error("That test record ID already exists. Use a different synthetic ID.");
+      }
+      if (state.connected) {
+        const detail = await state.api.importAssessment(assessment);
+        const { assessments } = await state.api.listAssessments();
+        state.assessments = assessments;
+        applyDetail(detail);
+        await refreshMetrics();
+      } else {
+        state.assessments.unshift(withInterpretation(assessment));
+        state.currentIndex = 0;
+        state.riskAcknowledged = false;
+        state.audit = [{ time: "Now", actor: state.reviewerCode, action: "Synthetic scored form entered", detail: assessment.id }];
+        persistHostedEvaluation();
+      }
+      renderQueue();
+      renderReview();
+      closeDialog("#import-dialog");
+      switchView("review");
+      form.reset();
+      showToast("Test scores converted into a clinician-review draft.");
+    } catch (error) {
+      $("#manual-entry-errors").textContent = error.message;
+    } finally {
+      button.disabled = false;
+      button.textContent = "Create test summary";
     }
   });
 
@@ -7174,9 +7284,10 @@ function addEventListeners() {
 }
 
 async function init() {
+  restoreHostedEvaluation();
   buildRatings();
   renderReviewerIdentity();
-  renderWorkspaceExperience(fallbackWorkspaceExperience());
+  renderWorkspaceExperience(state.workspaceExperience || fallbackWorkspaceExperience());
   renderQueue();
   renderReview();
   addEventListeners();

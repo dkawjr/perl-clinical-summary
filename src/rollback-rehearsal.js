@@ -4,9 +4,9 @@ export const ROLLBACK_REHEARSAL_CONTRACT = "perl-application-rollback-rehearsal/
 export const ROLLBACK_REHEARSAL_BOUNDARY = "This verifies local last-known-good compatibility and safety replay. It does not restore a deployable artifact, change the running application, perform an Azure rollback, or authorize clinical release.";
 
 const files = [
-  ["app.js", "688cdfc6c15a6a2d57d27d87775a72c8860a623eaad9884f9ce16950d054e5cd"],
-  ["index.html", "7ef2b966b9d43ee71b476644ed99ab41a401413621e7a18fd0b291f03c446156"],
-  ["styles.css", "a7781c443b797355291c387e5f5c33ccc947857cda6a73b4c3dd1d1c29c52394"],
+  ["app.js", "7a46020d5f85b7ed0de53788773ff883141eeec0c467bd52ad8cf5322b7cc2d7"],
+  ["index.html", "3370ed0fe3e8e18c7664544ac03591cdbefb20300c1a79c73a444ef5eb1fbefc"],
+  ["styles.css", "3c765cad7c7bd25044b37741c58daab9d63f2a28782ba637e95579bc7d3f2de0"],
   ["fieldwork.css", "fe064c3697ce8f73572a319439f00bdfae4ab822d9fc598ec4147d5790cbb9c8"],
   ["report.css", "fb0f2762c61005ed0ca9e082c6b6009c6182e7141ef642ab3b1998de0575baf1"],
   ["progress-report.css", "22ab917b9ce0f19c640ee2daa11fe69ca855cf9c1813f6c6d03f1493c8db8a86"],
@@ -37,8 +37,9 @@ const files = [
   ["candidate-advancement.css", "127cf67185223383c44c272d2161122390c22fd3b1d11387a7f9a08c55b56049"],
   ["server.mjs", "d89e7297e89335aaab95ce5df6f8b5172fcf453e4844ede21624d13b98847c07"],
   ["src/api-client.js", "c9db0a1cc5787a14611534f22ece14790780bf031a911921a226381aa57ef3e0"],
-  ["src/sandbox-store.js", "c6cce06105b338c4c2184467e66cabc91b214f8f187d089b7413f9e6249e9f34"],
+  ["src/sandbox-store.js", "baa2408606340d3464180b2445682d164d48e793516233c78b0b3fe19a31b566"],
   ["src/engine.js", "3539bf08898ef7775d9112cb79d5f25939d7d4d663b850019287168bf514040f"],
+  ["src/test-form-entry.js", "e1733e85b894258a41ca76da33b87ae6935443668ab1db6b3d8edb39ac77d43a"],
   ["src/clinical-brief.js", "6a697f0f43bf65e76d12bfc5f884984af2a7bbdcf1329367e1aa2944debc5ffe"],
   ["src/model-gateway.js", "db4bd0b3e5e8844d0e1dee87004d6c307e8af29ade1824ee6ea1530b7e599ba9"],
   ["src/model-input.js", "2efbfc9c6f7a50479116e2185d7a878429c583b65bcbd12dabfdb553c0da1eb7"],
@@ -89,7 +90,7 @@ const files = [
   ["src/integration-return.js", "7ad6aa0fd1e1d631aa815156fa462deaceff650a6e637fb66dec4ac4234b304e"],
   ["src/integration-rehearsal.js", "89acf9ef54ec328fa957854969daf7c13b84e5381e08eb7cff33d427847d5baa"],
   ["src/workspace-experience.js", "e628c8455937a7e31f719d873fcbb1c5e1974fdf521f81bea810d15ca467e99f"],
-  ["src/deployment-presentation.js", "78e9a25d4a06a965d3ac2ce649ed1787d92febda52654b7ac453317156873c0a"],
+  ["src/deployment-presentation.js", "695f8a32e8bb5776b6219688a7f93aa2ac2dead60f0f734d1004303b1b35643d"],
   ["src/operational-monitoring.js", "7424fe29815c0df55dc0e9179625f0e66b02f606f301ec97a313264bee05f18d"],
   ["src/incident-response.js", "5f3b043365f9c0bfe8e69a745db83150e5494a6aa12fa7919a835cf85a2d7041"],
   ["src/pilot-readiness.js", "afe1f05d008cca2d28cf813bcd5d8c7b87cb18ec2b7c1295ebd11a193e898cb4"],
@@ -155,12 +156,12 @@ const files = [
   ["schemas/counselor-reference-decision-event.schema.json", "b288ff8b8d142c186f1d98a635b1280c19b459a7af818cd028058857b1a385e4"],
   ["schemas/progress-review-event.schema.json", "0ca94f1394f57666700ef812779919358dce2aefa755e5268eaa7dd69abce5fc"],
   ["schemas/workspace-experience.schema.json", "095c3541e57b2903b6abbedbf68aa94296eb2f95b47a4765dd01feaf30fd4bc6"],
-  ["schemas/deployment-presentation.schema.json", "23d7f8826c565ac31f4eea78132c318355c456d3a197072769aabc20df15be2c"]
+  ["schemas/deployment-presentation.schema.json", "62f6fd42027eb6ddb9111d1523c119963aed9061639ce8f8ea837b838cad3bb7"]
 ];
 
 export const LOCAL_LAST_KNOWN_GOOD = Object.freeze({
-  id: "perl-local-lkg-2026-08-14",
-  version: "2026.08.18.47",
+  id: "perl-local-lkg-2026-08-18",
+  version: "2026.08.18.48",
   status: "local-engineering-baseline",
   artifactRepository: "working-tree-only",
   deployableArtifactAvailable: false,

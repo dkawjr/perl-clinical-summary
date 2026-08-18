@@ -1,4 +1,4 @@
-name: Publish private deployment candidate
+name: Publish immutable deployment candidate
 
 on:
   workflow_dispatch:

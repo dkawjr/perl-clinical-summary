@@ -27,7 +27,7 @@
 <body data-experience-mode="clinical" data-workspace-density="calm" data-review-focus="balanced" data-clinician-role="licensed-clinician" data-runtime-presentation="connecting">
   <a class="skip-link" href="#main-content">Skip to main content</a>
   <section id="server-required" class="server-required" role="dialog" aria-modal="true" aria-labelledby="server-required-title" hidden>
-    <div class="server-required-mark" aria-hidden="true"><span>PERL</span><strong>RC</strong><small>2.46</small></div>
+    <div class="server-required-mark" aria-hidden="true"><span>PERL</span><strong>RC</strong><small>2.47</small></div>
     <div class="server-required-copy">
       <span>Deployment interlock</span>
       <h1 id="server-required-title">Open the application.<br><em>Not its source file.</em></h1>
@@ -118,7 +118,7 @@
         <div class="topbar-actions">
           <button id="import-open" class="quiet-button" type="button">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m0 0L8 8m4-4 4 4M5 14v5h14v-5"/></svg>
-            Import fixture
+            New test summary
           </button>
           <button id="command-open" class="icon-button" type="button" aria-label="Open quick guide">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 9a4 4 0 1 1 7.5 2c-1 1.3-3.5 1.4-3.5 3M12 18h.01"/></svg>
@@ -128,7 +128,7 @@
       </header>
 
       <aside id="deployment-candidate-bar" class="deployment-candidate-bar" aria-label="Deployment candidate status" hidden>
-        <div><span>Release candidate</span><strong id="deployment-candidate-version">2.46</strong></div>
+        <div><span>Release candidate</span><strong id="deployment-candidate-version">2.47</strong></div>
         <div><span>Application path</span><strong>Production-equivalent</strong></div>
         <div><span>Runtime</span><strong id="deployment-candidate-state">Checking</strong></div>
         <p id="deployment-candidate-boundary">Evaluation records only. Named approvals still govern PHI and clinical activation.</p>
@@ -3930,20 +3930,61 @@
     </form>
   </dialog>
 
-  <dialog id="import-dialog" class="app-dialog" aria-labelledby="import-dialog-title">
-    <form method="dialog">
-      <div class="dialog-head"><div><span class="section-index">Synthetic data only</span><h2 id="import-dialog-title" tabindex="-1">Import a test fixture</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
-      <div class="import-warning"><strong>Do not upload PHI.</strong><p>This prototype runs in a local sandbox and intentionally rejects record IDs that do not begin with <code>FF-TEST-</code>.</p></div>
-      <label class="upload-zone" for="fixture-file"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 15v4h14v-4"/></svg><strong>Choose a JSON fixture</strong><span>Canonical scored assessment or proposed synthetic e-QPASS event</span><input id="fixture-file" type="file" accept="application/json,.json"></label>
-      <div id="import-errors" class="import-errors" role="alert"></div>
-      <div class="dialog-actions"><button class="secondary-button" value="cancel" type="submit" formnovalidate>Cancel</button><button id="load-fixture" class="primary-button" value="default" type="button">Load fixture</button></div>
+  <dialog id="import-dialog" class="app-dialog import-dialog" aria-labelledby="import-dialog-title">
+    <form method="dialog" id="scored-form-entry">
+      <div class="dialog-head"><div><span class="section-index">Synthetic evaluation</span><h2 id="import-dialog-title" tabindex="-1">Create a summary from a test form</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
+      <div class="import-warning"><strong>Use test information only.</strong><p>Enter the scored totals shown on a completed test form. PERL does not ask for a name, contact information, raw answers, or free-text history.</p></div>
+
+      <section class="manual-entry-section" aria-labelledby="manual-entry-title">
+        <div class="manual-entry-head"><div><span>01 / Scored form</span><h3 id="manual-entry-title">Enter the scored results</h3></div><p>Required fields · usually under two minutes</p></div>
+        <div class="entry-field-grid entry-record-grid">
+          <label><span>Test record ID</span><input name="recordId" autocomplete="off" maxlength="56" placeholder="DOLORES-01" required><small>PERL adds FF-TEST- automatically.</small></label>
+          <label><span>Response time</span><input name="duration" inputmode="numeric" pattern="[0-9]{2}:[0-9]{2}" value="10:00" required><small>MM:SS</small></label>
+          <label class="entry-wide"><span>Completion label</span><input name="completedAt" maxlength="120" value="Today · test entry" required><small>No person name or identifying date is needed.</small></label>
+        </div>
+
+        <div class="entry-section-label"><span>Core scores</span><small>Copy the scored totals—not raw responses.</small></div>
+        <div class="entry-field-grid entry-score-grid">
+          <label><span>Depression</span><input name="depression" type="number" min="0" max="104" value="0" required><small>0–104</small></label>
+          <label><span>Anxiety</span><input name="anxiety" type="number" min="0" max="116" value="0" required><small>0–116</small></label>
+          <label><span>Anger</span><input name="anger" type="number" min="0" max="112" value="0" required><small>0–112</small></label>
+          <label><span>Global index</span><input name="gpi" type="number" min="0" max="420" value="0" required><small>0–420</small></label>
+          <label><span>Phobic avoidance</span><input name="phobicAvoidance" type="number" min="0" max="40" value="0" required><small>0–40</small></label>
+          <label><span>Obsessive-compulsive</span><input name="obsessiveCompulsive" type="number" min="0" max="40" value="0" required><small>0–40</small></label>
+          <label><span>Psychoticism</span><input name="psychoticism" type="number" min="0" max="40" value="0" required><small>0–40</small></label>
+          <label class="critical-entry"><span>Suicide-risk screen</span><input name="suicideRisk" type="number" min="0" max="8" value="0" required><small>0–8 · non-zero holds approval</small></label>
+          <label class="critical-entry"><span>Violence-risk screen</span><input name="violenceRisk" type="number" min="0" max="8" value="0" required><small>0–8 · non-zero holds approval</small></label>
+        </div>
+
+        <div class="entry-section-label"><span>Key subscales</span><small>Enter the score and range printed on the form.</small></div>
+        <div class="entry-subscale-table">
+          <div class="entry-subscale-head"><span>Construct</span><span>Score</span><span>Range</span></div>
+          <label><strong>Dysphoria</strong><input name="subscale-dysphoria-score" type="number" min="0" max="120" value="0" aria-label="Dysphoria score" required><select name="subscale-dysphoria-level" aria-label="Dysphoria range"><option>minimal</option><option>mild</option><option>moderate</option><option>severe</option></select></label>
+          <label><strong>Negative cognition</strong><input name="subscale-negative-cognition-score" type="number" min="0" max="120" value="0" aria-label="Negative cognition score" required><select name="subscale-negative-cognition-level" aria-label="Negative cognition range"><option>minimal</option><option>mild</option><option>moderate</option><option>severe</option></select></label>
+          <label><strong>Anhedonia</strong><input name="subscale-anhedonia-score" type="number" min="0" max="120" value="0" aria-label="Anhedonia score" required><select name="subscale-anhedonia-level" aria-label="Anhedonia range"><option>minimal</option><option>mild</option><option>moderate</option><option>severe</option></select></label>
+          <label><strong>Apprehension</strong><input name="subscale-apprehension-score" type="number" min="0" max="120" value="0" aria-label="Apprehension score" required><select name="subscale-apprehension-level" aria-label="Apprehension range"><option>minimal</option><option>mild</option><option>moderate</option><option>severe</option></select></label>
+          <label><strong>Physiological arousal</strong><input name="subscale-physiological-arousal-score" type="number" min="0" max="120" value="0" aria-label="Physiological arousal score" required><select name="subscale-physiological-arousal-level" aria-label="Physiological arousal range"><option>minimal</option><option>mild</option><option>moderate</option><option>severe</option></select></label>
+          <label><strong>Anger-out verbal</strong><input name="subscale-anger-out-verbal-score" type="number" min="0" max="120" value="0" aria-label="Anger-out verbal score" required><select name="subscale-anger-out-verbal-level" aria-label="Anger-out verbal range"><option>minimal</option><option>mild</option><option>moderate</option><option>severe</option></select></label>
+        </div>
+        <div id="manual-entry-errors" class="import-errors" role="alert"></div>
+        <button id="create-test-summary" class="primary-button entry-create-button" type="button">Create test summary</button>
+      </section>
+
+      <details class="fixture-import-details">
+        <summary>Advanced: import an existing JSON fixture</summary>
+        <p>For technical testing, load a canonical scored assessment or proposed synthetic e-QPASS event.</p>
+        <label class="upload-zone" for="fixture-file"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5m0 0L8 9m4-4 4 4M5 15v4h14v-4"/></svg><strong>Choose a JSON fixture</strong><span>Canonical scored assessment or proposed synthetic e-QPASS event</span><input id="fixture-file" type="file" accept="application/json,.json"></label>
+        <div id="import-errors" class="import-errors" role="alert"></div>
+        <button id="load-fixture" class="secondary-button" type="button">Load JSON fixture</button>
+      </details>
+      <div class="dialog-actions"><button class="secondary-button" value="cancel" type="submit" formnovalidate>Cancel</button></div>
     </form>
   </dialog>
 
   <dialog id="guide-dialog" class="app-dialog guide-dialog" aria-labelledby="guide-dialog-title">
     <form method="dialog">
       <div class="dialog-head"><div><span class="section-index">Quick guide</span><h2 id="guide-dialog-title" tabindex="-1">How this calibration workspace works</h2></div><button class="dialog-close" value="cancel" aria-label="Close" type="submit" formnovalidate>×</button></div>
-      <ol class="guide-steps"><li><span>1</span><div><strong>Open a synthetic assessment</strong><p>PERL reads structured e-QPASS scores—not an unstructured transcript.</p></div></li><li><span>2</span><div><strong>Verify every inference</strong><p>Review the summary, scored profile, evidence, uncertainty, and follow-up prompts.</p></div></li><li><span>3</span><div><strong>Resolve safety holds</strong><p>Critical screens require direct clinical review and cannot be silently summarized away.</p></div></li><li><span>4</span><div><strong>Approve or teach</strong><p>Approve a safe draft or return structured feedback for calibration.</p></div></li></ol>
+      <ol class="guide-steps"><li><span>1</span><div><strong>Enter a synthetic scored form</strong><p>Choose New test summary and copy the scored totals and ranges from the completed test form. No names or raw answers are needed.</p></div></li><li><span>2</span><div><strong>Verify every inference</strong><p>Review the summary, scored profile, evidence, uncertainty, and follow-up prompts.</p></div></li><li><span>3</span><div><strong>Resolve safety holds</strong><p>Non-zero critical screens require direct clinical review and cannot be silently summarized away.</p></div></li><li><span>4</span><div><strong>Approve, edit, and export</strong><p>Refine the clinician draft, preview another audience, then use the report button to print or save a PDF.</p></div></li></ol>
       <div class="dialog-actions"><button class="primary-button" value="cancel" type="submit" formnovalidate>Got it</button></div>
     </form>
   </dialog>

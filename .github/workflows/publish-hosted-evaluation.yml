@@ -1,0 +1,50 @@
+name: Publish hosted synthetic evaluation
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  verify-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Use Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - name: Verify the evaluation build
+        run: |
+          npm install --package-lock-only --ignore-scripts
+          npm test
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Assemble browser-only evaluation artifact
+        run: |
+          mkdir -p _site
+          cp index.html app.js *.css *.js _site/
+          cp -R assets src _site/
+          touch _site/.nojekyll
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
